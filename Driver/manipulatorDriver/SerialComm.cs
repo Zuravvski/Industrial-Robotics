@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace manipulatorDriver
@@ -17,7 +13,7 @@ namespace manipulatorDriver
         private const StopBits DEFAULT_STOP_BITS = StopBits.Two;
         #endregion
 
-        protected SerialPort port;
+        protected readonly SerialPort port;
 
         #region Properties
         public int BaudRate

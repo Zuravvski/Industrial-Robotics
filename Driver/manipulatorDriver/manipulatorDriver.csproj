@@ -58,6 +58,7 @@
     <Compile Include="DataSupplier.cs" />
     <Compile Include="Manipulator.cs" />
     <Compile Include="Observer.cs" />
+    <Compile Include="Position.cs" />
     <Compile Include="SerialComm.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,14 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace manipulatorDriver
 {
     public class Manipulator : SerialComm
     {
+        public Position Localization { get; }
+
+        public Manipulator()
+        {
+            // Implement localization
+        }
+
+        private void Port_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        {
+            // Booo! Something's got a little tricky
+        }
+
         public void GrabClose()
         {
             Write("GC");
@@ -19,28 +26,24 @@ namespace manipulatorDriver
             Write("GO");
         }
 
-        // TODO: Fix this
-        public void Tool(int length)
-        {
-            if (length >= 0 && length <= 300)
-            {
-                Write("TL " + Convert.ToString(length));
-            }
-        }
-
         public void MovePosition(float x, float y, float z, float a, float b)
         {
-            Write(string.Format("MP {0},{1},{2},{3},{4}", x, y, z, a, b));
+            Write($"MP {x},{y},{z},{a},{b}");
         }
 
         public void MoveAway(float x, float y, float z, float a, float b)
         {
-            Write(string.Format("MP {0},{1},{2},{3},{4}", x, y, z, a, b));
+            Write($"MP {x},{y},{z},{a},{b}");
         }
 
         public void Draw(float x, float y, float z)
         {
-            Write(string.Format("DW {0},{1},{2}", x, y, z));
+            Write($"DW {x},{y},{z}");
+        }
+
+        private void Where()
+        {
+            Write("WH");
         }
     }
 }

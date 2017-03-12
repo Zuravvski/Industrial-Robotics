@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace manipulatorDriver
 {
+
+    // Todo: Considerable usage 
     public abstract class DataSupplier
     {
         private List<Observer> observers;
@@ -19,7 +17,6 @@ namespace manipulatorDriver
         public void Subscribe(Observer observer)
         {
             observers.Add(observer);
-
         }
 
         public void Unsubscribe(Observer observer)

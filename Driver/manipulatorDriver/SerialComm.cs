@@ -6,14 +6,24 @@ namespace manipulatorDriver
 {
    public abstract class SerialComm : DataSupplier
     {
+        public enum Terminator
+        {
+            NONE,
+            CR,     // Carriage return
+            LF,     // Line feed
+            CRLF    // Both
+        };
+
         #region Constants
         private const int DEFAULT_DATA_BITS = 8;
         private const int DEFAULT_BAUDRATE = 9600;
         private const Parity DEFAULT_PARITY = Parity.Even;
         private const StopBits DEFAULT_STOP_BITS = StopBits.Two;
+        private const Terminator DEFAULT_FRAME_TERMINATOR = Terminator.CR;
         #endregion
 
         protected readonly SerialPort port;
+        public Terminator FrameTerminator { get; set; }
 
         #region Properties
         public int BaudRate
@@ -61,7 +71,7 @@ namespace manipulatorDriver
                 WriteTimeout = 6000
             };
 
-            port.DataReceived += Port_DataReceived;
+            FrameTerminator = DEFAULT_FRAME_TERMINATOR;
         }
 
         public void OpenPort(string portName)
@@ -84,15 +94,36 @@ namespace manipulatorDriver
             port.Close();
         }
 
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            var data = port.ReadExisting();
-            NotifyObservers(data);
-        }
-
         public void Write(string data)
         {
-            port.Write(data + "\r");
+            try
+            {
+                port.Write(data + GetTerminator());
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
+        }
+
+        private string GetTerminator()
+        {
+            var terminator = "";
+            switch (FrameTerminator)
+            {
+                case Terminator.CR:
+                    terminator = "\r";
+                    break;
+
+                case Terminator.LF:
+                    terminator = "\n";
+                    break;
+
+                case Terminator.CRLF:
+                    terminator = "\r\n";
+                    break;
+            }
+            return terminator;
         }
     }
 }

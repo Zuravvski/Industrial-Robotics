@@ -21,11 +21,11 @@ namespace manipulatorDriver
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Manipulator manipulator;
+        private E2JManipulator manipulator;
         public MainWindow()
         {
             InitializeComponent();
-            manipulator = new Manipulator();
+            manipulator = new E2JManipulator();
         }
 
         private void button_Click(object sender, RoutedEventArgs e)

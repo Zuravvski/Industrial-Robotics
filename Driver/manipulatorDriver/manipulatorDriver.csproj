@@ -56,7 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataSupplier.cs" />
-    <Compile Include="Manipulator.cs" />
+    <Compile Include="E2JManipulator.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="SerialComm.cs" />

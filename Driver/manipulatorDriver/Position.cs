@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace manipulatorDriver
+namespace ManipulatorDriver
 {
     public class Position
     {
@@ -12,19 +12,11 @@ namespace manipulatorDriver
 
         public Position()
         {
-            
         }
 
         public Position(string position)
         {
-            // TODO: Add regex to validate given string
-            // TODO: Add handling of R and A (rotation and something)
-            var splitted = position.Replace("+", "").Split(',');
-            X = Convert.ToSingle(splitted[0]);
-            Y = Convert.ToSingle(splitted[1]);
-            Z = Convert.ToSingle(splitted[2]);
-            A = Convert.ToSingle(splitted[3]);
-            B = Convert.ToSingle(splitted[4]);
+            Parse(position);
         }
 
         public Position(float x, float y, float z, float a, float b)
@@ -34,6 +26,22 @@ namespace manipulatorDriver
             Z = z;
             A = a;
             B = b;
+        }
+
+        // TODO: Add regex to validate given string
+        // TODO: Add handling of R and A (rotation and something)
+        public bool Parse(string position)
+        {
+            var splitted = position.Replace("+", "").Split(',');
+            if (splitted.Length != 10) return false;
+            
+            X = Convert.ToSingle(splitted[0]);
+            Y = Convert.ToSingle(splitted[1]);
+            Z = Convert.ToSingle(splitted[2]);
+            A = Convert.ToSingle(splitted[3]);
+            B = Convert.ToSingle(splitted[4]);
+
+            return true;
         }
     }
 }

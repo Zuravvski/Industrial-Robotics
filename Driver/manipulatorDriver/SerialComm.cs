@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO.Ports;
-using System.Windows;
 
-namespace manipulatorDriver
+namespace ManipulatorDriver
 {
-   public abstract class SerialComm : DataSupplier
+   public class SerialComm : DataSupplier
     {
         public enum Terminator
         {
@@ -22,7 +21,7 @@ namespace manipulatorDriver
         private const Terminator DEFAULT_FRAME_TERMINATOR = Terminator.CR;
         #endregion
 
-        protected readonly SerialPort port;
+        private readonly SerialPort port;
         public Terminator FrameTerminator { get; set; }
 
         #region Properties
@@ -72,6 +71,12 @@ namespace manipulatorDriver
             };
 
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
+            port.DataReceived += Port_DataReceived;
+        }
+
+        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            NotifyObservers(port.ReadExisting());
         }
 
         public void OpenPort(string portName)
@@ -84,7 +89,7 @@ namespace manipulatorDriver
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Console.Error.WriteLine(ex.Message);
             }
         }
 

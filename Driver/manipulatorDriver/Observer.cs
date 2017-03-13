@@ -1,4 +1,4 @@
-﻿namespace manipulatorDriver
+﻿namespace ManipulatorDriver
 {
    public interface Observer
     {

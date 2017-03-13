@@ -1,70 +1,64 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Windows;
 
-namespace manipulatorDriver
+namespace ManipulatorDriver
 {
-    public class E2JManipulator : SerialComm
+    public class E2JManipulator : Observer
     {
-        public Position Localization { get; }
-        public string RawDataReceived { get; private set; }
+        #region Fields and Properties
 
+        private readonly SerialComm port;
         private ResponsiveCommand lastRequest;
+
+        public Position Localization { get; }
+        #endregion
 
         public E2JManipulator()
         {
-            // Implement localization
-
-            // Receiving data
+            port = new SerialComm();
+            Localization = new Position();
             lastRequest = ResponsiveCommand.INVALID;
-            port.DataReceived += Port_DataReceived;
+            port.Subscribe(this);
         }
 
-        private void Port_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        public void Connect(string portName)
         {
-            RawDataReceived = port.ReadExisting();
+            // TODO: Launching servo seems a pretty good idea
+            port.OpenPort(portName);
+        }
 
-            // TODO: Reconsider this structure, as it can grow quite large
-            switch (lastRequest)
-            {
-                case ResponsiveCommand.WH:
-                    // TODO: Write suitable regex 
-                    if (Regex.IsMatch(RawDataReceived, ".*")) 
-                    {
-                        // update position
-                    }
-                    break;
-            }
-
-            NotifyObservers(RawDataReceived);
+        public void Disconnect()
+        {
+            port.ClosePort();
         }
 
         public void GrabClose()
         {
-            Write("GC");
+            port.Write("GC");
         }
 
         public void GrabOpen()
         {
-            Write("GO");
+            port.Write("GO");
         }
 
         public void MovePosition(float x, float y, float z, float a, float b)
         {
-            Write($"MP {x},{y},{z},{a},{b}");
+            port.Write($"MP {x},{y},{z},{a},{b}");
         }
 
         public void MoveAway(float x, float y, float z, float a, float b)
         {
-            Write($"MP {x},{y},{z},{a},{b}");
+            port.Write($"MP {x},{y},{z},{a},{b}");
         }
 
         public void Draw(float x, float y, float z)
         {
-            Write($"DW {x},{y},{z}");
+            port.Write($"DW {x},{y},{z}");
         }
 
         private void Where()
         {
-            Write("WH");
+            port.Write("WH");
             lastRequest = ResponsiveCommand.WH;
         }
 
@@ -72,5 +66,19 @@ namespace manipulatorDriver
         {
             INVALID, WH
         };
+
+        // TODO: Consider regex validation
+        public void getNotified(string data)
+        {
+            switch (lastRequest)
+            {
+                case ResponsiveCommand.WH:
+                    if (Localization.parse(data))
+                    {
+                        lastRequest = ResponsiveCommand.INVALID;
+                    }
+                    break;
+            }
+        }
     }
 }

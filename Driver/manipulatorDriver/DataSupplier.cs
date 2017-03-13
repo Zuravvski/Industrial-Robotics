@@ -2,16 +2,13 @@
 
 namespace manipulatorDriver
 {
-
-    // Todo: Considerable usage 
     public abstract class DataSupplier
     {
-        private List<Observer> observers;
+        private readonly List<Observer> observers;
 
         public DataSupplier()
         {
             observers = new List<Observer>();
-
         }
 
         public void Subscribe(Observer observer)

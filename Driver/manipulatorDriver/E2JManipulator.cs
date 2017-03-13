@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using manipulatorDriver;
 
 namespace ManipulatorDriver
 {
@@ -14,7 +14,7 @@ namespace ManipulatorDriver
 
         public E2JManipulator()
         {
-            port = new SerialComm();
+            port = new SerialBuilder().Build();
             Localization = new Position();
             lastRequest = ResponsiveCommand.INVALID;
             port.Subscribe(this);
@@ -24,6 +24,7 @@ namespace ManipulatorDriver
         {
             // TODO: Launching servo seems a pretty good idea
             port.OpenPort(portName);
+            Where();
         }
 
         public void Disconnect()
@@ -73,7 +74,7 @@ namespace ManipulatorDriver
             switch (lastRequest)
             {
                 case ResponsiveCommand.WH:
-                    if (Localization.parse(data))
+                    if (Localization.Parse(data))
                     {
                         lastRequest = ResponsiveCommand.INVALID;
                     }

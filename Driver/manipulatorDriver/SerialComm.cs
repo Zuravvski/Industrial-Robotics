@@ -12,14 +12,7 @@ namespace ManipulatorDriver
             LF,     // Line feed
             CRLF    // Both
         };
-
-        #region Constants
-        private const int DEFAULT_DATA_BITS = 8;
-        private const int DEFAULT_BAUDRATE = 9600;
-        private const Parity DEFAULT_PARITY = Parity.Even;
-        private const StopBits DEFAULT_STOP_BITS = StopBits.Two;
-        private const Terminator DEFAULT_FRAME_TERMINATOR = Terminator.CR;
-        #endregion
+        private const SerialComm.Terminator DEFAULT_FRAME_TERMINATOR = SerialComm.Terminator.CR;
 
         private readonly SerialPort port;
         public Terminator FrameTerminator { get; set; }
@@ -59,19 +52,15 @@ namespace ManipulatorDriver
 
         public SerialComm()
         {
-            port = new SerialPort()
-            {
-                BaudRate = DEFAULT_BAUDRATE,
-                DataBits = DEFAULT_DATA_BITS,
-                Parity = DEFAULT_PARITY,
-                StopBits = DEFAULT_STOP_BITS,
-                RtsEnable = true,
-                ReadTimeout = 4000,
-                WriteTimeout = 6000
-            };
+            port = new SerialPort();
 
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
             port.DataReceived += Port_DataReceived;
+        }
+
+        public SerialComm(SerialPort port)
+        {
+            this.port = port;
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)

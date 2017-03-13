@@ -59,6 +59,7 @@
     <Compile Include="E2JManipulator.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="Position.cs" />
+    <Compile Include="SerialBuilder.cs" />
     <Compile Include="SerialComm.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

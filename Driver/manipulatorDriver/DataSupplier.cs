@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace manipulatorDriver
+namespace ManipulatorDriver
 {
     public abstract class DataSupplier
     {

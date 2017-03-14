@@ -1,21 +1,32 @@
 ﻿using manipulatorDriver;
+using System;
+using System.Globalization;
+using System.Threading;
 
 namespace ManipulatorDriver
 {
     public class E2JManipulator : Observer
     {
+
+        #region Enums
+        public enum GrabE { Closed, Open };
+        #endregion
+
         #region Fields and Properties
 
         private readonly SerialComm port;
+        public double X { get; private set; }
+        public double Y { get; private set; }
+        public double Z { get; private set; }
+        public double A { get; private set; }
+        public double B { get; private set; }
+        public GrabE Grab { get; private set; }
         private ResponsiveCommand lastRequest;
-
-        public Position Localization { get; }
         #endregion
 
         public E2JManipulator()
         {
             port = new SerialBuilder().Build();
-            Localization = new Position();
             lastRequest = ResponsiveCommand.INVALID;
             port.Subscribe(this);
         }
@@ -55,9 +66,10 @@ namespace ManipulatorDriver
         public void Draw(float x, float y, float z)
         {
             port.Write($"DW {x},{y},{z}");
+            Where();
         }
 
-        private void Where()
+        public void Where()
         {
             port.Write("WH");
             lastRequest = ResponsiveCommand.WH;
@@ -101,6 +113,11 @@ namespace ManipulatorDriver
             port.Write(string.Format("MJ {0},{1},{2},{3},{4}", pos1, pos2, pos3, pos4));
         }
 
+        public void MoveToolStraight(int pos,int dist)
+        {
+            port.Write(string.Format("MTS {0},{1},C", pos,dist));
+        }
+
         private enum ResponsiveCommand
         {
             INVALID, WH
@@ -112,12 +129,31 @@ namespace ManipulatorDriver
             switch (lastRequest)
             {
                 case ResponsiveCommand.WH:
-                    if (Localization.Parse(data))
-                    {
-                        lastRequest = ResponsiveCommand.INVALID;
-                    }
+                    Parse(data);
+                    lastRequest = ResponsiveCommand.INVALID;
                     break;
             }
+        }
+
+        public bool Parse(string position)
+        {
+            string[] splitted = position.Replace("+", "").Replace("\r", "").Split(',');
+            if (splitted.Length != 10) return false;
+
+            try
+            {
+                X = double.Parse(splitted[0], CultureInfo.InvariantCulture);
+                Y = double.Parse(splitted[1], CultureInfo.InvariantCulture);
+                Z = double.Parse(splitted[2], CultureInfo.InvariantCulture);
+                A = double.Parse(splitted[3], CultureInfo.InvariantCulture);
+                B = double.Parse(splitted[4], CultureInfo.InvariantCulture);
+                Grab = splitted[9] == "O" ? GrabE.Open : GrabE.Closed;
+            }
+            catch (FormatException ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
+            return true;
         }
     }
 }

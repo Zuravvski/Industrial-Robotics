@@ -61,11 +61,18 @@ namespace ManipulatorDriver
         public SerialComm(SerialPort port)
         {
             this.port = port;
+            FrameTerminator = DEFAULT_FRAME_TERMINATOR;
+            port.DataReceived += Port_DataReceived;
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            NotifyObservers(port.ReadExisting());
+            var read = "";
+            while(!read.Contains("\r"))
+            {
+                read += port.ReadExisting();
+            }
+            NotifyObservers(read);
         }
 
         public void OpenPort(string portName)

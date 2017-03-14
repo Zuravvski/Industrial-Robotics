@@ -63,6 +63,44 @@ namespace ManipulatorDriver
             lastRequest = ResponsiveCommand.WH;
         }
 
+        public void GripFlag(int flag)
+        {
+           port.Write(string.Format("GF {0})", flag));
+        }
+
+        public void GripPressure(int sf, int rf, int rt)
+        {
+            port.Write(string.Format("GP {0},{1},{2})", sf, rf, rt));
+        }
+        public void Here(int num)
+        {
+            port.Write(string.Format("HE {0}", num));
+        }
+        public void Home()
+        {
+            port.Write(string.Format("HO"));
+        }
+
+        public void IncrementPostion()
+        {
+            port. Write(string.Format("IP"));
+        }
+
+        public void JointRollChange(int num)
+        {
+            port.Write(string.Format("JRC {0}", num));
+        }
+
+        public void MoveContinuous(int pos1, int pos2)
+        {
+            port.Write(string.Format("MC {0},{1}", pos1, pos2));
+        }
+
+        public void MoveJoint(int pos1, int pos2, int pos3, int pos4)
+        {
+            port.Write(string.Format("MJ {0},{1},{2},{3},{4}", pos1, pos2, pos3, pos4));
+        }
+
         private enum ResponsiveCommand
         {
             INVALID, WH

@@ -49,7 +49,7 @@ namespace ManipulatorDriver
 
         private enum ResponsiveCommand
         {
-            INVALID, WH
+            INVALID, WH, LR
         };
         #endregion
 
@@ -231,13 +231,14 @@ namespace ManipulatorDriver
         /// <summary>
         /// Enables the interrupt motion by the specified bit of the external input signal. Ch
         /// </summary>
-        /// <param name="plusMinus">+: if the inputBitNumber of the external input port turns ON, the program jumps to the lineNumber;
+        /// <param name="sign">+: if the inputBitNumber of the external input port turns ON, the program jumps to the lineNumber;
         /// -: if the inputBitNumber of the external input port turns OFF, the program jumps to the lineNumber</param>
         /// <param name="inputBitNumber">specify the bit number of external input signal that you want to assign for interrupt signal. [0..32767]</param>
         /// <param name="lineNumber"></param>
-        public void EnableAct(string plusMinus, double inputBitNumber, double lineNumber)
+        public void EnableAct(SignE sign, double inputBitNumber, double lineNumber)
         {
-            Port.Write($"EA {plusMinus},{inputBitNumber},{lineNumber}");
+            var strSign = sign == SignE.Plus ? "+" : "-";
+            Port.Write($"EA {strSign},{inputBitNumber},{lineNumber}");
         }
 
         /// <summary>
@@ -404,10 +405,12 @@ namespace ManipulatorDriver
 
         /// <summary>
         /// Reads the program of the specified line number.
+        /// <param name="lineNumber">Specify the line number to be read.0 ≦ line number ≦ 32767 (If omitted, reads the current line number stopping)</param>
         /// </summary>
-        public void LineRead()
+        public void LineRead(uint lineNumber = 0)
         {
-            Port.Write("LR");
+            Port.Write($"LR {lineNumber}");
+            lastRequest = ResponsiveCommand.LR;
         }
 
         /// <summary>
@@ -441,6 +444,16 @@ namespace ManipulatorDriver
         public void Move(uint positionNumber = 0)
         {
             Port.Write($"MO {positionNumber}");
+        }
+
+        /// <summary>
+        /// Moves the hand tip to the specified position. (Joint interpolation)
+        /// </summary>
+        /// <param name="positionNumber">Specify the destination position number in integer value. [1..999]</param>
+        /// <param name="grab">Specify hand state.</param>
+        public void Move(uint positionNumber = 0, GrabE grab = GrabE.Open)
+        {
+            Port.Write($"MO {positionNumber},{grabStateToString(grab)}");
         }
 
         /// <summary>
@@ -720,10 +733,9 @@ namespace ManipulatorDriver
         /// <param name="aTurningAngle">Specify the turning angle around roll axe in XYZ coordinates (degree) of the robot. (0 for default)</param>
         /// <param name="bTurningAngle">Specify the turning angle around pitch axe in XYZ coordinates (degree) of the robot. (0 for default)</param>
         public void PositionDefine(uint positionNumber = 0, double xCoordinate = 0, double yCoordinate = 0, 
-                                    double zCoordinate = 0, double aTurningAngle = 0, double bTurningAngle = 0, 
-                                    double cTurningAngle = 0)
+                                    double zCoordinate = 0, double aTurningAngle = 0, double bTurningAngle = 0)
         {
-            Port.Write($"PD {positionNumber}, {xCoordinate}, {yCoordinate}, {zCoordinate}, {aTurningAngle}, {bTurningAngle}, {cTurningAngle}");
+            Port.Write($"PD {positionNumber}, {xCoordinate}, {yCoordinate}, {zCoordinate}, {aTurningAngle}, {bTurningAngle}");
         }
 
         /// <summary>
@@ -793,7 +805,7 @@ namespace ManipulatorDriver
         }
 
         /// <summary>
-        /// REads the program name or the program information.
+        /// Reads the program name or the program information.
         /// </summary>
         /// <param name="programName">Specify the robot program name to be read. (Max. 8 characters)</param>
         public void QuestionNumber(string programName)
@@ -808,6 +820,14 @@ namespace ManipulatorDriver
         public void RepeatCycle(uint numberOfRepeatedCycles)
         {
             Port.Write($"RC {numberOfRepeatedCycles}");
+        }
+
+        /// <summary>
+        /// Executes the specified part of commands in a program.
+        /// </summary>
+        public void Run()
+        {
+            Port.Write("RN");
         }
 
         /// <summary>
@@ -977,10 +997,10 @@ namespace ManipulatorDriver
         /// <summary>
         /// Allows the programmer to write a comment. [up to 120 characters]
         /// </summary>
-        /// <param name="commentarino"></param>
-        public void Comment(string commentarino)
+        /// <param name="comment"></param>
+        public void Comment(string comment)
         {
-            Port.Write($"' {commentarino}");
+            Port.Write($"' {comment}");
         }
 
         // TODO: Consider regex validation
@@ -991,6 +1011,10 @@ namespace ManipulatorDriver
             {
                 case ResponsiveCommand.WH:
                     Parse(data);
+                    lastRequest = ResponsiveCommand.INVALID;
+                    break;
+
+                case ResponsiveCommand.LR:
                     lastRequest = ResponsiveCommand.INVALID;
                     break;
             }

@@ -10,13 +10,15 @@ namespace manipulatorDriver
     public partial class MainWindow : Window
     {
         private uint it;
+        private uint speed;
         private readonly E2JManipulator manipulator;
         public MainWindow()
         {
             InitializeComponent();
             manipulator = new E2JManipulator();
             manipulator.Connect("COM3");
-            it = 1;
+            it = 6;
+            speed = 5;
         }
 
         private void button_Click(object sender, RoutedEventArgs e)

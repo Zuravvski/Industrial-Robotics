@@ -1,0 +1,15 @@
+﻿<Window x:Class="IDE.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IDE"
+        mc:Ignorable="d"
+        Title="Movemaster Studio" Height="391" Width="525">
+    <Grid Background="#FF252121">
+
+        <Button x:Name="button" Content="Download" HorizontalAlignment="Left" Margin="352,323,0,0" VerticalAlignment="Top" Width="75" Height="27" Click="button_Click"/>
+        <Button x:Name="button_Copy" Content="Upload" HorizontalAlignment="Left" Margin="432,323,0,0" VerticalAlignment="Top" Width="75" Height="27" Click="button_Copy_Click"/>
+        <StackPanel x:Name="mainView" HorizontalAlignment="Left" Height="318" VerticalAlignment="Top" Width="507" MinHeight="320" MinWidth="500"/>
+    </Grid>
+</Window>

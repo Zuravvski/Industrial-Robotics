@@ -1,5 +1,6 @@
 ﻿using manipulatorDriver;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace ManipulatorDriver
@@ -985,6 +986,7 @@ namespace ManipulatorDriver
         // TODO: Consider regex validation
         public void getNotified(string data)
         {
+            Debug.WriteLine(data);
             switch (lastRequest)
             {
                 case ResponsiveCommand.WH:

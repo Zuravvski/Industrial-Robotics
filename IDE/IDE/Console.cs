@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using ManipulatorDriver;
+using static System.String;
 
 namespace IDE
 {
@@ -27,22 +29,24 @@ namespace IDE
 
         public void uploadProgram()
         {
-           manipulator.LineRead(counter+=10);
+          // manipulator.LineRead(counter+=10);
+          manipulator.Speed(25);
         }
 
         public void downloadProgram()
         {
-            var linesOfCode = new TextRange(document.ContentStart, document.ContentEnd).Text.Split('\n');
-            var lines = 0;
-            manipulator.Number("10");
-            foreach(var line in linesOfCode)
-            {
-                if (line.Length != 0)
-                {
-                    manipulator.Port.Write(line);
-                }
-            }
-            manipulator.End();
+            //manipulator.MoveTool(5, 0, E2JManipulator.GrabE.Open);
+            //var linesOfCode = new TextRange(document.ContentStart, document.ContentEnd).Text.Split('\r', '\n');
+            ////manipulator.Number("LOL");
+            //foreach (var line in linesOfCode)
+            //{
+            //    if (IsNullOrEmpty(line)) continue;
+            //    manipulator.Port.Write(line);
+            //    Thread.Sleep(500);
+            //}
+            ////manipulator.End();
+            ////manipulator.Run(10, 50, "2");
+            //Debug.WriteLine("Written successfully (hopefully)");
             manipulator.Run();
         }
     }

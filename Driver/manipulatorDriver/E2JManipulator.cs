@@ -595,7 +595,7 @@ namespace ManipulatorDriver
         /// <param name="programName">Specify the robot program name (less than 8 characters).</param>
         public void Number(string programName)
         {
-            Port.Write($"N {programName}");
+            Port.Write($"N \"{programName}\"");
         }
 
         /// <summary>
@@ -828,6 +828,14 @@ namespace ManipulatorDriver
         public void Run()
         {
             Port.Write("RN");
+        }
+
+        /// <summary>
+        /// Executes the specified part of commands in a program.
+        /// </summary>
+        public void Run(string programName)
+        {
+            Port.Write($"RN ,,{programName}");
         }
 
         /// <summary>

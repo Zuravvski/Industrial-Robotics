@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using ManipulatorDriver;
-using System.Diagnostics;
 
 namespace manipulatorDriver
 {

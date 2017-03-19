@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO.Ports;
 
 namespace ManipulatorDriver
@@ -104,6 +105,7 @@ namespace ManipulatorDriver
             catch (Exception e)
             {
                 Console.Error.WriteLine(e.Message);
+                Debug.WriteLine(e.Message);
             }
         }
 

@@ -36,8 +36,9 @@ namespace WPF_industrial_robotics
                 // Open code completion after the user has pressed > :
                 completionWindow = new CompletionWindow(textEditor.TextArea);
                 IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                data.Add(new MyCompletionData("GC", "opisGC"));
-                //data.Add(new MyCompletionData("GC", "opis1"));
+                data.Add(new MyCompletionData("GC", "Closes Grip of a hand"));
+                //how to add many parameters switching at real time???????????????//
+                data.Add(new MyCompletionData("MO", "Moves to specified location; PARAM: position, state-of-a-grab"));  
 
                 completionWindow.Show();
                 completionWindow.Closed += delegate {

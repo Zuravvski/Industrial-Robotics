@@ -15,7 +15,7 @@ namespace manipulatorDriver
         {
             InitializeComponent();
             manipulator = new E2JManipulator();
-            manipulator.Connect("COM3");
+            manipulator.Connect("COM4");
             it = 6;
             speed = 5;
         }
@@ -98,9 +98,7 @@ namespace manipulatorDriver
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            //it = 1;
-            //manipulator.Speed(20);
-            manipulator.New();
+            manipulator.MoveContinuous(1, 2);
         }
     }
 }

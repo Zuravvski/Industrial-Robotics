@@ -403,6 +403,17 @@ namespace ManipulatorDriver
             Port.Write($"LG {comparedValue},{branchingLineNumber}");
         }
 
+
+        /// <summary>
+        /// Reads the current line number stopping.
+        /// </summary>
+        public void LineRead()
+        {
+            Port.Write("LR");
+            lastRequest = ResponsiveCommand.LR;
+        }
+
+
         /// <summary>
         /// Reads the program of the specified line number.
         /// <param name="lineNumber">Specify the line number to be read.0 ≦ line number ≦ 32767 (If omitted, reads the current line number stopping)</param>

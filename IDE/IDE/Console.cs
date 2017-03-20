@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using ManipulatorDriver;
 using static System.String;
+using System.Windows;
 
 namespace IDE
 {
@@ -22,7 +23,7 @@ namespace IDE
             document = new FlowDocument();
             Document = document; 
             manipulator = new E2JManipulator();
-            manipulator.Connect("COM3");
+            manipulator.Connect("COM4");
 
             document.LineHeight = 5.0;
         }
@@ -35,19 +36,17 @@ namespace IDE
 
         public void downloadProgram()
         {
-            //manipulator.MoveTool(5, 0, E2JManipulator.GrabE.Open);
-            //var linesOfCode = new TextRange(document.ContentStart, document.ContentEnd).Text.Split('\r', '\n');
-            ////manipulator.Number("LOL");
-            //foreach (var line in linesOfCode)
-            //{
-            //    if (IsNullOrEmpty(line)) continue;
-            //    manipulator.Port.Write(line);
-            //    Thread.Sleep(500);
-            //}
-            ////manipulator.End();
-            ////manipulator.Run(10, 50, "2");
-            //Debug.WriteLine("Written successfully (hopefully)");
-            manipulator.Run();
+         
+            var linesOfCode = new TextRange(document.ContentStart, document.ContentEnd).Text.Split('\r', '\n');
+          
+            foreach (var line in linesOfCode)
+            {
+                if (IsNullOrEmpty(line)) continue;
+                manipulator.Port.Write(line);
+                Thread.Sleep(150);
+            }
+            MessageBox.Show("Done");
+            Debug.WriteLine("Written successfully (hopefully)");
         }
     }
 }

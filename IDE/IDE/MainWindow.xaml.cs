@@ -1,18 +1,19 @@
-﻿using System.Windows;
+﻿using FirstFloor.ModernUI.Windows.Controls;
+using System.Windows;
 
 namespace IDE
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : ModernWindow
     {
         private readonly Console console;
         public MainWindow()
         {
             InitializeComponent();
             console = new Console();
-            mainView.Children.Add(console);
+            //mainView.Children.Add(console);
         }
 
         private void button_Copy_Click(object sender, RoutedEventArgs e)

@@ -24,8 +24,8 @@
         <Button x:Name="button_Send" Content="Send" HorizontalAlignment="Right" Margin="0,10.4,9.8,0" VerticalAlignment="Top" Width="75" Grid.Row="2" Grid.Column="1"/>
         <ListView x:Name="listView_FolderList" Grid.Row="1" PreviewMouseLeftButtonUp="listView_FolderList_click"/>
         <TextBlock x:Name="textBlock_LocalFiles" HorizontalAlignment="Left" Margin="10,7,0,0" TextWrapping="Wrap" Text="Local files:" VerticalAlignment="Top" Grid.Column="0" FontWeight="Bold"/>
-        <TextBox x:Name="textBox_ProgramName" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="10.2,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" MaxLength="40" PreviewTextInput="TextValidationTextBox"/>
-        <TextBlock IsHitTestVisible="False" Text="Type here..." Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Margin="15,5,0,0" Foreground="DarkGray">
+        <TextBox x:Name="textBox_ProgramName" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="63.2,5,-160,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" MaxLength="40" PreviewTextInput="TextValidationTextBox" Grid.ColumnSpan="2" Grid.RowSpan="2" FontWeight="Bold"/>
+        <TextBlock IsHitTestVisible="False" Text="Type here..." Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Margin="70.2,8,0,0" Foreground="DarkGray" Grid.RowSpan="2">
             <TextBlock.Style>
                 <Style TargetType="{x:Type TextBlock}">
                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -37,6 +37,7 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+        <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="10.2,7,0,0" TextWrapping="Wrap" Text="Save as:" VerticalAlignment="Top"/>
 
     </Grid>
 </UserControl>

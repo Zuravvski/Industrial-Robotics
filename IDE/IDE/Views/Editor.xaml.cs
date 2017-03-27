@@ -38,7 +38,20 @@ namespace IDE.Views
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            //add text entered handling
+            if (e.Text == "\n")
+            {
+                ////textEditor.LineUp();
+                //int i = textEditor.LineCount * 10;
+                ////int index = textEditor.Text.IndexOf(' ');
+                //completionWindow = new CompletionWindow(textEditor.TextArea);
+                //IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                //data.Add(new MyCompletionData(i.ToString()));
+                //completionWindow.Show();
+                //completionWindow.Closed += delegate
+                //{
+                //    completionWindow = null;
+                //};
+            }
         }
 
         private void TextEntering(object sender, TextCompositionEventArgs e)
@@ -46,10 +59,18 @@ namespace IDE.Views
             //add text entering handling
         }
 
+        private void KeyIsDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                //tbd
+            }
+        }
+
         private void InitializeAvalon()
         {
             textEditor = new TextEditor();
-            textEditor.ShowLineNumbers = true;
+            textEditor.ShowLineNumbers = false;
             textEditor.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));  //here you can set backgroud color
             IHighlightingDefinition definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), HighlightingManager.Instance);
             HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
@@ -61,6 +82,7 @@ namespace IDE.Views
 
             textEditor.TextArea.TextEntering += TextEntering;
             textEditor.TextArea.TextEntered += TextEntered;
+            textEditor.TextArea.PreviewKeyDown += KeyIsDown;
         }
 
         #endregion
@@ -70,12 +92,29 @@ namespace IDE.Views
         private void PopulateFileList()
         {
             listView_FolderList.Items.Clear();
-
-            string[] files = Directory.GetFiles(@"Programs", "*.txt");
-            foreach (string file in files)
+            try
             {
-                string fileName = Path.GetFileNameWithoutExtension(file);
-                listView_FolderList.Items.Add(fileName);
+                string[] files = Directory.GetFiles(@"Programs", "*.txt");
+
+                foreach (string file in files)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(file);
+                    listView_FolderList.Items.Add(fileName);
+                }
+            }
+            catch (DirectoryNotFoundException)
+            {
+                if (MessageBox.Show("Local storage folder not found. Create one?", "Data not found", MessageBoxButton.YesNo, 
+                    MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    Directory.CreateDirectory(@"Programs");
+                }
+                else
+                {
+                    MessageBox.Show("In order to start using Editor you must create folder named Programs upon bin/Debug directory. " +
+                        "If you want to do this automatically, please restart application and accept after error occurs.", 
+                        "Data not found", MessageBoxButton.OK);
+                }
             }
         }
 

@@ -38,20 +38,56 @@ namespace IDE.Views
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text == "\n")
-            {
-                ////textEditor.LineUp();
-                //int i = textEditor.LineCount * 10;
-                ////int index = textEditor.Text.IndexOf(' ');
-                //completionWindow = new CompletionWindow(textEditor.TextArea);
-                //IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                //data.Add(new MyCompletionData(i.ToString()));
-                //completionWindow.Show();
-                //completionWindow.Closed += delegate
-                //{
-                //    completionWindow = null;
-                //};
-            }
+            //if (e.Text == "\n")
+            //{
+            //    completionWindow = new CompletionWindow(textEditor.TextArea);
+            //    IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+            //    completionWindow.Closed += delegate
+            //    {
+            //        completionWindow = null;
+            //    };
+
+            //    int numberOfLines = 0;
+            //    foreach (char x in textEditor.Text)
+            //    {
+            //        if (x == '\n') numberOfLines++;
+            //    }
+
+            //    if (textEditor.TextArea.Caret.Line > 2 && textEditor.TextArea.Caret.Line < numberOfLines)
+            //    {
+            //        try
+            //        {
+            //            var lineOfText = Regex.Split(textEditor.Text, "\r");
+            //            var previousNumberStr = lineOfText[textEditor.TextArea.Caret.Line - 2].Split(new string[] { "\n" }, StringSplitOptions.None)[1].Split(' ')[0].Trim();
+            //            var nextNumberStr = lineOfText[textEditor.TextArea.Caret.Line].Split(new string[] { "\n" }, StringSplitOptions.None)[1].Split(' ')[0].Trim();
+
+            //            int previousNumber = Int32.Parse(previousNumberStr);
+            //            int nextNumber = Int32.Parse(nextNumberStr);
+
+            //            int suggestNumber = previousNumber + (nextNumber - previousNumber) / 2;
+
+            //            data.Add(new MyCompletionData(suggestNumber.ToString()));
+            //            completionWindow.Show();
+            //        }
+            //        catch (Exception) { }
+            //    }
+            //    else if (textEditor.TextArea.Caret.Line > numberOfLines)
+            //    {
+            //        try
+            //        {
+            //            var lineOfText = Regex.Split(textEditor.Text, "\r");
+            //            var previousNumberStr = lineOfText[textEditor.TextArea.Caret.Line - 2].Split(new string[] { "\n" }, StringSplitOptions.None)[1].Split(' ')[0].Trim();
+
+            //            int previousNumber = Int32.Parse(previousNumberStr);
+
+            //            int suggestNumber = previousNumber + 10;
+
+            //            data.Add(new MyCompletionData(suggestNumber.ToString()));
+            //            completionWindow.Show();
+            //        }
+            //        catch (Exception) { };
+            //    }
+            //}
         }
 
         private void TextEntering(object sender, TextCompositionEventArgs e)
@@ -72,9 +108,17 @@ namespace IDE.Views
             textEditor = new TextEditor();
             textEditor.ShowLineNumbers = false;
             textEditor.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));  //here you can set backgroud color
-            IHighlightingDefinition definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), HighlightingManager.Instance);
-            HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
-            textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
+            try
+            {
+                IHighlightingDefinition definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), HighlightingManager.Instance);
+                HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
+                textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
+            }
+            catch(FileNotFoundException)
+            {
+                MessageBox.Show("Highlighting definitions not found. Support for syntax highlighting will be switched off in this session.",
+                    "No definitions", MessageBoxButton.OK);
+            }
 
             Grid.SetRow(textEditor, 1);
             Grid.SetColumn(textEditor, 1);
@@ -89,7 +133,7 @@ namespace IDE.Views
 
         #region FileViewer
 
-        private void PopulateFileList()
+        public void PopulateFileList()
         {
             listView_FolderList.Items.Clear();
             try

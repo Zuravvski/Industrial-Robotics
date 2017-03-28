@@ -76,13 +76,20 @@ namespace ManipulatorDriver
         {
             // TODO: Launching servo seems a pretty good idea
             Port.OpenPort(portName);
-            Where();
+            //Where();
         }
 
         public void Disconnect()
         {
             Port.ClosePort();
         }
+
+
+        public void SendCustom(string expression)
+        {
+            Port.Write($"{expression}");
+        }
+
 
         /// <summary>
         /// ANDs the specified value with the internal register, then stoers the result to the internal register.

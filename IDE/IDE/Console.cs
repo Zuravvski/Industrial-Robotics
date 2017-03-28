@@ -20,12 +20,13 @@ namespace IDE
 
         public Console()
         {
-            document = new FlowDocument();
-            Document = document; 
-            manipulator = new E2JManipulator();
-            manipulator.Connect("COM4");
+            //document = new FlowDocument();
+            //Document = document;
+            //manipulator = new E2JManipulator();
+            //manipulator.Connect("COM4");
+            //manipulator.Where();
 
-            document.LineHeight = 5.0;
+            //document.LineHeight = 5.0;
         }
 
         public void uploadProgram()

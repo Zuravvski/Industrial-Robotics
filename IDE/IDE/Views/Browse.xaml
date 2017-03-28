@@ -6,7 +6,21 @@
              xmlns:local="clr-namespace:IDE.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
+    <Grid x:Name="grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="97*"/>
+            <ColumnDefinition Width="192*"/>
+            <ColumnDefinition Width="11*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Button x:Name="button_Load" Content="Load" HorizontalAlignment="Left" Margin="10,10.4,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.231,0.881" Click="button_Load_Click"/>
+        <Button x:Name="button_Save" Content="Save" HorizontalAlignment="Left" Margin="90,10.4,0,0" VerticalAlignment="Top" Width="75" Grid.Row="2" Grid.ColumnSpan="2" Click="button_Save_Click"/>
+        <ListView x:Name="listView_RobotList" Grid.Row="1" PreviewMouseLeftButtonUp="listView_RobotList_click"/>
+        <TextBlock x:Name="textBlock_LocalFiles" HorizontalAlignment="Left" Margin="10,7,0,0" TextWrapping="Wrap" Text="RV-E3J files:" VerticalAlignment="Top" Grid.Column="0" FontWeight="Bold"/>
     </Grid>
 </UserControl>

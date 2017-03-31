@@ -13,18 +13,6 @@ namespace IDE
         {
             InitializeComponent();
             console = new Console();
-            //mainView.Children.Add(console);
-        }
-
-        private void button_Copy_Click(object sender, RoutedEventArgs e)
-        {
-            console.uploadProgram();
-        }
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            console.downloadProgram();
-            
         }
     }
 }

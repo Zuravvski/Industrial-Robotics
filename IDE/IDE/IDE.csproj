@@ -63,64 +63,75 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="Others\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModels\AppearanceViewModel.cs" />
-    <Compile Include="Views\Browse.xaml.cs">
-      <DependentUpon>Browse.xaml</DependentUpon>
+    <Compile Include="Common\Models\AboutModel.cs" />
+    <Compile Include="Common\Models\BrowseModel.cs" />
+    <Compile Include="Common\Models\HomeModel.cs" />
+    <Compile Include="Common\Models\Program.cs" />
+    <Compile Include="Common\Models\ListManager.cs" />
+    <Compile Include="Common\Models\ProgramEditor.cs" />
+    <Compile Include="Common\ViewModels\AboutViewModel.cs" />
+    <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
+    <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
+    <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
+    <Compile Include="Common\ViewModels\EditorViewModel.cs" />
+    <Compile Include="Common\ViewModels\HomeViewModel.cs" />
+    <Compile Include="Common\Views\BrowseView.xaml.cs">
+      <DependentUpon>BrowseView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Editor.xaml.cs">
-      <DependentUpon>Editor.xaml</DependentUpon>
+    <Compile Include="Common\Views\EditorView.xaml.cs">
+      <DependentUpon>EditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Home.xaml.cs">
-      <DependentUpon>Home.xaml</DependentUpon>
+    <Compile Include="Common\Views\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MyCompletionData.cs" />
-    <Compile Include="Views\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    <Compile Include="Common\MyCompletionData.cs" />
+    <Compile Include="Common\Views\SettingsPageView.xaml.cs">
+      <DependentUpon>SettingsPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
+    <Compile Include="Common\Views\AboutView.xaml.cs">
+      <DependentUpon>AboutView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\Appearance.xaml.cs">
-      <DependentUpon>Appearance.xaml</DependentUpon>
+    <Compile Include="Common\Views\AppearanceView.xaml.cs">
+      <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Others\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="Others\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Console.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Common\Console.cs" />
+    <Compile Include="Others\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Browse.xaml">
+    <Page Include="Common\Views\BrowseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Editor.xaml">
+    <Page Include="Common\Views\EditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Home.xaml">
+    <Page Include="Common\Views\HomeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPage.xaml">
+    <Page Include="Common\Views\SettingsPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\About.xaml">
+    <Page Include="Common\Views\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\Appearance.xaml">
+    <Page Include="Common\Views\AppearanceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -143,7 +154,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="Others\packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -151,7 +162,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Others\App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\manipulatorDriver\manipulatorDriver.csproj">
@@ -160,13 +171,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="industrial_robot-512.ico" />
+    <Resource Include="Icons\industrial_robot-512.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\app_icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="app_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

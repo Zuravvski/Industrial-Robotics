@@ -2,9 +2,9 @@
 using System.IO;
 using System.Text;
 
-namespace IDE.Common.Model
+namespace IDE.Common.Models
 {
-    public class Program
+    public class Program : IProgram
     {
 
         #region Constructor
@@ -28,7 +28,7 @@ namespace IDE.Common.Model
 
         public void LoadProgram()
         {
-            if (Name != null && Name != "")
+            if (!string.IsNullOrEmpty(Name))
             {
                 try
                 {
@@ -40,7 +40,7 @@ namespace IDE.Common.Model
 
         public void SaveProgram(string saveAs)
         {
-            if (saveAs != null && saveAs != "")
+            if (!string.IsNullOrEmpty(saveAs))
             {
                 try
                 {

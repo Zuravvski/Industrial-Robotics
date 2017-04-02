@@ -1,19 +1,20 @@
-﻿using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
-using System.Windows.Input;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using IDE.Common.Model;
 
-namespace IDE.Common.Utilities
+namespace IDE.Common.Models
 {
     public class ProgramEditor : TextEditor
     {
-        Highlighting highlighting;
-        Program currentProgram;
+        private readonly Highlighting highlighting;
+        private Program currentProgram;
 
         #region enums
 
@@ -57,13 +58,16 @@ namespace IDE.Common.Utilities
         private void InitializeAvalon()
         {
             ShowLineNumbers = true;
-            Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+            Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
 
             if (highlighting == Highlighting.On)
             {
                 try
                 {
-                    IHighlightingDefinition definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), 
+                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), 
                         HighlightingManager.Instance);
                     HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
                     SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");

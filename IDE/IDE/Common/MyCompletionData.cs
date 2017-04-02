@@ -30,12 +30,12 @@ namespace IDE.Views
             get { return "Description for " + this.Text; }
         }
 
-        public double Priority => throw new NotImplementedException();
-
         public void Complete(TextArea textArea, ISegment completionSegment,
             EventArgs insertionRequestEventArgs)
         {
             textArea.Document.Replace(completionSegment, this.Text);
         }
+
+        public double Priority { get; }
     }
 }

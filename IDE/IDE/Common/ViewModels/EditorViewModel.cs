@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
-using IDE.Common.ViewModel.Commands;
 using IDE.Common.Model;
 using System.ComponentModel;
 using IDE.Common.Utilities;
-using static IDE.Common.Utilities.ProgramEditor;
+using static IDE.Common.Models.ProgramEditor;
 using System.Windows;
 using System;
 using System.Linq;
+using IDE.Common.Models;
+using IDE.Common.ViewModels.Commands;
 
 namespace IDE.Common.ViewModel
 {
     public class EditorViewModel : INotifyPropertyChanged
     {
-        List<Program> programList;
-        ProgramEditor programEditor;
-        ListManager listManager;
-        string programName;
+        private List<Program> programList;
+        private ProgramEditor programEditor;
+        private ListManager listManager;
+        private string programName;
 
         #region Constructor
 
@@ -95,7 +96,8 @@ namespace IDE.Common.ViewModel
             {   
                 if (ProgramList.Any(criteria => criteria.Name == ProgramName) && 
                     (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != ProgramName))
-                {//to prevent we wont overwrite something by accident (it wont pop if we just "save" not "save as")
+                {
+                    //to prevent we wont overwrite something by accident (it wont pop if we just "save" not "save as")
                     if (MessageBox.Show("Program with this name already exist. Do you want to overwrite it?",
                         "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                     {
@@ -131,8 +133,7 @@ namespace IDE.Common.ViewModel
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

@@ -70,9 +70,12 @@
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
+    <Compile Include="Common\Models\IProgram.cs" />
     <Compile Include="Common\Models\Program.cs" />
     <Compile Include="Common\Models\ListManager.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
+    <Compile Include="Common\Models\RemoteProgram.cs" />
+    <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
@@ -179,9 +182,7 @@
   <ItemGroup>
     <Resource Include="app_icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Common\Utilities\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

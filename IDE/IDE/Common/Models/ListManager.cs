@@ -1,13 +1,13 @@
-﻿using IDE.Common.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using IDE.Common.Model;
 
-namespace IDE.Common.Utilities
+namespace IDE.Common.Models
 {
     public class ListManager
     {
-        List<Program> programList;
+        private List<Program> programList;
 
         #region Constructor
 
@@ -43,17 +43,16 @@ namespace IDE.Common.Utilities
 
             try
             {
-                string[] files = Directory.GetFiles(@"Programs", "*.txt");
+                var files = Directory.GetFiles(@"Programs", "*.txt");
 
-
-                foreach (string file in files)
+                foreach (var file in files)
                 {
-                    string fileName = Path.GetFileNameWithoutExtension(file);
+                    var fileName = Path.GetFileNameWithoutExtension(file);
                     programList.Add(new Program(fileName));   //adds new program to list of local programs
                 }
 
             } 
-            catch(DirectoryNotFoundException ex)
+            catch(DirectoryNotFoundException)
             {
                 if (MessageBox.Show("Local storage folder not found. Create one?", "Data not found", MessageBoxButton.YesNo,
                     MessageBoxImage.Warning) == MessageBoxResult.Yes)

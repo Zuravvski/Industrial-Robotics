@@ -9,7 +9,8 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="97*"/>
+            <ColumnDefinition Width="77*"/>
+            <ColumnDefinition Width="20*"/>
             <ColumnDefinition Width="192*"/>
             <ColumnDefinition Width="11*"/>
         </Grid.ColumnDefinitions>
@@ -19,14 +20,14 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
-        <Button Command="{Binding LoadClickCommand}" Content="Load" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10.4,0,0" Grid.Row="2" Grid.Column="0" Width="75"/>
-        <Button Command="{Binding SaveClickCommand}" Content="Save" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,10.4,0,0" Grid.Row="2" Grid.Column="0" Width="75"/>
-        <Button Command="{Binding SendClickCommand}" Content="Send" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10.4,9,0" Grid.Row="2" Grid.Column="1" Width="75"/>
-        <TextBlock Text="Local files:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,3,0,0" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" FontWeight="Bold"/>
-        <TextBlock Text="Save as:"     HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,3,0,0" Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" FontWeight="Normal"/>
-        <ContentControl Content="{Binding ProgramEditor}" Grid.Row="1" Grid.Column="1"/>
-        <TextBox Text="{Binding ProgramName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Margin="63,0,-160,0" TextWrapping="Wrap"  Width="300" MaxLength="40" Grid.ColumnSpan="2" Grid.RowSpan="2" FontWeight="Bold"/>
-        <ListView ItemsSource="{Binding ProgramList}" Grid.Row="1" SelectedItem="{Binding SelectedProgram}">
+        <Button Command="{Binding LoadClickCommand}" Content="Load" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" Width="75" Grid.ColumnSpan="2" Height="26"/>
+        <Button Command="{Binding SaveClickCommand}" Content="Save" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="9,10,0,0" Grid.Row="2" Grid.Column="1" Width="75" Grid.ColumnSpan="2" Height="26"/>
+        <Button Command="{Binding SendClickCommand}" Content="Send" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,9,0" Grid.Row="2" Grid.Column="2" Width="75" Height="26"/>
+        <TextBlock Text="Local files:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,3,0,0" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" FontWeight="Bold" Height="16" Width="59"/>
+        <TextBlock Text="Save as:"     HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,3,0,0" Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" FontWeight="Normal" Height="16" Width="42"/>
+        <ContentControl Content="{Binding ProgramEditor}" Grid.Row="1" Grid.Column="2"/>
+        <TextBox Text="{Binding ProgramName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Margin="63,0,-160,0" TextWrapping="Wrap"  Width="300" MaxLength="40" Grid.ColumnSpan="2" Grid.RowSpan="2" FontWeight="Bold"/>
+        <ListView ItemsSource="{Binding ProgramList}" Grid.Row="1" SelectedItem="{Binding SelectedProgram}" Grid.ColumnSpan="2">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"/>

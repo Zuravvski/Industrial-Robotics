@@ -928,6 +928,14 @@ namespace Driver
         }
 
         /// <summary>
+        /// Turns on servo
+        /// </summary>
+        public void ServoOn()
+        {
+            Port.Write("SVO");
+        }
+
+        /// <summary>
         /// Sets the operating speed, acceleration or deceleration time and the continuous path setting.
         /// </summary>
         /// <param name="speedLevel">Set moving speed. [0...30]</param>

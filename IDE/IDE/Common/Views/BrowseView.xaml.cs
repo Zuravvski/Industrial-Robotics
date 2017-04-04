@@ -1,5 +1,4 @@
-﻿using ManipulatorDriver;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -10,6 +9,7 @@ using static System.String;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Text;
+using Driver;
 
 namespace IDE.Views
 {
@@ -19,7 +19,7 @@ namespace IDE.Views
     public partial class Browse : UserControl, Observer
     {
         private FlowDocument document;
-        private E2JManipulator manipulator;
+        private E3JManipulator manipulator;
         int k = 0;  //for iterating program infos in Notifer
         string[] receivedProgramInfo;
         string[] programNames;
@@ -29,7 +29,7 @@ namespace IDE.Views
         {
             InitializeComponent();
             
-            manipulator = new E2JManipulator();
+            manipulator = new E3JManipulator();
             manipulator.Connect("COM4");
             manipulator.Port.Subscribe(this);
 

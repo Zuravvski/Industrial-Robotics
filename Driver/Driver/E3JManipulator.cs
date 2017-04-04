@@ -1,9 +1,8 @@
-﻿using manipulatorDriver;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace ManipulatorDriver
+namespace Driver
 {
     public class E3JManipulator : Observer
     {

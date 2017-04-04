@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace manipulatorDriver
+namespace Driver
 {
     public abstract class Command
     {

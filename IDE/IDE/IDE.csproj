@@ -168,12 +168,6 @@
     <None Include="Others\App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\manipulatorDriver\manipulatorDriver.csproj">
-      <Project>{B26141C6-5738-4EC4-965E-BB46F7F615DB}</Project>
-      <Name>manipulatorDriver</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icons\industrial_robot-512.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -182,7 +176,12 @@
   <ItemGroup>
     <Resource Include="app_icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\Driver\Driver.csproj">
+      <Project>{BB72767E-30AE-4840-B00E-BB8C9AC33727}</Project>
+      <Name>Driver</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

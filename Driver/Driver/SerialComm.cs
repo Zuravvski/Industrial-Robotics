@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Text;
-using System.Threading.Tasks;
-using manipulatorDriver;
 
-namespace ManipulatorDriver
+namespace Driver
 {
    public class SerialComm : DataSupplier
     {

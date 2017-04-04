@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using ManipulatorDriver;
 using static System.String;
 using System.Windows;
+using Driver;
 
 namespace IDE
 {
@@ -14,7 +14,7 @@ namespace IDE
         // TODO: Add line counting
         // TODO: Consider ";" as the end of instruction
         private readonly FlowDocument document;
-        private readonly E2JManipulator manipulator;
+        private readonly E3JManipulator manipulator;
 
         private uint counter = 0; // Just for test
 

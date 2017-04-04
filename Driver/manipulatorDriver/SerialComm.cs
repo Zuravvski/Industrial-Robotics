@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Text;
+using System.Threading.Tasks;
+using manipulatorDriver;
 
 namespace ManipulatorDriver
 {
@@ -13,9 +17,14 @@ namespace ManipulatorDriver
             LF,     // Line feed
             CRLF    // Both
         };
-        private const SerialComm.Terminator DEFAULT_FRAME_TERMINATOR = SerialComm.Terminator.CR;
+        private const Terminator DEFAULT_FRAME_TERMINATOR = SerialComm.Terminator.CR;
 
         private readonly SerialPort port;
+        private readonly HashSet<IObserver<string>> observers;
+
+        /// <summary>
+        /// Enables adjusting data frame terminator 
+        /// </summary>
         public Terminator FrameTerminator { get; set; }
 
         #region Properties
@@ -51,29 +60,26 @@ namespace ManipulatorDriver
 
         #endregion
 
-        public SerialComm()
-        {
-            port = new SerialPort();
-
-            FrameTerminator = DEFAULT_FRAME_TERMINATOR;
-            port.DataReceived += Port_DataReceived;
-        }
-
         public SerialComm(SerialPort port)
         {
             this.port = port;
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
-            port.DataReceived += Port_DataReceived;
+            observers = new HashSet<IObserver<string>>();
+            
         }
 
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private async void ReadData()
         {
-            var read = "";
-            while(!read.Contains("\r"))
+            try
             {
-                read += port.ReadExisting();
+                var buffer = new byte[1024];
+                await port.BaseStream.ReadAsync(buffer, 0, buffer.Length);
+                NotifyObservers(Encoding.ASCII.GetString(buffer));
             }
-            NotifyObservers(read);
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
         }
 
         public void OpenPort(string portName)
@@ -96,11 +102,12 @@ namespace ManipulatorDriver
             port.Close();
         }
 
-        public void Write(string data)
+        public async void Write(string data)
         {
             try
             {
-                port.Write(data + GetTerminator());
+                var processedData = Encoding.ASCII.GetBytes(data + GetTerminator());
+                await port.BaseStream.WriteAsync(processedData, 0, processedData.Length);
             }
             catch (Exception e)
             {

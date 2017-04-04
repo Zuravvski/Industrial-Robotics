@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace ManipulatorDriver
 {
-    public class E2JManipulator : Observer
+    public class E3JManipulator : Observer
     {
 
         #region Enums
@@ -65,7 +65,7 @@ namespace ManipulatorDriver
         private ResponsiveCommand lastRequest;
         #endregion
 
-        public E2JManipulator()
+        public E3JManipulator()
         {
             Port = new SerialBuilder().Build();
             lastRequest = ResponsiveCommand.INVALID;
@@ -74,9 +74,9 @@ namespace ManipulatorDriver
 
         public void Connect(string portName)
         {
-            // TODO: Launching servo seems a pretty good idea
             Port.OpenPort(portName);
-            //Where();
+            ServoOn();
+            Where();
         }
 
         public void Disconnect()
@@ -883,6 +883,14 @@ namespace ManipulatorDriver
         public void Return(uint lineNumber)
         {
             Port.Write($"RT {lineNumber}");
+        }
+
+        /// <summary>
+        /// Turns the servo on
+        /// </summary>
+        public void ServoOn()
+        {
+            Port.Write("SVO");
         }
 
         /// <summary>

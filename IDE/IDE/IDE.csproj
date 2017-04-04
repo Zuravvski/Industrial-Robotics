@@ -168,9 +168,9 @@
     <None Include="Others\App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\manipulatorDriver\manipulatorDriver.csproj">
-      <Project>{B26141C6-5738-4EC4-965E-BB46F7F615DB}</Project>
-      <Name>manipulatorDriver</Name>
+    <ProjectReference Include="..\..\Driver\Driver\Driver.csproj">
+      <Project>{2531C24D-FAC4-4984-A340-5043CED26B8B}</Project>
+      <Name>Driver</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

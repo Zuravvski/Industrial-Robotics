@@ -2,10 +2,11 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using ManipulatorDriver;
 
-namespace ManipulatorDriver
+namespace Driver
 {
-    public class E2JManipulator : Observer
+    public class E3JManipulator : Observer
     {
 
         #region Enums
@@ -65,7 +66,7 @@ namespace ManipulatorDriver
         private ResponsiveCommand lastRequest;
         #endregion
 
-        public E2JManipulator()
+        public E3JManipulator()
         {
             Port = new SerialBuilder().Build();
             lastRequest = ResponsiveCommand.INVALID;

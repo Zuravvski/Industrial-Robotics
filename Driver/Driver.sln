@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "manipulatorDriver", "manipulatorDriver\manipulatorDriver.csproj", "{B26141C6-5738-4EC4-965E-BB46F7F615DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Driver", "Driver\Driver.csproj", "{EA50597A-F369-4D6C-A3AD-D49DEF006848}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B26141C6-5738-4EC4-965E-BB46F7F615DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B26141C6-5738-4EC4-965E-BB46F7F615DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B26141C6-5738-4EC4-965E-BB46F7F615DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B26141C6-5738-4EC4-965E-BB46F7F615DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA50597A-F369-4D6C-A3AD-D49DEF006848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA50597A-F369-4D6C-A3AD-D49DEF006848}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA50597A-F369-4D6C-A3AD-D49DEF006848}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA50597A-F369-4D6C-A3AD-D49DEF006848}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

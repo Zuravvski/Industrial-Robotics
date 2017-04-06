@@ -19,6 +19,7 @@ namespace Driver
 
         private readonly SerialPort port;
         private readonly HashSet<IObserver<string>> observers;
+        private string incompleteData;
 
         /// <summary>
         /// Enables adjusting data frame terminator 
@@ -66,13 +67,18 @@ namespace Driver
             
         }
 
-        private async void ReadData()
+        private async void Read()
         {
             try
             {
                 var buffer = new byte[1024];
                 await port.BaseStream.ReadAsync(buffer, 0, buffer.Length);
-                NotifyObservers(Encoding.ASCII.GetString(buffer));
+                var decoded = Encoding.ASCII.GetString(buffer).Split('\r');
+
+                foreach (var line in decoded)
+                {
+                    NotifyObservers(line);
+                }
             }
             catch (Exception ex)
             {

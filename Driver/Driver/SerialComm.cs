@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Net.Mime;
 using System.Text;
 
 namespace Driver
@@ -57,6 +58,8 @@ namespace Driver
             set { port.RtsEnable = value; }
         }
 
+        public bool Connected => port.IsOpen;
+
         #endregion
 
         public SerialComm(SerialPort port)
@@ -71,13 +74,16 @@ namespace Driver
         {
             try
             {
-                var buffer = new byte[1024];
-                await port.BaseStream.ReadAsync(buffer, 0, buffer.Length);
-                var decoded = Encoding.ASCII.GetString(buffer).Split('\r');
-
-                foreach (var line in decoded)
+                while (port.IsOpen)
                 {
-                    NotifyObservers(line);
+                    var buffer = new byte[1024];
+                    await port.BaseStream.ReadAsync(buffer, 0, buffer.Length);
+                    var decoded = Encoding.ASCII.GetString(buffer).Split('\r');
+
+                    foreach (var line in decoded)
+                    {
+                        NotifyObservers(line);
+                    }
                 }
             }
             catch (Exception ex)
@@ -93,6 +99,7 @@ namespace Driver
             try
             {
                 port.Open();
+                Read();
             }
             catch(Exception ex)
             {

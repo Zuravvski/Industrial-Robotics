@@ -84,6 +84,10 @@ namespace Driver
         }
 
 
+        /// <summary>
+        /// Sends custom command defined by user
+        /// </summary>
+        /// <param name="expression"></param>
         public void SendCustom(string expression)
         {
             Port.Write($"{expression}");

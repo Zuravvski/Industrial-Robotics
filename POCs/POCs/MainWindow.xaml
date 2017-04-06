@@ -7,8 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <local:Console></local:Console>
-        </ScrollViewer>
+        <Button x:Name="buttonConnect" Content="Connect" HorizontalAlignment="Left" Margin="126,87,0,0" VerticalAlignment="Top" Width="75" Click="buttonConnect_Click"/>
+        <Button x:Name="buttonGC" Content="GC" HorizontalAlignment="Left" Margin="314,92,0,0" VerticalAlignment="Top" Width="75" Click="buttonGC_Click"/>
+        <Button x:Name="buttonGO" Content="GO" HorizontalAlignment="Left" Margin="314,67,0,0" VerticalAlignment="Top" Width="75" Click="buttonGO_Click"/>
+        <Button x:Name="buttonWH" Content="WH" HorizontalAlignment="Left" Margin="314,117,0,0" VerticalAlignment="Top" Width="75" Click="buttonWH_Click"/>
     </Grid>
 </Window>

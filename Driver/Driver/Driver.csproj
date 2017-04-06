@@ -45,7 +45,9 @@
   <ItemGroup>
     <Compile Include="DataSupplier.cs" />
     <Compile Include="E3JManipulator.cs" />
-    <Compile Include="ICommand.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="IFileReader.cs" />
+    <Compile Include="IFileWriter.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

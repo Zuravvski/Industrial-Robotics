@@ -10,6 +10,7 @@
         <mui:ModernTab Layout="List" SelectedSource="Common/Views/AppearanceView.xaml">
             <mui:ModernTab.Links>
                 <mui:Link DisplayName="appearance" Source="Common/Views/AppearanceView.xaml" />
+                <mui:Link DisplayName="highlighting" Source="Common/Views/HighlightingView.xaml"/>
                 <mui:Link DisplayName="about" Source="Common/Views/AboutView.xaml" />
             </mui:ModernTab.Links>
         </mui:ModernTab>

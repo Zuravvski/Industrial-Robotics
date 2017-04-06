@@ -38,12 +38,15 @@
     <ApplicationIcon>app_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Driver">
+      <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\Driver.dll</HintPath>
+    </Reference>
     <Reference Include="FirstFloor.ModernUI, Version=1.0.9.0, Culture=neutral, PublicKeyToken=bc9b0c37bf06c6a9, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Visual Studio 2017\Projects\ModernUIcopypaste\ModernUIcopypaste\bin\Debug\FirstFloor.ModernUI.dll</HintPath>
+      <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\FirstFloor.ModernUI.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
-      <HintPath>packages\AvalonEdit.5.0.3\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+      <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -61,6 +64,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="Others\App.xaml">
@@ -81,12 +87,16 @@
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
     <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
+    <Compile Include="Common\ViewModels\HighlightingViewModel.cs" />
     <Compile Include="Common\ViewModels\HomeViewModel.cs" />
     <Compile Include="Common\Views\BrowseView.xaml.cs">
       <DependentUpon>BrowseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Views\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\HighlightingView.xaml.cs">
+      <DependentUpon>HighlightingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -101,6 +111,10 @@
     <Compile Include="Common\Views\AppearanceView.xaml.cs">
       <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Common\Views\HighlightingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Others\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -166,12 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Others\App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Driver\Driver\Driver.csproj">
-      <Project>{2531C24D-FAC4-4984-A340-5043CED26B8B}</Project>
-      <Name>Driver</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\industrial_robot-512.ico" />

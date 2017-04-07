@@ -21,6 +21,14 @@ namespace IDE.Common.Models
 
         public string Name { private set; get; }
         public string Content { set; get; }
+        public string[] Lines
+        {
+            get
+            {
+                string[] lines = Content.Split(new string[] { "\r\n"}, StringSplitOptions.None);
+                return lines;
+            }
+        }
 
         #endregion
 
@@ -38,13 +46,25 @@ namespace IDE.Common.Models
             }
         }
 
-        public void SaveProgram(string saveAs)
+        public void SaveProgram(string name)
         {
-            if (!string.IsNullOrEmpty(saveAs))
+            if (!string.IsNullOrEmpty(name))
             {
                 try
                 {
-                    File.WriteAllText(@"Programs\" + saveAs + ".txt", Content, Encoding.ASCII);
+                    File.WriteAllText(@"Programs\" + name + ".txt", Content, Encoding.ASCII);
+                }
+                catch (Exception) { };
+            }
+        }
+
+        public void RemoveProgram(Program program)
+        {
+            if (!string.IsNullOrEmpty(program.Name))
+            {
+                try
+                {
+                    File.Delete(@"Programs\" + program.Name + ".txt");
                 }
                 catch (Exception) { };
             }

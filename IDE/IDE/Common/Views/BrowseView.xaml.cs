@@ -31,7 +31,7 @@ namespace IDE.Views
             InitializeComponent();
             
             manipulator = new E3JManipulator();
-            manipulator.Connect("COM4");
+            manipulator.Connect("COM3");
             manipulator.Port.Subscribe(this);
 
             receivedProgramInfo = new string[50];   //too big
@@ -94,7 +94,7 @@ namespace IDE.Views
         {
             receivedProgram = "";
             string selectedItem = listView_RobotList.SelectedItem.ToString();
-            int numberOfLines = 25;
+            int numberOfLines = 55;
 
             for (uint i = 0; i < numberOfLines; i++)
             {
@@ -107,7 +107,7 @@ namespace IDE.Views
                 {
                     manipulator.StepRead(i);
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
             MessageBox.Show($@"Program {selectedItem}.txt saved in \bin\Programs", "Download finished", MessageBoxButton.OK);
 
@@ -136,7 +136,7 @@ namespace IDE.Views
                 {
                     receivedProgramInfo[k++] = data;
                 }
-                else if (Regex.IsMatch(data, @"\A\d+ [a-zA-Z]+"))
+                else if (Regex.IsMatch(data, @"\A\d+"))
                 {
                     receivedProgram += data + "\n";
                 }

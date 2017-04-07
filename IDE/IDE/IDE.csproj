@@ -65,7 +65,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\Xceed.Wpf.Toolkit.dll</HintPath>
+      <HintPath>..\..\..\..\Visual Studio 2017\Projects\ModernUIcopypaste\ModernUIcopypaste\bin\Debug\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +102,9 @@
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MyCompletionData.cs" />
+    <Compile Include="Common\Views\SaveAsDialog.xaml.cs">
+      <DependentUpon>SaveAsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\Views\SettingsPageView.xaml.cs">
       <DependentUpon>SettingsPageView.xaml</DependentUpon>
     </Compile>
@@ -112,6 +115,10 @@
       <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
     <Page Include="Common\Views\HighlightingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\SaveAsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

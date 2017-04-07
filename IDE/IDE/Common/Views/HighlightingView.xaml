@@ -12,32 +12,32 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Category1  "/>
-                    <TextBlock Text="This is a sample text 123"/>
-                    <xctk:ColorPicker/>
+                    <TextBlock Text="This is a sample text 123     "/>
+                    <xctk:ColorPicker Width="80"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Category2  "/>
-                    <TextBlock Text="This is a sample text 123"/>
-                    <xctk:ColorPicker/>
+                    <TextBlock Text="This is a sample text 123     "/>
+                    <xctk:ColorPicker Width="80"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Category3  "/>
-                    <TextBlock Text="This is a sample text 123"/>
-                    <xctk:ColorPicker/>
+                    <TextBlock Text="This is a sample text 123     "/>
+                    <xctk:ColorPicker Width="80"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Category4  "/>
-                    <TextBlock Text="This is a sample text 123"/>
-                    <xctk:ColorPicker/>
+                    <TextBlock Text="This is a sample text 123     "/>
+                    <xctk:ColorPicker Width="80"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Category5  "/>
-                    <TextBlock Text="This is a sample text 123"/>
-                    <xctk:ColorPicker/>
+                    <TextBlock Text="This is a sample text 123     "/>
+                    <xctk:ColorPicker Width="80"/>
                 </StackPanel>
             </StackPanel>
         </GroupBox>

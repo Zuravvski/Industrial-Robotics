@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using Driver;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
-using robotymobilne_projekt.GUI.ViewModels;
+using IDE.Common.Views;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace IDE.Common.ViewModels
 {
@@ -120,21 +124,28 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        // Not yet implemented
         public ICommand Load
         {
             get
             {
                 return load ?? (load = new DelegateCommand(delegate
                 {
-                    try
+                    var dialog = new OpenFileDialog()
                     {
-                        ProgramEditor.CurrentProgram = SelectedProgram;
-                    }
-                    catch (NullReferenceException)
+                        Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                        Multiselect = false,
+                        RestoreDirectory = true,
+                        InitialDirectory = Directory.GetCurrentDirectory()
+                    };
+                    if (dialog.ShowDialog().GetValueOrDefault())
                     {
-                        MessageBox.Show("Nothing to load. Please select program first.", "No program selected", MessageBoxButton.OK, MessageBoxImage.Error);
+                        var name = dialog.FileName;
+                        if (!string.IsNullOrEmpty(name))
+                        {
+                            ListManager.LoadProgram(name);
+                        }
                     }
+
                 }));
             }
         }

@@ -53,7 +53,7 @@ namespace IDE.Common.Models
         private void InitializeAvalon()
         {
             ShowLineNumbers = true;
-            Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+            //Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
             Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;

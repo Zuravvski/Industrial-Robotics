@@ -9,16 +9,11 @@ namespace IDE.Common.Models
 {
     public class ListManager : ObservableObject
     {
-        #region Constructor
-
         public ListManager()
         {
             Programs = new ObservableCollection<Program>();
-            PopulateList();
         }
-
-        #endregion
-
+      
         #region Properties
 
         public ObservableCollection<Program> Programs { get; }
@@ -38,7 +33,8 @@ namespace IDE.Common.Models
                 foreach (var file in files)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(file);
-                    Programs.Add(new Program(fileName));   //adds new program to list of local programs
+                    // Adds new program to list of local programs
+                    Programs.Add(new Program(fileName));  
                 }
 
             } 
@@ -65,49 +61,49 @@ namespace IDE.Common.Models
             Programs.Add(new Program(name));
         }
 
-        public void LoadProgram(Program program)
+        public void LoadProgram(string path)
         {
-            if (!string.IsNullOrEmpty(program.Name))
+            var name = Path.GetFileNameWithoutExtension(path);
+            if (string.IsNullOrEmpty(name)) return;
+            try
             {
-                try
-                {
-                    program.Content = File.ReadAllText(@"Programs\" + program.Name + ".txt", Encoding.ASCII);
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Could not load program. File may be corrupted.", "Error", 
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                var program = new Program(name);
+                program.Content = File.ReadAllText(@"Programs\" + program.Name + ".txt", Encoding.ASCII);
+                Programs.Add(program);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Could not load program. File may be corrupted.", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         public void SaveProgram(Program program)
         {
-            if (!string.IsNullOrEmpty(program.Name))
+            if (string.IsNullOrEmpty(program.Name)) return;
+            try
             {
-                try
-                {
-                    File.WriteAllText(@"Programs\" + program.Name + ".txt", program.Content, Encoding.ASCII);
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Could not save program due to invalid data.", "Error", 
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                File.WriteAllText(@"Programs\" + program.Name + ".txt", program.Content, Encoding.ASCII);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Could not save program due to invalid data.", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         public void RemoveProgram(Program program)
         {
-            if (!string.IsNullOrEmpty(program.Name))
+            if (string.IsNullOrEmpty(program.Name)) return;
+            try
             {
-                try
-                {
-                    File.Delete(@"Programs\" + program.Name + ".txt");
-                    Programs.Remove(program);
-                }
-                catch (Exception) { };
+                File.Delete(@"Programs\" + program.Name + ".txt");
+                Programs.Remove(program);
             }
+            catch (Exception)
+            {
+                // TBD
+            };
         }
 
         #endregion

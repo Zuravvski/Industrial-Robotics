@@ -86,6 +86,7 @@
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
     <Compile Include="Common\ViewModels\Commands\ObservableObject.cs" />
     <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
+    <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />
     <Compile Include="Common\ViewModels\DelegateCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
     <Compile Include="Common\ViewModels\HighlightingViewModel.cs" />
@@ -103,6 +104,9 @@
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MyCompletionData.cs" />
+    <Compile Include="Common\Views\SaveAsDialog.xaml.cs">
+      <DependentUpon>SaveAsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\Views\SettingsPageView.xaml.cs">
       <DependentUpon>SettingsPageView.xaml</DependentUpon>
     </Compile>
@@ -113,6 +117,10 @@
       <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
     <Page Include="Common\Views\HighlightingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\SaveAsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

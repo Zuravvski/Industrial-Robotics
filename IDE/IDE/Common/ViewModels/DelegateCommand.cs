@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Input;
 
-
-namespace robotymobilne_projekt.GUI.ViewModels
+namespace IDE.Common.ViewModels
 {
     /// <summary>
     ///     This class allows delegating the commanding logic to methods passed as parameters,

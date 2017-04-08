@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Driver;
+using ManipulatorDriver;
 
 namespace IDE.Views
 {

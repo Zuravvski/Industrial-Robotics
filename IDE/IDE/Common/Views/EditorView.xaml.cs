@@ -19,6 +19,5 @@ namespace IDE.Views
         }
 
         #endregion
-
     }
 }

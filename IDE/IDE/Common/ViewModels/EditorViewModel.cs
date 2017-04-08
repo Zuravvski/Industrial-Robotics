@@ -125,11 +125,11 @@ namespace IDE.Common.ViewModel
                 {
                     return;
                 }
-                var dialog = new SaveAsDialog();    //this dialog fits perfectly for creating new programs
+                var dialog = new SaveAsDialog("Please enter name for your program:");    //this dialog fits perfectly for creating new programs
                 if (dialog.ShowDialog() == true)
                 {
-                    if (ProgramList.Any(criteria => criteria.Name == dialog.ProgramName) && //to prevent we wont overwrite something by accident)
-                         (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != dialog.ProgramName))
+                    if (ProgramList.Any(criteria => criteria.Name == dialog.UserInput) && //to prevent we wont overwrite something by accident)
+                         (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != dialog.UserInput))
                     {
                         if (MessageBox.Show("Program with this name already exist. Do you want to overwrite it?",
                             "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
@@ -137,9 +137,9 @@ namespace IDE.Common.ViewModel
                             return;
                         }
                     }
-                    ProgramEditor.CurrentProgram = new Program(dialog.ProgramName) { Content = "" };
-                    ProgramEditor.CurrentProgram.SaveProgram(dialog.ProgramName);
-                    ProgramName = dialog.ProgramName;
+                    ProgramEditor.CurrentProgram = new Program(dialog.UserInput) { Content = "" };
+                    ProgramEditor.CurrentProgram.SaveProgram(dialog.UserInput);
+                    ProgramName = dialog.UserInput;
                     ProgramList = new ListManager().List;
                 }
             }
@@ -179,11 +179,11 @@ namespace IDE.Common.ViewModel
         {
             try
             {
-                var dialog = new SaveAsDialog();
+                var dialog = new SaveAsDialog("Please enter name for your program:");
                 if (dialog.ShowDialog() == true)
                 {
-                    if (ProgramList.Any(criteria => criteria.Name == dialog.ProgramName) && //to prevent we wont overwrite something by accident)
-                         (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != dialog.ProgramName))
+                    if (ProgramList.Any(criteria => criteria.Name == dialog.UserInput) && //to prevent we wont overwrite something by accident)
+                         (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != dialog.UserInput))
                     {
                         if (MessageBox.Show("Program with this name already exist. Do you want to overwrite it?",
                             "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
@@ -191,9 +191,9 @@ namespace IDE.Common.ViewModel
                             return;
                         }
                     }
-                    ProgramEditor.CurrentProgram = new Program(dialog.ProgramName) { Content = ProgramEditor.Text };
-                    ProgramEditor.CurrentProgram.SaveProgram(dialog.ProgramName);
-                    ProgramName = dialog.ProgramName;
+                    ProgramEditor.CurrentProgram = new Program(dialog.UserInput) { Content = ProgramEditor.Text };
+                    ProgramEditor.CurrentProgram.SaveProgram(dialog.UserInput);
+                    ProgramName = dialog.UserInput;
                     ProgramList = new ListManager().List;
                 }
             }

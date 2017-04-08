@@ -11,8 +11,8 @@
 
     <Grid Height="50" Width="300" VerticalAlignment="Top">
         <StackPanel>
-            <TextBlock Text="Please enter name for your program:"/>
-            <TextBox x:Name="TextBox_ProgramName" MaxLength="35"/>
+            <TextBlock x:Name="TextBlock_AboveInput"/>
+            <TextBox x:Name="TextBox_UserInput" MaxLength="35"/>
         </StackPanel>
     </Grid>
     

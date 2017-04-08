@@ -19,7 +19,6 @@ namespace IDE.Common.ViewModels
         private Color colorMovement, colorGrip, colorCounters, colorProgramming, colorInformations, colorNumbers, colorComments;
         private Brush foregroundMovement, foregroundGrip, foregroundCounters, foregroundProgramming, foregroundInformations, foregroundNumbers, foregroundComments;
         CustomHighlighting highlighting;
-        
 
 
         #region Constructor
@@ -38,9 +37,14 @@ namespace IDE.Common.ViewModels
             ColorNumbers = currentDefinitions[5];
             ColorComments = currentDefinitions[6];
 
-            TestClickCommand = new RelayCommand(Test);
+
+            ExportClickCommand = new RelayCommand(Export);
+            ImportClickCommand = new RelayCommand(Import);
+            ApplyClickCommand = new RelayCommand(Apply);
+
         }
-    
+
+
         #endregion
 
         #region Properties
@@ -246,12 +250,27 @@ namespace IDE.Common.ViewModels
 
         #region Actions
 
-        public ICommand TestClickCommand { get; private set; }
+        public ICommand ExportClickCommand { get; private set; }
+        public ICommand ImportClickCommand { get; private set; }
+        public ICommand ApplyClickCommand { get; private set; }
 
-        private void Test(object obj)
+
+        private void Import(object obj)
+        {
+            //read highlight definition and write it into "main" HighlightingDefinition file
+            highlighting.HighlightingDefinitionColors = highlighting.ImportDefinitionsColors;
+        }
+
+        private void Export(object obj)
         {
             Color[] colorList = new Color[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
-            highlighting.HighlightingDefinitionColors = colorList;
+            highlighting.ExportDefinitionsColors = colorList;   //send current colors into export method
+        }
+
+        private void Apply(object obj)
+        {
+            Color[] colorList = new Color[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
+            highlighting.HighlightingDefinitionColors = colorList;  //
         }
 
         #endregion

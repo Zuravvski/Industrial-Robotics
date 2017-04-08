@@ -3,12 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Diagnostics;
 using System.Threading;
-using static System.String;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Driver;
 using ManipulatorDriver;
 
@@ -37,7 +36,7 @@ namespace IDE.Views
             receivedProgramInfo = new string[50];   //too big
             programNames = new string[50];  //too big
 
-            RefreshList();
+            Task.Run(() => RefreshList());
         }
 
         private void RefreshList()

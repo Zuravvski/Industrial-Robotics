@@ -10,6 +10,7 @@ using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using IDE.Common.Views;
 using Microsoft.Win32;
+using System.Windows.Media;
 
 namespace IDE.Common.ViewModels
 {
@@ -19,6 +20,7 @@ namespace IDE.Common.ViewModels
         
         private string programName;
         private Program selectedProgram;
+        private Brush themeColor;
 
         #region Actions
         private ICommand create;
@@ -57,6 +59,19 @@ namespace IDE.Common.ViewModels
                 NotifyPropertyChanged("ProgramEditor");
             }
         }
+        
+        public Brush ThemeColor
+        {
+            set
+            {
+                themeColor = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue); 
+                NotifyPropertyChanged("ThemeColor");
+            }
+            get
+            {
+                return themeColor;
+            }
+        }
 
         #endregion
 
@@ -92,13 +107,13 @@ namespace IDE.Common.ViewModels
                         {
                             return;
                         }
-                        var dialog = new SaveAsDialog(); //this dialog fits perfectly for creating new programs
+                        var dialog = new SaveAsDialog("Please enter name for your program:"); //this dialog fits perfectly for creating new programs
                         if (dialog.ShowDialog() == true)
                         {
-                            if (ListManager.Programs.Any(criteria => criteria.Name == dialog.ProgramName) &&
+                            if (ListManager.Programs.Any(criteria => criteria.Name == dialog.UserInput) &&
                                 //to prevent we wont overwrite something by accident)
                                 (ProgramEditor.CurrentProgram == null ||
-                                 ProgramEditor.CurrentProgram.Name != dialog.ProgramName))
+                                 ProgramEditor.CurrentProgram.Name != dialog.UserInput))
                             {
                                 if (MessageBox.Show(
                                         "Program with this name already exist. Do you want to overwrite it?",
@@ -108,7 +123,7 @@ namespace IDE.Common.ViewModels
                                     return;
                                 }
                             }
-                            ListManager.CreateProgram(dialog.ProgramName);
+                            ListManager.CreateProgram(dialog.UserInput);
                             SelectedProgram = ListManager.Programs[ListManager.Programs.Count - 1];
                         }
                     }
@@ -172,13 +187,13 @@ namespace IDE.Common.ViewModels
                 {
                     try
                     {
-                        var dialog = new SaveAsDialog();
+                        var dialog = new SaveAsDialog("Please enter name for your program");
                         if (selectedProgram != null && dialog.ShowDialog() == true)
                         {
-                            if (ListManager.Programs.Any(criteria => criteria.Name == dialog.ProgramName) &&
+                            if (ListManager.Programs.Any(criteria => criteria.Name == dialog.UserInput) &&
                                 //to prevent we wont overwrite something by accident)
                                 (ProgramEditor.CurrentProgram == null ||
-                                 ProgramEditor.CurrentProgram.Name != dialog.ProgramName))
+                                 ProgramEditor.CurrentProgram.Name != dialog.UserInput))
                             {
                                 if (MessageBox.Show(
                                         "Program with this name already exist. Do you want to overwrite it?",
@@ -188,7 +203,7 @@ namespace IDE.Common.ViewModels
                                     return;
                                 }
                             }
-                            ProgramEditor.CurrentProgram = new Program(dialog.ProgramName)
+                            ProgramEditor.CurrentProgram = new Program(dialog.UserInput)
                             {
                                 Content = ProgramEditor.Text
                             };

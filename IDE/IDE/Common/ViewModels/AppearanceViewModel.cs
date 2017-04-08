@@ -1,4 +1,5 @@
 ﻿using FirstFloor.ModernUI.Presentation;
+using IDE.Common.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -143,6 +144,7 @@ namespace IDE.ViewModels
                 if (this.selectedAccentColor != value)
                 {
                     this.selectedAccentColor = value;
+                    new EditorViewModel().ThemeColor = new SolidColorBrush(value);
                     OnPropertyChanged("SelectedAccentColor");
 
                     AppearanceManager.Current.AccentColor = value;

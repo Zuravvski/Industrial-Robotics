@@ -7,11 +7,7 @@ using System.Windows.Input;
 using Driver;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
-<<<<<<< Updated upstream
-=======
-using IDE.Common.Views;
 using robotymobilne_projekt.GUI.ViewModels;
->>>>>>> Stashed changes
 
 namespace IDE.Common.ViewModels
 {
@@ -22,22 +18,6 @@ namespace IDE.Common.ViewModels
         private string programName;
         private Program selectedProgram;
 
-<<<<<<< Updated upstream
-        #region Constructor
-
-        public EditorViewModel()
-        {
-            SaveClickCommand = new RelayCommand(Save);
-            LoadClickCommand = new RelayCommand(Load);           
-            
-            listManager = new ListManager();
-            ProgramList = listManager.List;
-
-            programEditor = new ProgramEditor(Highlighting.On);
-            ProgramEditor = programEditor;
-        }
-
-=======
         #region Actions
         private ICommand create;
         private ICommand load;
@@ -45,7 +25,6 @@ namespace IDE.Common.ViewModels
         private ICommand saveAs;
         private ICommand delete;
         private ICommand send;
->>>>>>> Stashed changes
         #endregion
 
         #region Properties
@@ -82,11 +61,6 @@ namespace IDE.Common.ViewModels
         //usun
         private readonly E3JManipulator manipulator;
 
-<<<<<<< Updated upstream
-        public bool CanExecute { set; get; }
-        public ICommand SaveClickCommand { set; get; }
-        public ICommand LoadClickCommand { set; get; }
-=======
         #region Constructor
 
         public EditorViewModel()
@@ -98,32 +72,11 @@ namespace IDE.Common.ViewModels
             manipulator = new E3JManipulator();
             manipulator.Connect("COM4");
         }
->>>>>>> Stashed changes
 
         #endregion
 
         #region Commands
 
-<<<<<<< Updated upstream
-        public void Save(object obj)
-        {
-            try
-            {   
-                if (ProgramList.Any(criteria => criteria.Name == ProgramName) && 
-                    (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != ProgramName))
-                {
-                    //to prevent we wont overwrite something by accident (it wont pop if we just "save" not "save as")
-                    if (MessageBox.Show("Program with this name already exist. Do you want to overwrite it?",
-                        "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                    {
-                        return;
-                    }
-                }
-
-                ProgramEditor.CurrentProgram = new Program(ProgramName) { Content = ProgramEditor.Text };
-                ProgramEditor.CurrentProgram.SaveProgram(ProgramName);
-                ProgramList = new ListManager().List;
-=======
         public ICommand Create
         {
             get
@@ -164,7 +117,6 @@ namespace IDE.Common.ViewModels
                         // TBD
                     }
                 }));
->>>>>>> Stashed changes
             }
         }
 
@@ -187,13 +139,6 @@ namespace IDE.Common.ViewModels
             }
         }
 
-<<<<<<< Updated upstream
-        #endregion
-
-        #region PropertyChangedEvents
-
-        public event PropertyChangedEventHandler PropertyChanged;
-=======
         public ICommand Save
         {
             get
@@ -301,7 +246,6 @@ namespace IDE.Common.ViewModels
                     try
                     {
                         var lines = ProgramEditor.CurrentProgram.GetLines();
->>>>>>> Stashed changes
 
                         foreach (var line in lines)
                         {
@@ -317,7 +261,6 @@ namespace IDE.Common.ViewModels
                 }));
             }
         }
-
         #endregion
     }
 }

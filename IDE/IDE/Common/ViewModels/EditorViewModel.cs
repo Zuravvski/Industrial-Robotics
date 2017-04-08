@@ -31,6 +31,7 @@ namespace IDE.Common.ViewModel
 
         public EditorViewModel()
         {
+            CreateClickCommand = new RelayCommand(Create);
             LoadClickCommand = new RelayCommand(Load);
             SaveClickCommand = new RelayCommand(Save);
             SaveAsClickCommand = new RelayCommand(SaveAs);
@@ -49,6 +50,7 @@ namespace IDE.Common.ViewModel
             manipulator = new E3JManipulator();
             manipulator.Connect("COM4");
         }
+
 
 
 
@@ -103,6 +105,7 @@ namespace IDE.Common.ViewModel
         #region Commands
 
         public bool CanExecute { set; get; }
+        public ICommand CreateClickCommand { set; get; }
         public ICommand LoadClickCommand { set; get; }
         public ICommand SaveClickCommand { set; get; }
         public ICommand SaveAsClickCommand { set; get; }
@@ -112,6 +115,36 @@ namespace IDE.Common.ViewModel
         #endregion
 
         #region Actions
+
+        private void Create(object obj)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(ProgramEditor.Text) && MessageBox.Show("Are you sure you wish to create new program? Note that all unsaved changes will be lost.", 
+                    "File creator", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    return;
+                }
+                var dialog = new SaveAsDialog();    //this dialog fits perfectly for creating new programs
+                if (dialog.ShowDialog() == true)
+                {
+                    if (ProgramList.Any(criteria => criteria.Name == dialog.ProgramName) && //to prevent we wont overwrite something by accident)
+                         (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != dialog.ProgramName))
+                    {
+                        if (MessageBox.Show("Program with this name already exist. Do you want to overwrite it?",
+                            "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                        {
+                            return;
+                        }
+                    }
+                    ProgramEditor.CurrentProgram = new Program(dialog.ProgramName) { Content = "" };
+                    ProgramEditor.CurrentProgram.SaveProgram(dialog.ProgramName);
+                    ProgramName = dialog.ProgramName;
+                    ProgramList = new ListManager().List;
+                }
+            }
+            catch (Exception) { };
+        }
 
         public void Load(object obj)
         {
@@ -160,6 +193,7 @@ namespace IDE.Common.ViewModel
                     }
                     ProgramEditor.CurrentProgram = new Program(dialog.ProgramName) { Content = ProgramEditor.Text };
                     ProgramEditor.CurrentProgram.SaveProgram(dialog.ProgramName);
+                    ProgramName = dialog.ProgramName;
                     ProgramList = new ListManager().List;
                 }
             }

@@ -21,6 +21,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Button Command="{Binding CreateClickCommand}" Content="Create" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0" Width="75" Height="26"/>
             <Button Command="{Binding LoadClickCommand}" Content="Load" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,10,0,0" Width="75" Height="26"/>
             <Button Command="{Binding SaveClickCommand}" Content="Save" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,10,0,0"  Width="75" Height="26"/>
             <Button Command="{Binding SaveAsClickCommand}" Content="Save as" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,10,0,0"  Width="75" Height="26"/>

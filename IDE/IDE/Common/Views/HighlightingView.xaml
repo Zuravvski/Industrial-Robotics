@@ -102,8 +102,11 @@
                     <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundComments}" Grid.Column="1"/>
                     <xctk:ColorPicker SelectedColor="{Binding ColorComments}" Grid.Column="2"/>
                 </Grid>
-
-                <Button Command="{Binding TestClickCommand}" Content="Apply"  Margin="0,5,0,0"  HorizontalAlignment="Right" Width="75"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Command="{Binding ImportClickCommand}" Content="Import"  Margin="0,5,5,0"  HorizontalAlignment="Right" Width="75"/>
+                    <Button Command="{Binding ExportClickCommand}" Content="Export"  Margin="0,5,5,0"  HorizontalAlignment="Right" Width="75"/>
+                    <Button Command="{Binding ApplyClickCommand}" Content="Apply"  Margin="0,5,0,0"  HorizontalAlignment="Right" Width="75"/>
+                </StackPanel>
 
             </StackPanel>
         </GroupBox>

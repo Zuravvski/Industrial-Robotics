@@ -1,5 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,22 +16,13 @@ using System.Windows.Shapes;
 namespace IDE.Common.Views
 {
     /// <summary>
-    /// Interaction logic for SaveAsDialog.xaml
+    /// Interaction logic for HelpView.xaml
     /// </summary>
-    public partial class SaveAsDialog : ModernDialog
+    public partial class HelpView : UserControl
     {
-        public SaveAsDialog(string textAboveInput)
+        public HelpView()
         {
             InitializeComponent();
-
-            TextBlock_AboveInput.Text = textAboveInput;
-            // define the dialog buttons
-            this.Buttons = new Button[] { this.OkButton, this.CancelButton };
-        }
-
-        public string UserInput
-        {
-            get { return TextBox_UserInput.Text; }
         }
     }
 }

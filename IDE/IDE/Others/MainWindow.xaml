@@ -37,7 +37,7 @@
     <mui:ModernWindow.TitleLinks>
         <!-- TOP RIGHT CORNER (BAR) -->
         <mui:Link DisplayName="settings" Source="Common/Views/SettingsPageView.xaml" />
-        <mui:Link DisplayName="help" Source="https://github.com/Zuravvski/Industrial-Robotics" />
+        <mui:Link DisplayName="help" Source="Common/Views/HelpView.xaml" />
     </mui:ModernWindow.TitleLinks>
     
     

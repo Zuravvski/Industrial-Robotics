@@ -7,7 +7,6 @@ using System.Xml;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using IDE.Common.Model;
 
 namespace IDE.Common.Models
 {
@@ -25,16 +24,12 @@ namespace IDE.Common.Models
         }
 
         #endregion
-
-        #region Constructor
-
+        
         public ProgramEditor(Highlighting highlighting)
         {
             this.highlighting = highlighting;
             InitializeAvalon();
         }
-
-        #endregion
 
         #region Properties
 
@@ -91,7 +86,7 @@ namespace IDE.Common.Models
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            //tbi
+            currentProgram.Content = Text;
         }
 
         private void TextEntering(object sender, TextCompositionEventArgs e)

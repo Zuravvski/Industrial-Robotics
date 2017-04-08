@@ -49,6 +49,7 @@
       <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -76,16 +77,16 @@
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
-    <Compile Include="Common\Models\IProgram.cs" />
     <Compile Include="Common\Models\Program.cs" />
     <Compile Include="Common\Models\ListManager.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
-    <Compile Include="Common\Models\RemoteProgram.cs" />
     <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
+    <Compile Include="Common\ViewModels\Commands\ObservableObject.cs" />
     <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
+    <Compile Include="Common\ViewModels\DelegateCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
     <Compile Include="Common\ViewModels\HighlightingViewModel.cs" />
     <Compile Include="Common\ViewModels\HomeViewModel.cs" />

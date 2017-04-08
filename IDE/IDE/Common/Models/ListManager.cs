@@ -1,19 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Windows;
-using IDE.Common.Model;
+using IDE.Common.ViewModels.Commands;
 
 namespace IDE.Common.Models
 {
-    public class ListManager
+    public class ListManager : ObservableObject
     {
-        private List<Program> programList;
-
         #region Constructor
 
         public ListManager()
         {
-            programList = new List<Program>();
+            Programs = new ObservableCollection<Program>();
             PopulateList();
         }
 
@@ -21,25 +23,15 @@ namespace IDE.Common.Models
 
         #region Properties
 
-        public List<Program> List
-        {
-            private set
-            {
-                programList = value;
-            }
-            get
-            {
-                return programList;
-            }
-        }
+        public ObservableCollection<Program> Programs { get; }
 
         #endregion
 
         #region Actions
 
-        public void PopulateList()
+        private void PopulateList()
         {
-            programList.Clear();
+            Programs.Clear();
 
             try
             {
@@ -48,7 +40,7 @@ namespace IDE.Common.Models
                 foreach (var file in files)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(file);
-                    programList.Add(new Program(fileName));   //adds new program to list of local programs
+                    Programs.Add(new Program(fileName));   //adds new program to list of local programs
                 }
 
             } 
@@ -65,6 +57,58 @@ namespace IDE.Common.Models
                         "If you want to do this automatically, please accept after error occurs.",
                         "Data not found",MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+            }
+        }
+
+
+        public void CreateProgram(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return;
+            Programs.Add(new Program(name));
+        }
+
+        public void LoadProgram(Program program)
+        {
+            if (!string.IsNullOrEmpty(program.Name))
+            {
+                try
+                {
+                    program.Content = File.ReadAllText(@"Programs\" + program.Name + ".txt", Encoding.ASCII);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Could not load program. File may be corrupted.", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        public void SaveProgram(Program program)
+        {
+            if (!string.IsNullOrEmpty(program.Name))
+            {
+                try
+                {
+                    File.WriteAllText(@"Programs\" + program.Name + ".txt", program.Content, Encoding.ASCII);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Could not save program due to invalid data.", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        public void RemoveProgram(Program program)
+        {
+            if (!string.IsNullOrEmpty(program.Name))
+            {
+                try
+                {
+                    File.Delete(@"Programs\" + program.Name + ".txt");
+                    Programs.Remove(program);
+                }
+                catch (Exception) { };
             }
         }
 

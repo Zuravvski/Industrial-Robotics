@@ -1,18 +1,16 @@
 ﻿using System;
-using System.IO;
-using System.Text;
+using System.Collections.Generic;
 
 namespace IDE.Common.Models
 {
-    public class Program : IProgram
+    public class Program
     {
-
         #region Constructor
 
         public Program(string name)
         {
             Name = name;
-            LoadProgram();
+            Content = "";
         }
 
         #endregion
@@ -22,12 +20,9 @@ namespace IDE.Common.Models
         public string Name { private set; get; }
         public string Content { set; get; }
 
-        #endregion
-
-        #region Actions
-
-        public void LoadProgram()
+        public IEnumerable<string> GetLines()
         {
+<<<<<<< Updated upstream
             if (!string.IsNullOrEmpty(Name))
             {
                 try
@@ -48,9 +43,12 @@ namespace IDE.Common.Models
                 }
                 catch (Exception) { };
             }
+=======
+            var lines = Content.Split(new[] { "\r\n"}, StringSplitOptions.None);
+            return lines;
+>>>>>>> Stashed changes
         }
 
         #endregion
-
     }
 }

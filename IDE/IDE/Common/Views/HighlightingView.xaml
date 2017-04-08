@@ -7,38 +7,104 @@
              xmlns:local="clr-namespace:IDE.Common.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+
     <Grid>
-        <GroupBox Header="colors">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Header="Colors" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Category1  "/>
-                    <TextBlock Text="This is a sample text 123     "/>
-                    <xctk:ColorPicker Width="80"/>
-                </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Category2  "/>
-                    <TextBlock Text="This is a sample text 123     "/>
-                    <xctk:ColorPicker Width="80"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Category3  "/>
-                    <TextBlock Text="This is a sample text 123     "/>
-                    <xctk:ColorPicker Width="80"/>
-                </StackPanel>
+                    <TextBlock Text="Movement" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundMovement}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding ColorMovement}" Grid.Column="2"/>
+                </Grid>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Category4  "/>
-                    <TextBlock Text="This is a sample text 123     "/>
-                    <xctk:ColorPicker Width="80"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Category5  "/>
-                    <TextBlock Text="This is a sample text 123     "/>
-                    <xctk:ColorPicker Width="80"/>
-                </StackPanel>
+                    <TextBlock Text="Grip" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundGrip}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding ColorGrip}" Grid.Column="2"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Counters" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundCounters}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding ColorCounters}" Grid.Column="2"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Programming" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundProgramming}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding ColorProgramming}" Grid.Column="2"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Informations" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundInformations}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding ColorInformations}" Grid.Column="2"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Numbers" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundNumbers}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding ColorNumbers}" Grid.Column="2"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Comments" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundComments}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding ColorComments}" Grid.Column="2"/>
+                </Grid>
+
+                <Button Command="{Binding TestClickCommand}" Content="Apply"  Margin="0,5,0,0"  HorizontalAlignment="Right" Width="75"/>
+
             </StackPanel>
         </GroupBox>
     </Grid>

@@ -1,18 +1,11 @@
 ﻿using System.IO.Ports;
 using ManipulatorDriver;
+using Driver;
 
 namespace manipulatorDriver
 {
     public class SerialBuilder
     {
-        #region Constants
-        private const int DEFAULT_DATA_BITS = 8;
-        private const int DEFAULT_BAUDRATE = 9600;
-        private const Parity DEFAULT_PARITY = System.IO.Ports.Parity.Even;
-        private const StopBits DEFAULT_STOP_BITS = System.IO.Ports.StopBits.Two;
-
-        #endregion
-
         // TODO: Reconsider building
         private readonly SerialPort port;
 
@@ -20,13 +13,13 @@ namespace manipulatorDriver
         {
             port = new SerialPort()
             {
-                BaudRate = DEFAULT_BAUDRATE,
-                DataBits = DEFAULT_DATA_BITS,
-                Parity = DEFAULT_PARITY,
-                StopBits = DEFAULT_STOP_BITS,
-                RtsEnable = true,
-                ReadTimeout = 4000,
-                WriteTimeout = 6000
+                BaudRate = DriverSettings.Instance.BaudRate,
+                DataBits = DriverSettings.Instance.DataBits,
+                Parity = DriverSettings.Instance.Parity,
+                StopBits = DriverSettings.Instance.StopBits,
+                RtsEnable = DriverSettings.Instance.RtsEnable,
+                ReadTimeout = DriverSettings.Instance.ReadTimeout,
+                WriteTimeout = DriverSettings.Instance.WriteTimeout
             };
         }
 
@@ -56,6 +49,24 @@ namespace manipulatorDriver
         public SerialBuilder RtsEnable(bool state)
         {
             port.RtsEnable = state;
+            return this;
+        }
+
+        public SerialBuilder DataBits(int databits)
+        {
+            port.DataBits = databits;
+            return this;
+        }
+
+        public SerialBuilder ReadTimeout(int readtimeout)
+        {
+            port.ReadTimeout = readtimeout;
+            return this;
+        }
+
+        public SerialBuilder WriteTimeout(int writetimeout)
+        {
+            port.WriteTimeout = writetimeout;
             return this;
         }
     }

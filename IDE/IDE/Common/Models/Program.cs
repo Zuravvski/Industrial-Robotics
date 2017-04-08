@@ -1,21 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace IDE.Common.Models
 {
-    public class Program : IProgram
+    public class Program
     {
-
-        #region Constructor
-
         public Program(string name)
         {
             Name = name;
-            LoadProgram();
+            Content = "";
         }
-
-        #endregion
 
         #region Properties
 
@@ -30,47 +26,11 @@ namespace IDE.Common.Models
             }
         }
 
+        public IEnumerable<string> GetLines()
+        {
+            var lines = Content.Split(new[] { "\r\n" }, StringSplitOptions.None);
+            return lines;
+        }
         #endregion
-
-        #region Actions
-
-        public void LoadProgram()
-        {
-            if (!string.IsNullOrEmpty(Name))
-            {
-                try
-                {
-                    Content = File.ReadAllText(@"Programs\" + Name + ".txt", Encoding.ASCII);
-                }
-                catch (Exception) { };
-            }
-        }
-
-        public void SaveProgram(string name)
-        {
-            if (!string.IsNullOrEmpty(name))
-            {
-                try
-                {
-                    File.WriteAllText(@"Programs\" + name + ".txt", Content, Encoding.ASCII);
-                }
-                catch (Exception) { };
-            }
-        }
-
-        public void RemoveProgram(Program program)
-        {
-            if (!string.IsNullOrEmpty(program.Name))
-            {
-                try
-                {
-                    File.Delete(@"Programs\" + program.Name + ".txt");
-                }
-                catch (Exception) { };
-            }
-        }
-
-        #endregion
-
     }
 }

@@ -1,92 +1,50 @@
-﻿using System.Collections.Generic;
-using System.Windows.Input;
-using IDE.Common.Model;
-using System.ComponentModel;
-using IDE.Common.Utilities;
-using static IDE.Common.Models.ProgramEditor;
-using System.Windows;
-using System;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Input;
+using Driver;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
-using ManipulatorDriver;
-using Driver;
-using System.Diagnostics;
-using System.Threading;
 using IDE.Common.Views;
+using Microsoft.Win32;
 
-namespace IDE.Common.ViewModel
+namespace IDE.Common.ViewModels
 {
-    public class EditorViewModel : INotifyPropertyChanged
+    public class EditorViewModel : ObservableObject
     {
-        private List<Program> programList;
         private ProgramEditor programEditor;
-        private ListManager listManager;
+        
         private string programName;
+        private Program selectedProgram;
 
-        //usun
-        private E3JManipulator manipulator;
-
-        #region Constructor
-
-        public EditorViewModel()
-        {
-            CreateClickCommand = new RelayCommand(Create);
-            LoadClickCommand = new RelayCommand(Load);
-            SaveClickCommand = new RelayCommand(Save);
-            SaveAsClickCommand = new RelayCommand(SaveAs);
-            DeleteClickCommand = new RelayCommand(Delete);
-            SendClickCommand = new RelayCommand(Send);
-
-            
-            listManager = new ListManager();
-            ProgramList = listManager.List;
-
-            programEditor = new ProgramEditor(Highlighting.On);
-            ProgramEditor = programEditor;
-
-
-            //deleteTHIS
-            manipulator = new E3JManipulator();
-            manipulator.Connect("COM4");
-        }
-
-
-
-
-
+        #region Actions
+        private ICommand create;
+        private ICommand load;
+        private ICommand save;
+        private ICommand saveAs;
+        private ICommand delete;
+        private ICommand send;
         #endregion
 
         #region Properties
 
-        public List<Program> ProgramList
+        public ListManager ListManager { get; }
+        public Program SelectedProgram
         {
-            get
-            {
-                return programList;
-            }
             set
             {
-                programList = value;
-                OnPropertyChanged("ProgramList");
+                selectedProgram = value;
+                programEditor.CurrentProgram = value;
+                NotifyPropertyChanged("SelectedProgram");
             }
-        }
-
-        public Program SelectedProgram { set; get; }
-
-        public string ProgramName
-        {
             get
             {
-                return programName;
-            }
-            set
-            {
-                programName = value;
-                OnPropertyChanged("ProgramName");
+                return selectedProgram;
             }
         }
-
         public ProgramEditor ProgramEditor
         {
             get
@@ -96,172 +54,229 @@ namespace IDE.Common.ViewModel
             set
             {
                 programEditor = value;
-                OnPropertyChanged("ProgramEditor");
+                NotifyPropertyChanged("ProgramEditor");
             }
         }
+
+        #endregion
+
+        //usun
+        private readonly E3JManipulator manipulator;
+
+        #region Constructor
+
+        public EditorViewModel()
+        {    
+            ListManager = new ListManager();
+            ProgramEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
+
+            programEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
+            ProgramEditor = programEditor;
+        }
+
+
+
+
 
         #endregion
 
         #region Commands
 
-        public bool CanExecute { set; get; }
-        public ICommand CreateClickCommand { set; get; }
-        public ICommand LoadClickCommand { set; get; }
-        public ICommand SaveClickCommand { set; get; }
-        public ICommand SaveAsClickCommand { set; get; }
-        public ICommand DeleteClickCommand { set; get; }
-        public ICommand SendClickCommand { set; get; }
-
-        #endregion
-
-        #region Actions
-
-        private void Create(object obj)
+        public ICommand Create
         {
-            try
+            get
             {
-                if (!string.IsNullOrEmpty(ProgramEditor.Text) && MessageBox.Show("Are you sure you wish to create new program? Note that all unsaved changes will be lost.", 
-                    "File creator", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                return create ?? (create = new DelegateCommand(delegate
                 {
-                    return;
-                }
-                var dialog = new SaveAsDialog("Please enter name for your program:");    //this dialog fits perfectly for creating new programs
-                if (dialog.ShowDialog() == true)
-                {
-                    if (ProgramList.Any(criteria => criteria.Name == dialog.UserInput) && //to prevent we wont overwrite something by accident)
-                         (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != dialog.UserInput))
+                    try
                     {
-                        if (MessageBox.Show("Program with this name already exist. Do you want to overwrite it?",
-                            "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                        if (!string.IsNullOrEmpty(ProgramEditor.Text) &&
+                            MessageBox.Show(
+                                "Are you sure you wish to create new program? Note that all unsaved changes will be lost.",
+                                "File creator", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                         {
                             return;
                         }
+                        var dialog = new SaveAsDialog(); //this dialog fits perfectly for creating new programs
+                        if (dialog.ShowDialog() == true)
+                        {
+                            if (ListManager.Programs.Any(criteria => criteria.Name == dialog.ProgramName) &&
+                                //to prevent we wont overwrite something by accident)
+                                (ProgramEditor.CurrentProgram == null ||
+                                 ProgramEditor.CurrentProgram.Name != dialog.ProgramName))
+                            {
+                                if (MessageBox.Show(
+                                        "Program with this name already exist. Do you want to overwrite it?",
+                                        "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                                    MessageBoxResult.No)
+                                {
+                                    return;
+                                }
+                            }
+                            ListManager.CreateProgram(dialog.ProgramName);
+                            SelectedProgram = ListManager.Programs[ListManager.Programs.Count - 1];
+                        }
                     }
-                    ProgramEditor.CurrentProgram = new Program(dialog.UserInput) { Content = "" };
-                    ProgramEditor.CurrentProgram.SaveProgram(dialog.UserInput);
-                    ProgramName = dialog.UserInput;
-                    ProgramList = new ListManager().List;
-                }
-            }
-            catch (Exception) { };
-        }
-
-        public void Load(object obj)
-        {
-            try
-            {
-                ProgramEditor.CurrentProgram = SelectedProgram;
-                ProgramName = ProgramEditor.CurrentProgram.Name;
-            }
-            catch (NullReferenceException)
-            {
-                MessageBox.Show("Nothing to load. Please select program first.", "No program selected", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        public void Save(object obj)
-        {
-            if (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name == null)  //if name is not defined yet, define it with save as
-            {
-                SaveAs(null);
-                return;
-            }
-            try
-            {   
-                ProgramEditor.CurrentProgram = new Program(ProgramName) { Content = ProgramEditor.Text };
-                ProgramEditor.CurrentProgram.SaveProgram(ProgramName);
-                ProgramList = new ListManager().List;
-            }
-            catch (Exception) { };
-        }
-
-        private void SaveAs(object obj)
-        {
-            try
-            {
-                var dialog = new SaveAsDialog("Please enter name for your program:");
-                if (dialog.ShowDialog() == true)
-                {
-                    if (ProgramList.Any(criteria => criteria.Name == dialog.UserInput) && //to prevent we wont overwrite something by accident)
-                         (ProgramEditor.CurrentProgram == null || ProgramEditor.CurrentProgram.Name != dialog.UserInput))
+                    catch (Exception)
                     {
-                        if (MessageBox.Show("Program with this name already exist. Do you want to overwrite it?",
-                            "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                        // TBD
+                    }
+                }));
+            }
+        }
+
+        public ICommand Load
+        {
+            get
+            {
+                return load ?? (load = new DelegateCommand(delegate
+                {
+                    var dialog = new OpenFileDialog()
+                    {
+                        Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                        Multiselect = false,
+                        RestoreDirectory = true,
+                        InitialDirectory = Directory.GetCurrentDirectory()
+                    };
+                    if (dialog.ShowDialog().GetValueOrDefault())
+                    {
+                        var name = dialog.FileName;
+                        if (!string.IsNullOrEmpty(name))
+                        {
+                            ListManager.LoadProgram(name);
+                        }
+                    }
+
+                }));
+            }
+        }
+
+        public ICommand Save
+        {
+            get
+            {
+                return save ?? (save = new DelegateCommand(delegate
+                {
+                    if (selectedProgram != null)
+                    {
+                        ListManager.SaveProgram(SelectedProgram);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No program was chosen.");
+                    }
+                }));
+            }
+        }
+
+        public ICommand SaveAs
+        {
+            get
+            {
+                return saveAs ?? (saveAs = new DelegateCommand(delegate
+                {
+                    try
+                    {
+                        var dialog = new SaveAsDialog();
+                        if (selectedProgram != null && dialog.ShowDialog() == true)
+                        {
+                            if (ListManager.Programs.Any(criteria => criteria.Name == dialog.ProgramName) &&
+                                //to prevent we wont overwrite something by accident)
+                                (ProgramEditor.CurrentProgram == null ||
+                                 ProgramEditor.CurrentProgram.Name != dialog.ProgramName))
+                            {
+                                if (MessageBox.Show(
+                                        "Program with this name already exist. Do you want to overwrite it?",
+                                        "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                                    MessageBoxResult.No)
+                                {
+                                    return;
+                                }
+                            }
+                            ProgramEditor.CurrentProgram = new Program(dialog.ProgramName)
+                            {
+                                Content = ProgramEditor.Text
+                            };
+                            ListManager.SaveProgram(ProgramEditor.CurrentProgram);
+                        }
+                        else
+                        {
+                            MessageBox.Show("No program was chosen.");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        
+                    };
+                }));
+            }
+        }
+
+        public ICommand Delete
+        {
+            get
+            {
+                return delete ?? (delete = new DelegateCommand(delegate
+                {
+                    if (SelectedProgram == null)
+                    {
+                        MessageBox.Show("You need to select program first.", "File remover",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+                    try
+                    {
+                        if (MessageBox.Show(
+                                $"Are you sure you want to delete: {SelectedProgram.Name}? This operation cannot be undone!",
+                                "File remover",
+                                MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                         {
                             return;
                         }
+
+                        if (SelectedProgram != ProgramEditor.CurrentProgram)
+                        {
+                            ListManager.RemoveProgram(SelectedProgram);
+                        }
+                        //if we want to delete current program we set first program from list as current one (consider empty program?)
+                        else
+                        {
+                            ListManager.RemoveProgram(SelectedProgram);
+                            ProgramEditor.CurrentProgram = ListManager.Programs[0];
+                        }
                     }
-                    ProgramEditor.CurrentProgram = new Program(dialog.UserInput) { Content = ProgramEditor.Text };
-                    ProgramEditor.CurrentProgram.SaveProgram(dialog.UserInput);
-                    ProgramName = dialog.UserInput;
-                    ProgramList = new ListManager().List;
-                }
+                    catch (Exception)
+                    {
+                        
+                    };
+                }));
             }
-            catch (Exception) { };
         }
 
-        private void Delete(object obj)
+        public ICommand Send
         {
-            if (SelectedProgram == null)
+            get
             {
-                MessageBox.Show("You need to select program first.", "File remover",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-            try
-            {
-                if (MessageBox.Show($"Are you sure you want to delete: {SelectedProgram.Name}? This operation cannot be undone!", "File remover", 
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                return send ?? (send = new DelegateCommand(delegate
                 {
-                    return;
-                }
+                    try
+                    {
+                        var lines = ProgramEditor.CurrentProgram.GetLines();
 
-                if (SelectedProgram != ProgramEditor.CurrentProgram)
-                {
-                    SelectedProgram.RemoveProgram(SelectedProgram);
-                }
-                else    //if we want to delete current program we set first program from list as current one (consider empty program?)
-                {
-                    SelectedProgram.RemoveProgram(SelectedProgram);
-                    ProgramEditor.CurrentProgram = ProgramList[0];
-                    ProgramName = ProgramList[0].Name;
-                }
-                ProgramList = new ListManager().List;
-            }
-            catch (Exception) { };
-        }
-
-        private void Send(object obj)
-        {
-            try
-            {
-                string[] lines = ProgramEditor.CurrentProgram.Lines;
-
-                foreach (string line in lines)
-                {
-                    Thread.Sleep(300);
-                    manipulator.SendCustom(line);
-                    Debug.WriteLine(line);
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("wyjebalo error");
+                        foreach (var line in lines)
+                        {
+                            Thread.Sleep(300);
+                            manipulator.SendCustom(line);
+                            Debug.WriteLine(line);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("wyjebalo error");
+                    }
+                }));
             }
         }
-
         #endregion
-
-        #region PropertyChangedEvents
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
-
     }
 }

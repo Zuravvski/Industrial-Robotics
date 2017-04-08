@@ -68,15 +68,10 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {    
             ListManager = new ListManager();
-            ProgramEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
-
             programEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
-            ProgramEditor = programEditor;
+
+            manipulator = new E3JManipulator();
         }
-
-
-
-
 
         #endregion
 

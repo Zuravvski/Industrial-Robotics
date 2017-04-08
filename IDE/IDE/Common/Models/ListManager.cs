@@ -11,7 +11,7 @@ namespace IDE.Common.Models
     {
         public ListManager()
         {
-            Programs = new ObservableCollection<Program>();
+            Programs = AppSession.Instance.LoadLastSession();
         }
       
         #region Properties
@@ -70,6 +70,7 @@ namespace IDE.Common.Models
                 var program = new Program(name);
                 program.Content = File.ReadAllText(@"Programs\" + program.Name + ".txt", Encoding.ASCII);
                 Programs.Add(program);
+                AppSession.Instance.SaveSession(Programs);
             }
             catch (Exception)
             {
@@ -83,7 +84,12 @@ namespace IDE.Common.Models
             if (string.IsNullOrEmpty(program.Name)) return;
             try
             {
-                File.WriteAllText(@"Programs\" + program.Name + ".txt", program.Content, Encoding.ASCII);
+                var path = @"Programs\" + program.Name + ".txt";
+                File.WriteAllText(path, program.Content, Encoding.ASCII);
+                program.Path = path;
+                AppSession.Instance.SaveSession(Programs);
+                MessageBox.Show("Saved");
+
             }
             catch (Exception)
             {
@@ -99,6 +105,7 @@ namespace IDE.Common.Models
             {
                 File.Delete(@"Programs\" + program.Name + ".txt");
                 Programs.Remove(program);
+                //AppSession.Instance.SaveSession(Programs);
             }
             catch (Exception)
             {

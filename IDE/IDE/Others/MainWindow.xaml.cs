@@ -8,11 +8,9 @@ namespace IDE
     /// </summary>
     public partial class MainWindow : ModernWindow
     {
-        private readonly Console console;
         public MainWindow()
         {
             InitializeComponent();
-            console = new Console();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using IDE.Common.ViewModels.Commands;
+﻿using IDE.Common.Models;
+using IDE.Common.ViewModels.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,33 +18,32 @@ namespace IDE.Common.ViewModels
     {
         private Color colorMovement, colorGrip, colorCounters, colorProgramming, colorInformations, colorNumbers, colorComments;
         private Brush foregroundMovement, foregroundGrip, foregroundCounters, foregroundProgramming, foregroundInformations, foregroundNumbers, foregroundComments;
+        CustomHighlighting highlighting;
+        
 
-        public ObservableCollection<string> ColorCollection { get; set; }
-        public ICommand TestClickCommand { get; private set; }
+
+        #region Constructor
 
         public HighlightingViewModel()
         {
+            highlighting = new CustomHighlighting();
+
             //default colors
-            Color staticDefault = Color.FromRgb(193, 193, 193);
-            ColorMovement = staticDefault;
-            ColorGrip = staticDefault;
-            ColorCounters = staticDefault;
-            ColorProgramming = staticDefault;
-            ColorInformations = staticDefault;
-            ColorNumbers = staticDefault;
-            ColorComments = staticDefault;
-
-            ColorCollection = new ObservableCollection<string>();
-            ColorCollection.Add("Some dummy string");
-
+            var currentDefinitions = highlighting.HighlightingDefinitionColors;
+            ColorMovement = currentDefinitions[0];
+            ColorGrip = currentDefinitions[1];
+            ColorCounters = currentDefinitions[2];
+            ColorProgramming = currentDefinitions[3];
+            ColorInformations = currentDefinitions[4];
+            ColorNumbers = currentDefinitions[5];
+            ColorComments = currentDefinitions[6];
 
             TestClickCommand = new RelayCommand(Test);
         }
+    
+        #endregion
 
-        private void Test(object obj)
-        {
-
-        }
+        #region Properties
 
         public Color ColorMovement
         {
@@ -150,6 +150,7 @@ namespace IDE.Common.ViewModels
             }
         }
 
+
         public Brush ForegroundMovement
         {
             set
@@ -175,6 +176,7 @@ namespace IDE.Common.ViewModels
                 return foregroundGrip;
             }
         }
+
         public Brush ForegroundCounters
         {
             set
@@ -187,6 +189,7 @@ namespace IDE.Common.ViewModels
                 return foregroundCounters;
             }
         }
+
         public Brush ForegroundProgramming
         {
             set
@@ -199,6 +202,7 @@ namespace IDE.Common.ViewModels
                 return foregroundProgramming;
             }
         }
+
         public Brush ForegroundInformations
         {
             set
@@ -211,6 +215,7 @@ namespace IDE.Common.ViewModels
                 return foregroundInformations;
             }
         }
+
         public Brush ForegroundNumbers
         {
             set
@@ -223,6 +228,7 @@ namespace IDE.Common.ViewModels
                 return foregroundNumbers;
             }
         }
+
         public Brush ForegroundComments
         {
             set
@@ -236,7 +242,19 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        #endregion
 
+        #region Actions
+
+        public ICommand TestClickCommand { get; private set; }
+
+        private void Test(object obj)
+        {
+            Color[] colorList = new Color[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
+            highlighting.HighlightingDefinitionColors = colorList;
+        }
+
+        #endregion
 
         #region PropertyChangedEvents
 

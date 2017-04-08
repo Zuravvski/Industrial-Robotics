@@ -72,6 +72,7 @@
     </ApplicationDefinition>
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
+    <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\IProgram.cs" />
     <Compile Include="Common\Models\Program.cs" />

@@ -11,9 +11,13 @@ using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using IDE.Common.Views;
 using System.Windows.Media;
+<<<<<<< HEAD
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
+=======
+using IDE.ViewModels;
+>>>>>>> 7e00a946682c84bc2a24048c7d4fe57d00fde2d6
 
 namespace IDE.Common.ViewModels
 {
@@ -23,7 +27,7 @@ namespace IDE.Common.ViewModels
         
         private string programName;
         private Program selectedProgram;
-        private Brush themeColor;
+        private SolidColorBrush themeColor;
 
         #region Actions
         private ICommand create;
@@ -62,18 +66,25 @@ namespace IDE.Common.ViewModels
                 NotifyPropertyChanged("ProgramEditor");
             }
         }
-        
-        public Brush ThemeColor
+
+        public SolidColorBrush ThemeColor
         {
             set
             {
-                themeColor = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue); 
+                themeColor = value;
                 NotifyPropertyChanged("ThemeColor");
             }
             get
             {
                 return themeColor;
             }
+        }
+
+        private static EditorViewModel instance = new EditorViewModel();
+        public static EditorViewModel Instance
+        {
+            set { instance = value; }
+            get { return instance; }
         }
 
         #endregion
@@ -89,6 +100,18 @@ namespace IDE.Common.ViewModels
             programEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
 
             manipulator = new E3JManipulator();
+            Instance = this;
+
+            //ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2")); //default color
+            
+            if (AppearanceViewModel.Instance != null)
+            { 
+                ThemeColor = new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor); //default color
+            }
+            else
+            {
+                ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
+            }
         }
 
         #endregion

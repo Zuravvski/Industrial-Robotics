@@ -83,6 +83,16 @@ namespace IDE.Common.ViewModels
             get { return instance; }
         }
 
+        public string Text
+        {
+            get { return SelectedProgram.Content; }
+            set
+            {
+                SelectedProgram.Content = value;
+                NotifyPropertyChanged("Text");
+            }
+        }
+
         #endregion
 
         //usun
@@ -286,31 +296,19 @@ namespace IDE.Common.ViewModels
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         return;
                     }
-                    try
+                    var deleteDialog = new DeleteProgramDialog();
+                    if (deleteDialog.ShowDialog().GetValueOrDefault())
                     {
-                        if (MessageBox.Show(
-                                $"Are you sure you want to delete: {SelectedProgram.Name}? This operation cannot be undone!",
-                                "File remover",
-                                MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                        if (deleteDialog.IsDeleteChecked)
                         {
-                            return;
+                            ListManager.DeleteProgram(selectedProgram);
                         }
-
-                        if (SelectedProgram != ProgramEditor.CurrentProgram)
-                        {
-                            ListManager.RemoveProgram(SelectedProgram);
-                        }
-                        //if we want to delete current program we set first program from list as current one (consider empty program?)
                         else
                         {
-                            ListManager.RemoveProgram(SelectedProgram);
-                            ProgramEditor.CurrentProgram = ListManager.Programs[0];
+                            ListManager.RemoveProgram(selectedProgram);
                         }
-                    }
-                    catch (Exception)
-                    {
-                        
-                    };
+                        SelectedProgram = null;
+                    } 
                 }));
             }
         }

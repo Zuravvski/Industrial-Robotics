@@ -40,19 +40,12 @@ namespace IDE.Common.ViewModels
 
         public bool CanExecute()
         {
-            if (_canExecuteMethod != null)
-            {
-                return _canExecuteMethod();
-            }
-            return true;
+            return _canExecuteMethod == null || _canExecuteMethod();
         }
 
         public void Execute()
         {
-            if (_executeMethod != null)
-            {
-                _executeMethod();
-            }
+            _executeMethod?.Invoke();
         }
 
         public bool IsAutomaticRequeryDisabled

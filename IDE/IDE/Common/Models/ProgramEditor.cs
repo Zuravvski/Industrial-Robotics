@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Configuration;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -24,7 +25,7 @@ namespace IDE.Common.Models
         }
 
         #endregion
-        
+
         public ProgramEditor(Highlighting highlighting)
         {
             this.highlighting = highlighting;
@@ -38,7 +39,7 @@ namespace IDE.Common.Models
             set
             {
                 currentProgram = value;
-                Text = CurrentProgram.Content;
+                Text = value == null ? string.Empty : CurrentProgram.Content;
             }
             get
             {
@@ -53,7 +54,6 @@ namespace IDE.Common.Models
         private void InitializeAvalon()
         {
             ShowLineNumbers = true;
-            //Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
             Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
@@ -86,7 +86,10 @@ namespace IDE.Common.Models
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            currentProgram.Content = Text;
+            if (currentProgram != null)
+            {
+                currentProgram.Content = Text;
+            }
         }
 
         private void TextEntering(object sender, TextCompositionEventArgs e)

@@ -93,7 +93,7 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {    
             ListManager = new ListManager();
-            programEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
+            programEditor = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.ReadOnly.No);
 
             manipulator = new E3JManipulator();
 

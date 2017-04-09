@@ -13,6 +13,7 @@ namespace IDE.Common.Models
     public class ProgramEditor : TextEditor
     {
         private readonly Highlighting highlighting;
+        private readonly ReadOnly readOnly;
         private Program currentProgram;
 
         #region enums
@@ -23,11 +24,18 @@ namespace IDE.Common.Models
             Off
         }
 
+        public enum ReadOnly
+        {
+            Yes,
+            No
+        }
+
         #endregion
         
-        public ProgramEditor(Highlighting highlighting)
+        public ProgramEditor(Highlighting highlighting, ReadOnly readOnly)
         {
             this.highlighting = highlighting;
+            this.readOnly = readOnly;
             InitializeAvalon();
         }
 
@@ -57,6 +65,10 @@ namespace IDE.Common.Models
             Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            if (readOnly == ReadOnly.Yes)
+            {
+                IsReadOnly = true;
+            }
 
             if (highlighting == Highlighting.On)
             {
@@ -86,7 +98,7 @@ namespace IDE.Common.Models
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
         {
-            currentProgram.Content = Text;
+            //currentProgram.Content = Text;
         }
 
         private void TextEntering(object sender, TextCompositionEventArgs e)

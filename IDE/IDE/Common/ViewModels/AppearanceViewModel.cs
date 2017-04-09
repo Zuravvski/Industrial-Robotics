@@ -71,6 +71,9 @@ namespace IDE.ViewModels
             SyncThemeAndColor();
 
             AppearanceManager.Current.PropertyChanged += OnAppearanceManagerPropertyChanged;
+
+            //this is mine
+            Instance = this;
         }
 
         private void SyncThemeAndColor()
@@ -136,6 +139,13 @@ namespace IDE.ViewModels
             }
         }
 
+        private static AppearanceViewModel instance;
+        public static AppearanceViewModel Instance
+        {
+            set { instance = value; }
+            get { return instance; }
+        }
+            
         public Color SelectedAccentColor
         {
             get { return this.selectedAccentColor; }
@@ -144,10 +154,11 @@ namespace IDE.ViewModels
                 if (this.selectedAccentColor != value)
                 {
                     this.selectedAccentColor = value;
-                    new EditorViewModel().ThemeColor = new SolidColorBrush(value);
                     OnPropertyChanged("SelectedAccentColor");
 
                     AppearanceManager.Current.AccentColor = value;
+                    
+                    EditorViewModel.Instance.ThemeColor = new SolidColorBrush(selectedAccentColor);
                 }
             }
         }

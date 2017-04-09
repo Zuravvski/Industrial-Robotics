@@ -13,6 +13,7 @@ using ManipulatorDriver;
 using IDE.Common.ViewModel;
 using IDE.Common.Views;
 using System.Collections.Specialized;
+using IDE.Common.ViewModels;
 
 namespace IDE.Views
 {

@@ -1,19 +1,15 @@
-﻿using IDE.Common.Models;
-using IDE.Common.ViewModels.Commands;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
+using IDE.Common.Models;
+using IDE.Common.ViewModels.Commands;
 
-namespace IDE.Common.ViewModel
+namespace IDE.Common.ViewModels
 {
     public class BrowseViewModel : ObservableObject
     {
+        private string userInputText;
 
         public BrowseViewModel()
         {
@@ -26,7 +22,18 @@ namespace IDE.Common.ViewModel
         }
 
         public MessageList MessageList { get; }
-        public string UserInputText { set; get; }
+        public string UserInputText
+        {
+            set
+            {
+                userInputText = value;
+                NotifyPropertyChanged("UserInputText");
+            }
+            get
+            {
+                return userInputText;
+            }
+        }
 
 
 
@@ -48,8 +55,8 @@ namespace IDE.Common.ViewModel
         {
             if (!string.IsNullOrEmpty(UserInputText))
             {
-                MessageList.AddMessage(new Message(DateTime.Now.ToString(), UserInputText));
-                //UserInputText = string.Empty;             nie dziala?
+                MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), UserInputText));
+                UserInputText = string.Empty;
             }
         }
 

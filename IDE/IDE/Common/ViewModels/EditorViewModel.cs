@@ -97,23 +97,12 @@ namespace IDE.Common.ViewModels
 
             manipulator = new E3JManipulator();
 
-<<<<<<< Updated upstream
             //ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2")); //default color
             
             ThemeColor = AppearanceViewModel.Instance != null ? 
                 new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
-=======
 
             Instance = this;
-            if (AppearanceViewModel.Instance != null)
-            { 
-                ThemeColor = new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor);
-            }
-            else
-            {
-                ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2")); //default color
-            }
->>>>>>> Stashed changes
         }
 
         #endregion

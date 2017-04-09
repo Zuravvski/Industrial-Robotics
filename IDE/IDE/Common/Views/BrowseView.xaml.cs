@@ -27,40 +27,6 @@ namespace IDE.Views
         {
             InitializeComponent();
             DataContext = new BrowseViewModel();
-
-            //there is NO OTHER WAY to keep ListView autoscrolling than in code-behind:
-            ((INotifyCollectionChanged)msglist.Items).CollectionChanged += MessageList_CollectionChanged;
-        }
-
-        private void MessageList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                // scroll the new item into view   
-                msglist.ScrollIntoView(e.NewItems[0]);
-            }
-        }
-
-        private void msglist_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateColumnsWidth(sender as ListView);
-        }
-
-        private void msglist_Loaded(object sender, RoutedEventArgs e)
-        {
-            UpdateColumnsWidth(sender as ListView);
-        }
-
-        private void UpdateColumnsWidth(ListView listView)
-        {
-            int autoFillColumnIndex = (listView.View as GridView).Columns.Count - 1;
-            if (listView.ActualWidth == Double.NaN)
-                listView.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
-            double remainingSpace = listView.ActualWidth;
-            for (int i = 0; i < (listView.View as GridView).Columns.Count; i++)
-                if (i != autoFillColumnIndex)
-                    remainingSpace -= (listView.View as GridView).Columns[i].ActualWidth;
-            (listView.View as GridView).Columns[autoFillColumnIndex].Width = remainingSpace >= 0 ? remainingSpace : 0;
         }
 
         //private FlowDocument document;

@@ -92,7 +92,7 @@
         <ListView ItemsSource="{Binding Path=ListManager.Programs}" Grid.Row="1" SelectedItem="{Binding SelectedProgram}" Grid.ColumnSpan="2">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding ElementName=SelectedAccentColor, Path=DataContext.}"/>
+                    <TextBlock Text="{Binding ElementName=SelectedAccentColor, Path=DataContext}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

@@ -4,20 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using Driver;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using IDE.Common.Views;
 using System.Windows.Media;
-<<<<<<< HEAD
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
-=======
 using IDE.ViewModels;
->>>>>>> 7e00a946682c84bc2a24048c7d4fe57d00fde2d6
 
 namespace IDE.Common.ViewModels
 {
@@ -104,14 +100,8 @@ namespace IDE.Common.ViewModels
 
             //ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2")); //default color
             
-            if (AppearanceViewModel.Instance != null)
-            { 
-                ThemeColor = new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor); //default color
-            }
-            else
-            {
-                ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
-            }
+            ThemeColor = AppearanceViewModel.Instance != null ? 
+                new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
         }
 
         #endregion

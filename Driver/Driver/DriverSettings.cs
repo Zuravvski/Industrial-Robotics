@@ -38,10 +38,7 @@ namespace Driver
 
         private static readonly Lazy<DriverSettings> instance = new Lazy<DriverSettings>(() => new DriverSettings());
 
-        public static DriverSettings Instance
-        {
-            get { return instance.Value; }
-        }
+        public static DriverSettings Instance => instance.Value;
 
 
         protected DriverSettings()
@@ -53,27 +50,35 @@ namespace Driver
         {
             var doc = new XmlDocument();
             var node = doc.AppendChild(doc.CreateElement("DriverSettings"));
+
             var temp = doc.CreateElement(BaudRateToken);
             temp.InnerText = Convert.ToString(BaudRate);
             node.AppendChild(temp);
+
             temp = doc.CreateElement(DataBitsToken);
             temp.InnerText = Convert.ToString(DataBits);
             node.AppendChild(temp);
+
             temp = doc.CreateElement(ParityToken);
             temp.InnerText = Convert.ToString(Parity);
             node.AppendChild(temp);
+
             temp = doc.CreateElement(StopBitsToken);
             temp.InnerText = Convert.ToString(StopBits);
             node.AppendChild(temp);
+
             temp = doc.CreateElement(RtsEnableToken);
             temp.InnerText = Convert.ToString(RtsEnable);
             node.AppendChild(temp);
+
             temp = doc.CreateElement(ReadTimeoutToken);
             temp.InnerText = Convert.ToString(ReadTimeout);
             node.AppendChild(temp);
+
             temp = doc.CreateElement(WriteTimeoutToken);
             temp.InnerText = Convert.ToString(WriteTimeout);
             node.AppendChild(temp);
+
             doc.Save("DriverSettings.xml");
         }
 

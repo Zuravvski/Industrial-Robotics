@@ -4,13 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using Driver;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using IDE.Common.Views;
-using Microsoft.Win32;
 using System.Windows.Media;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace IDE.Common.ViewModels
 {
@@ -169,7 +172,35 @@ namespace IDE.Common.ViewModels
                 {
                     if (selectedProgram != null)
                     {
-                        ListManager.SaveProgram(SelectedProgram);
+                        // Program is was previously saved in certain location
+                        // we just want to override it from now on
+                        if (!string.IsNullOrEmpty(selectedProgram.Path))
+                        {
+                            ListManager.SaveProgram(SelectedProgram);
+                        }
+                        // First save requires the user to enter the path
+                        // Subsequent saves will override file specified below
+                        else
+                        {
+                            var saveDialog = new SaveFileDialog()
+                            {
+                                InitialDirectory = Directory.GetCurrentDirectory(),
+                                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                                DefaultExt = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                                Title = "Save program as...",
+                                FileName = SelectedProgram.Name,
+                                OverwritePrompt = true
+                            };
+                            if (!saveDialog.ShowDialog().GetValueOrDefault()) return;
+                            var path = saveDialog.FileName;
+
+                            // Check wheter chosen file path is valid
+                            if (!string.IsNullOrEmpty(path))
+                            {
+                                SelectedProgram.Path = path;
+                                ListManager.SaveProgram(SelectedProgram);
+                            }  
+                        }
                     }
                     else
                     {
@@ -185,39 +216,46 @@ namespace IDE.Common.ViewModels
             {
                 return saveAs ?? (saveAs = new DelegateCommand(delegate
                 {
-                    try
+                    if (selectedProgram != null)
                     {
-                        var dialog = new SaveAsDialog("Please enter name for your program");
-                        if (selectedProgram != null && dialog.ShowDialog() == true)
+                        var saveDialog = new SaveFileDialog()
                         {
-                            if (ListManager.Programs.Any(criteria => criteria.Name == dialog.UserInput) &&
-                                //to prevent we wont overwrite something by accident)
-                                (ProgramEditor.CurrentProgram == null ||
-                                 ProgramEditor.CurrentProgram.Name != dialog.UserInput))
+                            InitialDirectory = string.IsNullOrEmpty(selectedProgram.Path) ? 
+                                    Directory.GetCurrentDirectory() : selectedProgram.Path,
+                            Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                            DefaultExt = "txt",
+                            Title = "Save program as...",
+                            FileName = selectedProgram.Name,
+                            OverwritePrompt = true
+                        };
+                        
+                        if (saveDialog.ShowDialog().GetValueOrDefault())
+                        {
+                            var path = saveDialog.FileName;
+                            if (!string.IsNullOrEmpty(path))
                             {
-                                if (MessageBox.Show(
-                                        "Program with this name already exist. Do you want to overwrite it?",
-                                        "File already exist", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
-                                    MessageBoxResult.No)
+                                var program = new Program(Path.GetFileNameWithoutExtension(path))
                                 {
-                                    return;
+                                    Path = path,
+                                    Content = selectedProgram.Content
+                                };
+                                if (selectedProgram.Path.Equals(path))
+                                {
+                                    ListManager.SaveProgram(selectedProgram);
+                                }
+                                else
+                                {
+                                    ListManager.AddProgram(program);
+                                    ListManager.SaveProgram(program);
+                                    SelectedProgram = program;
                                 }
                             }
-                            ProgramEditor.CurrentProgram = new Program(dialog.UserInput)
-                            {
-                                Content = ProgramEditor.Text
-                            };
-                            ListManager.SaveProgram(ProgramEditor.CurrentProgram);
-                        }
-                        else
-                        {
-                            MessageBox.Show("No program was chosen.");
                         }
                     }
-                    catch (Exception)
+                    else
                     {
-                        
-                    };
+                        MessageBox.Show("No program was chosen.");
+                    }
                 }));
             }
         }

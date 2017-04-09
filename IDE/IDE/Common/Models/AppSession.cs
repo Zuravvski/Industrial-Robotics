@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Windows.Controls;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace IDE.Common.Models
@@ -21,6 +21,7 @@ namespace IDE.Common.Models
             document = new XmlDocument();
         }
 
+        // TODO: Consider this method to be async - probably there's no need as it runs only once
         public ObservableCollection<Program> LoadLastSession()
         {
             var list = new ObservableCollection<Program>();
@@ -60,24 +61,26 @@ namespace IDE.Common.Models
                 }
                 return list;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return list;
             }
-
-
         }
 
-        public void SaveSession(IEnumerable<Program> programsList)
+        public async void SaveSession(IEnumerable<Program> programsList)
         {
-            var node = document.CreateElement("Session");
-            foreach (var program in programsList)
+            await Task.Run(() =>
             {
-                var element = document.CreateElement("Program");
-                element.InnerText = program.Path;
-                node.AppendChild(element);
-            }
-            document.Save(DEFAULT_FILE_PATH);
+                document.RemoveAll();
+                var node = document.AppendChild(document.CreateElement("Session"));
+                foreach (var program in programsList)
+                {
+                    var element = document.CreateElement("Program");
+                    element.InnerText = program.Path;
+                    node.AppendChild(element);
+                }
+                document.Save(DEFAULT_FILE_PATH);
+            });
         }
     }
 }

@@ -54,7 +54,6 @@ namespace IDE.Common.Models
             }
         }
 
-
         public void CreateProgram(string name)
         {
             if (string.IsNullOrEmpty(name)) return;
@@ -63,12 +62,15 @@ namespace IDE.Common.Models
 
         public void LoadProgram(string path)
         {
-            var name = Path.GetFileNameWithoutExtension(path);
-            if (string.IsNullOrEmpty(name)) return;
             try
             {
-                var program = new Program(name);
-                program.Content = File.ReadAllText(@"Programs\" + program.Name + ".txt", Encoding.ASCII);
+                var name = Path.GetFileNameWithoutExtension(path);
+                if (string.IsNullOrEmpty(name)) return;
+                var program = new Program(name)
+                {
+                    Path = path
+                };
+                program.Content = File.ReadAllText(program.Path, Encoding.ASCII);
                 Programs.Add(program);
                 AppSession.Instance.SaveSession(Programs);
             }
@@ -81,15 +83,12 @@ namespace IDE.Common.Models
 
         public void SaveProgram(Program program)
         {
-            if (string.IsNullOrEmpty(program.Name)) return;
+            if (string.IsNullOrEmpty(program.Name) && string.IsNullOrEmpty(program.Path)) return;
             try
             {
-                var path = @"Programs\" + program.Name + ".txt";
+                var path = program.Path;
                 File.WriteAllText(path, program.Content, Encoding.ASCII);
-                program.Path = path;
                 AppSession.Instance.SaveSession(Programs);
-                MessageBox.Show("Saved");
-
             }
             catch (Exception)
             {
@@ -100,17 +99,27 @@ namespace IDE.Common.Models
 
         public void RemoveProgram(Program program)
         {
+            Programs.Remove(program);
+        }
+
+        public void DeleteProgram(Program program)
+        {
             if (string.IsNullOrEmpty(program.Name)) return;
             try
             {
                 File.Delete(@"Programs\" + program.Name + ".txt");
-                Programs.Remove(program);
-                //AppSession.Instance.SaveSession(Programs);
+                RemoveProgram(program);
+                AppSession.Instance.SaveSession(Programs);
             }
             catch (Exception)
             {
                 // TBD
             };
+        }
+
+        public void AddProgram(Program program)
+        {
+            Programs.Add(program);
         }
 
         #endregion

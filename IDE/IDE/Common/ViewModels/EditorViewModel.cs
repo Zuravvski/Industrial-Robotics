@@ -106,9 +106,13 @@ namespace IDE.Common.ViewModels
             programEditor = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.ReadOnly.No);
 
             manipulator = new E3JManipulator();
+            manipulator.Connect("COM3");
+
+            manipulator.SendCustom("WH");
+            
 
             //ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2")); //default color
-            
+
             ThemeColor = AppearanceViewModel.Instance != null ? 
                 new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
 
@@ -321,12 +325,12 @@ namespace IDE.Common.ViewModels
                 {
                     try
                     {
-                        var lines = ProgramEditor.CurrentProgram.GetLines();
+                        var lines = SelectedProgram.GetLines();
 
                         foreach (var line in lines)
                         {
                             Thread.Sleep(300);
-                            manipulator.SendCustom(line);
+                            manipulator.SendCustom("WH");
                             Debug.WriteLine(line);
                         }
                     }

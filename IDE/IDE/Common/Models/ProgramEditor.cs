@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,13 +9,13 @@ using System.Xml;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Microsoft.Win32;
 
 namespace IDE.Common.Models
 {
     public class ProgramEditor : TextEditor
     {
         private readonly Highlighting highlighting;
-        private readonly ReadOnly readOnly;
         private Program currentProgram;
 
         #region enums
@@ -24,19 +25,13 @@ namespace IDE.Common.Models
             On,
             Off
         }
-
-        public enum ReadOnly
-        {
-            Yes,
-            No
-        }
+        
 
         #endregion
 
-        public ProgramEditor(Highlighting highlighting, ReadOnly readOnly)
+        public ProgramEditor(Highlighting highlighting)
         {
             this.highlighting = highlighting;
-            this.readOnly = readOnly;
             InitializeAvalon();
         }
 
@@ -54,7 +49,7 @@ namespace IDE.Common.Models
                 return currentProgram;
             }
         }
-
+        
         #endregion
 
         #region Actions
@@ -65,10 +60,6 @@ namespace IDE.Common.Models
             Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            if (readOnly == ReadOnly.Yes)
-            {
-                IsReadOnly = true;
-            }
 
             if (highlighting == Highlighting.On)
             {
@@ -88,12 +79,12 @@ namespace IDE.Common.Models
 
             TextArea.TextEntering += TextEntering;
             TextArea.TextEntered += TextEntered;
-            TextArea.PreviewKeyDown += KeyIsDown;
+            TextArea.PreviewKeyDown += KeyIsDown;     
         }
 
         private void KeyIsDown(object sender, KeyEventArgs e)
         {
-            //tbi
+
         }
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
@@ -108,6 +99,34 @@ namespace IDE.Common.Models
         {
             //tbi
         }
+
+        public void ExportContent(string defaultFileName, string extension)
+        {
+            try
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.FileName = defaultFileName; // Default file name
+                dialog.DefaultExt = extension; // Default file extension
+                dialog.Filter = $"{extension} files (.{extension}|*.{extension}"; // Filter files by extension
+
+                // Process save file dialog box results
+                if (dialog.ShowDialog() == false)
+                {
+                    return;
+                }
+
+                string[] lines = Text.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+
+                File.WriteAllLines($"{dialog.FileName}", lines);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Something went very wrong here. Try again tommorow.",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
 
         #endregion
 

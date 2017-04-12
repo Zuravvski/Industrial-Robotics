@@ -1,11 +1,11 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
+using Driver;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -84,7 +84,7 @@ namespace IDE.Common.Models
 
         private void KeyIsDown(object sender, KeyEventArgs e)
         {
-
+            //tbi
         }
 
         private void TextEntered(object sender, TextCompositionEventArgs e)

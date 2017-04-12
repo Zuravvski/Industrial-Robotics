@@ -1,11 +1,15 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO.Ports;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ManipulatorDriver
+namespace Driver
 {
-   public class SerialComm : DataSupplier
+   public class SerialComm
     {
+        private readonly SerialPort port;
+
+        #region Enums and data structures
         public enum Terminator
         {
             NONE,
@@ -13,10 +17,17 @@ namespace ManipulatorDriver
             LF,     // Line feed
             CRLF    // Both
         };
-        private const SerialComm.Terminator DEFAULT_FRAME_TERMINATOR = SerialComm.Terminator.CR;
+        private const Terminator DEFAULT_FRAME_TERMINATOR = SerialComm.Terminator.CR;
+        public static readonly int DEFAULT_BUFFER_SIZE = 1024;
+        #endregion
 
-        private readonly SerialPort port;
-        public Terminator FrameTerminator { get; set; }
+        #region Events
+
+        public delegate void ReceiveData(string data);
+
+        public event ReceiveData DataReceived;
+
+        #endregion
 
         #region Properties
         public int BaudRate
@@ -49,13 +60,20 @@ namespace ManipulatorDriver
             set { port.RtsEnable = value; }
         }
 
+        public int BufferSize { get; set; }
+
+        public Terminator FrameTerminator { get; set; }
+
+        public bool Opened => port.IsOpen;
+
         #endregion
 
+        // TODO: Builder instead of constructors
         public SerialComm()
         {
             port = new SerialPort();
-
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
+            BufferSize = DEFAULT_BUFFER_SIZE;
             port.DataReceived += Port_DataReceived;
         }
 
@@ -63,6 +81,7 @@ namespace ManipulatorDriver
         {
             this.port = port;
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
+            BufferSize = DEFAULT_BUFFER_SIZE;
             port.DataReceived += Port_DataReceived;
         }
 
@@ -73,7 +92,7 @@ namespace ManipulatorDriver
             {
                 read += port.ReadExisting();
             }
-            NotifyObservers(read);
+            DataReceived?.Invoke(read);
         }
 
         public void OpenPort(string portName)
@@ -105,8 +124,36 @@ namespace ManipulatorDriver
             catch (Exception e)
             {
                 Console.Error.WriteLine(e.Message);
-                Debug.WriteLine(e.Message);
             }
+        }
+
+        public async Task WriteAsync(string data)
+        {
+            try
+            {
+                var buffer = Encoding.ASCII.GetBytes(data);
+                await port.BaseStream.WriteAsync(buffer, 0, buffer.Length);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
+        }
+
+        public async Task<string> ReadAsync()
+        {
+            var buffer = new byte[1024];
+            try
+            {
+                var bytesRead = await port.BaseStream.ReadAsync(buffer, 0, buffer.Length);
+                Array.Resize(ref buffer, bytesRead);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
+
+            return Encoding.ASCII.GetString(buffer);
         }
 
         private string GetTerminator()

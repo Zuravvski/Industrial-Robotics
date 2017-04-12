@@ -1,18 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Threading;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Driver;
-using ManipulatorDriver;
-using IDE.Common.ViewModel;
-using IDE.Common.Views;
-using System.Collections.Specialized;
+﻿using System.Windows.Controls;
 using IDE.Common.ViewModels;
 
 namespace IDE.Views

@@ -1,8 +1,6 @@
 ﻿using System.IO.Ports;
-using ManipulatorDriver;
-using Driver;
 
-namespace manipulatorDriver
+namespace Driver
 {
     public class SerialBuilder
     {

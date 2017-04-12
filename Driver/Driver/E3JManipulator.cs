@@ -1,14 +1,11 @@
-﻿using manipulatorDriver;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using ManipulatorDriver;
 
 namespace Driver
 {
-    public class E3JManipulator : Observer
+    public class E3JManipulator
     {
-
         #region Enums
         public enum GrabE { Closed, Open };
 
@@ -57,6 +54,7 @@ namespace Driver
         #region Fields and Properties
 
         public SerialComm Port { get; private set; }
+        public bool Connected => Port.Opened;
         public double X { get; private set; }
         public double Y { get; private set; }
         public double Z { get; private set; }
@@ -70,7 +68,7 @@ namespace Driver
         {
             Port = new SerialBuilder().Build();
             lastRequest = ResponsiveCommand.INVALID;
-            Port.Subscribe(this);
+            Port.DataReceived += Port_DataReceived;
         }
 
         public void Connect(string portName)
@@ -472,7 +470,7 @@ namespace Driver
         /// <param name="grab">Specify hand state.</param>
         public void Move(uint positionNumber = 0, GrabE grab = GrabE.Open)
         {
-            Port.Write($"MO {positionNumber},{grabStateToString(grab)}");
+            Port.Write($"MO {positionNumber},{GrabStateToString(grab)}");
         }
 
         /// <summary>
@@ -553,7 +551,7 @@ namespace Driver
         /// <param name="grab">Specify open or close state of the hand.</param>
         public void MoveRA(uint positionNumber, GrabE grab)
         {
-            Port.Write($"MRA {positionNumber},{grabStateToString(grab)}");
+            Port.Write($"MRA {positionNumber},{GrabStateToString(grab)}");
             Where();
         }
 
@@ -584,7 +582,7 @@ namespace Driver
         /// <param name="grab">Specify open or close state of the hand.</param>
         public void MoveTool(uint positionNumber, double travelDistance = 0, GrabE grab = GrabE.Closed)
         {
-            Port.Write($"MT {positionNumber},{travelDistance},{grabStateToString(grab)}");
+            Port.Write($"MT {positionNumber},{travelDistance},{GrabStateToString(grab)}");
         }
 
         /// <summary>
@@ -605,7 +603,7 @@ namespace Driver
         /// <param name="grab">Specify open or close state of the hand.</param>
         public void MoveToolStraight(uint positionNumber, double travelDistance = 0, GrabE grab = GrabE.Closed)
         {
-            Port.Write($"MTS {positionNumber},{travelDistance},{grabStateToString(grab)}");
+            Port.Write($"MTS {positionNumber},{travelDistance},{GrabStateToString(grab)}");
         }
 
         /// <summary>
@@ -1038,8 +1036,13 @@ namespace Driver
             Port.Write($"' {comment}");
         }
 
-        // TODO: Consider regex validation
-        public void getNotified(string data)
+        private string GrabStateToString(GrabE grab)
+        {
+            return grab == GrabE.Open ? "O" : "C";
+        }
+
+        // TODO: Delete later - it's only for debugging purposes
+        private void Port_DataReceived(string data)
         {
             Debug.WriteLine(data);
             switch (lastRequest)
@@ -1055,14 +1058,10 @@ namespace Driver
             }
         }
 
-        private string grabStateToString(GrabE grab)
+        // TODO: Completely useless - to remove
+        private void Parse(string position)
         {
-            return grab == GrabE.Open ? "O" : "C";
-        }
-
-        public void Parse(string position)
-        {
-            string[] splitted = position.Replace("+", "").Replace("\r", "").Split(',');
+            var splitted = position.Replace("+", "").Replace("\r", "").Split(',');
             if (splitted.Length != 10) return;
 
             try

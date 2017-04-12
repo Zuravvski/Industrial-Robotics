@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -20,7 +19,7 @@ namespace IDE.Common.ViewModels
     public class EditorViewModel : ObservableObject
     {
         private ProgramEditor programEditor;
-        
+        private readonly ProgramService programService;
         private string programName;
         private Program selectedProgram;
         private SolidColorBrush themeColor;
@@ -76,12 +75,7 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        private static EditorViewModel instance = new EditorViewModel();
-        public static EditorViewModel Instance
-        {
-            set { instance = value; }
-            get { return instance; }
-        }
+        public static EditorViewModel Instance { set; get; }
 
         public string Text
         {
@@ -106,9 +100,11 @@ namespace IDE.Common.ViewModels
             programEditor = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.ReadOnly.No);
 
             manipulator = new E3JManipulator();
+            manipulator.Connect("COM5");
+            programService = new ProgramService(manipulator);
 
             //ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2")); //default color
-            
+
             ThemeColor = AppearanceViewModel.Instance != null ? 
                 new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
 
@@ -319,21 +315,7 @@ namespace IDE.Common.ViewModels
             {
                 return send ?? (send = new DelegateCommand(delegate
                 {
-                    try
-                    {
-                        var lines = ProgramEditor.CurrentProgram.GetLines();
-
-                        foreach (var line in lines)
-                        {
-                            Thread.Sleep(300);
-                            manipulator.SendCustom(line);
-                            Debug.WriteLine(line);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("wyjebalo error");
-                    }
+                    programService.DownloadProgram(ProgramEditor.CurrentProgram);
                 }));
             }
         }

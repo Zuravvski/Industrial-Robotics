@@ -78,7 +78,6 @@
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\Message.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
-    <Compile Include="Common\Models\Program.cs" />
     <Compile Include="Common\Models\ListManager.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
     <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />

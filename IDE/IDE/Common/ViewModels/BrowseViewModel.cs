@@ -85,7 +85,7 @@ namespace IDE.Common.ViewModels
             if (!string.IsNullOrEmpty(UserInputText))
             {
                 MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), UserInputText));
-                ProgramEditor.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + "\t\t" + 
+                ProgramEditor.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " + 
                     MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
                 ProgramEditor.ScrollToEnd();
                 UserInputText = string.Empty;

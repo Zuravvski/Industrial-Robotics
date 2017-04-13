@@ -17,7 +17,7 @@ namespace Driver
         public string Name { private set; get; }
         public string Path { set; get; }
         public string Content { set; get; }
-        public List<Position> Positions;
+        //public List<Position> Positions;
 
         #endregion
 

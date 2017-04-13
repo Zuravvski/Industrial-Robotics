@@ -46,11 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataSupplier.cs" />
     <Compile Include="DriverSettings.cs" />
     <Compile Include="E3JManipulator.cs" />
     <Compile Include="IXMLObject.cs" />
-    <Compile Include="Observer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgramService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

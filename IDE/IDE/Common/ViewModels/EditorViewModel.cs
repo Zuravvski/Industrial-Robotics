@@ -13,6 +13,9 @@ using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 using IDE.ViewModels;
+using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.AvalonEdit.Document;
+using System.Collections.Generic;
 
 namespace IDE.Common.ViewModels
 {
@@ -109,8 +112,25 @@ namespace IDE.Common.ViewModels
                 new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
 
             Instance = this;
+
+            ProgramEditor.TextArea.TextEntering += TextArea_TextEntering;
         }
 
+        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (ProgramEditor.IsLineValid != null)
+            {
+                List<bool> list = ProgramEditor.IsLineValid;
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (!list[i])
+                        ProgramEditor.TextArea.TextView.LineTransformers.Add(new LineColorizer(i + 1, LineColorizer.IsValid.No));
+                    else
+                        ProgramEditor.TextArea.TextView.LineTransformers.Add(new LineColorizer(i + 1, LineColorizer.IsValid.Yes));
+                }
+            }
+        }
         #endregion
 
         #region Commands

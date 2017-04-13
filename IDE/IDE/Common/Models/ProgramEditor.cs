@@ -10,6 +10,9 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Microsoft.Win32;
+using System;
+using System.Timers;
+using System.Collections.Generic;
 
 namespace IDE.Common.Models
 {
@@ -18,9 +21,12 @@ namespace IDE.Common.Models
         private readonly Highlighting highlighting;
         private Program currentProgram;
 
-        #region enums
+        Timer regexTimer = new Timer();
 
-        public enum Highlighting
+
+    #region enums
+
+    public enum Highlighting
         {
             On,
             Off
@@ -33,7 +39,12 @@ namespace IDE.Common.Models
         {
             this.highlighting = highlighting;
             InitializeAvalon();
+
+            regexTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            regexTimer.Interval = 1000;
+            regexTimer.Enabled = true;
         }
+
 
         #region Properties
 
@@ -49,6 +60,8 @@ namespace IDE.Common.Models
                 return currentProgram;
             }
         }
+
+        public List<bool> IsLineValid { get; private set; }
         
         #endregion
 
@@ -127,6 +140,27 @@ namespace IDE.Common.Models
             }
         }
 
+        private void CheckLineValidation()
+        {
+            List<bool> isLineValid = new List<bool>();
+            if (CurrentProgram != null && !string.IsNullOrEmpty(CurrentProgram.Content))
+            {
+                string[] lines = CurrentProgram.Content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    isLineValid.Add(RegexMatching.InputMatching(lines[i]));
+                }
+            }
+
+            IsLineValid = isLineValid;
+        }
+
+
+        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            CheckLineValidation();
+        }
 
         #endregion
 

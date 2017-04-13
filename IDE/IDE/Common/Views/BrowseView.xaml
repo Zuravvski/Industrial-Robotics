@@ -23,7 +23,13 @@
 
         <!--List-->
         <TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <ListView x:Name="listView_RobotList" Grid.ColumnSpan="2" Margin="0,23,191.8,46" Grid.RowSpan="4"/>
+        <ListView Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
         <!--Buttons for list management-->
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">

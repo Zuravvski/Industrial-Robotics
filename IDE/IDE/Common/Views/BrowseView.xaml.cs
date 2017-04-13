@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using IDE.Common.ViewModels;
+using System.Windows;
 
 namespace IDE.Views
 {

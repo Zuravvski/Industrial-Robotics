@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,10 +39,22 @@ namespace IDE.Common.ViewModels
             ColorComments = currentDefinitions[6];
 
 
-            ExportClickCommand = new RelayCommand(Export);
-            ImportClickCommand = new RelayCommand(Import);
-            ApplyClickCommand = new RelayCommand(Apply);
+            ExportClickCommand = new RelayCommand(Export, IsFileAvailable);
+            ImportClickCommand = new RelayCommand(Import, IsFileAvailable);
+            ApplyClickCommand = new RelayCommand(Apply, IsFileAvailable);
+        }
 
+        private bool IsFileAvailable(object obj)
+        {
+            string[] files = Directory.GetFiles(".", "*xshd");
+
+            foreach (string file in files)
+            {
+                if (file == ".\\CustomHighlighting.xshd")
+                    return true;
+            }
+
+            return false;
         }
 
 

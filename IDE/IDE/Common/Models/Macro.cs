@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace IDE.Common.Models
 {
     public class Macro
     {
+
+        #region Constructor
+
         /// <summary>
         /// Initializes new Macro.
         /// </summary>
@@ -19,8 +23,14 @@ namespace IDE.Common.Models
             Content = content;
         }
 
+        #endregion
+
+        #region Properties
+
         public string Name { get; private set; }
-        public string Content { get; private set; }
+        public string Content { get; set; }
+
+        #endregion
 
     }
 }

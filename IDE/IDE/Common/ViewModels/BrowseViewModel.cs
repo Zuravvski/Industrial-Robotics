@@ -11,7 +11,6 @@ namespace IDE.Common.ViewModels
     public class BrowseViewModel : ObservableObject
     {
         ProgramEditor commandHistory, commandInput;
-        MacroManager macroManager;
         bool lineWasNotValid;
 
         public BrowseViewModel()
@@ -21,7 +20,6 @@ namespace IDE.Common.ViewModels
             InitializeCommandInput();
 
             MessageList = new MessageList();    //list storing sent commands
-            macroManager = new MacroManager();
         }
 
 

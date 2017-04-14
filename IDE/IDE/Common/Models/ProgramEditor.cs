@@ -18,23 +18,27 @@ namespace IDE.Common.Models
 {
     public class ProgramEditor : TextEditor
     {
+
+        #region Fields
+
         private readonly Highlighting highlighting;
         private Program currentProgram;
         private Macro currentMacro;
-
         Timer regexTimer = new Timer();
 
+        #endregion
 
-    #region enums
+        #region enums
 
-    public enum Highlighting
+        public enum Highlighting
         {
             On,
             Off
         }
-        
 
         #endregion
+
+        #region Constructor
 
         public ProgramEditor(Highlighting highlighting)
         {
@@ -46,6 +50,7 @@ namespace IDE.Common.Models
             regexTimer.Enabled = true;
         }
 
+        #endregion
 
         #region Properties
 

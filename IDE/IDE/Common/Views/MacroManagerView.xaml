@@ -19,8 +19,15 @@
 
         <TextBlock Text="Available macros:"  Grid.Row="0" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Bottom"/>
         <TextBlock Text="{Binding CurrentMacroText}" Grid.Row="0" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Bottom"/>
+
+        <ListView ItemsSource="{Binding Path=MacroManager.Macros}" SelectedItem="{Binding SelectedMacro}" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         
-        <ListView Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"/>
         <StackPanel Grid.Row="2" Grid.Column="0"  Orientation="Horizontal">
             <Button Content="Create" Command="{Binding CreateCommand}"/>
             <Button Content="Load" Command="{Binding LoadCommand}"/>

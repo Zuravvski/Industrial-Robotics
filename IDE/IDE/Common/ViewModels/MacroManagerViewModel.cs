@@ -4,26 +4,37 @@ using IDE.Common.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace IDE.Common.ViewModels
 {
     public class MacroManagerViewModel : ObservableObject
     {
-        private MacroManager macroManager;
+
+        #region Fields
+
         private ProgramEditor macroEditor;
+        private Macro selectedMacro;
         private string currentMacroText;
+
+        #endregion
+
+        #region Constructor
 
         public MacroManagerViewModel()
         {
             DeclareCommands();
             InitializeMacroEditor();
 
-            macroManager = new MacroManager();
+            MacroManager = new MacroManager(MacroEditor);
+            MacroManager.CurrentMacro = null;   //after startup our editor will be disabled till we create/load program
         }
 
+        #endregion
 
         #region Properties
 
@@ -40,9 +51,24 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        public MacroManager MacroManager { get; private set; }
+
+        public Macro SelectedMacro
+        {
+            set
+            {
+                selectedMacro = value;
+                NotifyPropertyChanged("SelectedMacro");
+            }
+            get
+            {
+                return selectedMacro;
+            }
+        }
+
         public string CurrentMacroText
         {
-            private set
+            set
             {
                 currentMacroText = value;
                 NotifyPropertyChanged("CurrentMacroText");
@@ -68,25 +94,55 @@ namespace IDE.Common.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                macroManager.Macros.Add(new Macro(dialog.UserInput, string.Empty));
+                MacroManager.Macros.Add(new Macro(dialog.UserInput, string.Empty));
             }
 
-            MacroEditor.CurrentMacro = macroManager.Macros[macroManager.Macros.Count];  //sets new macro as current one
+            MacroManager.CurrentMacro = MacroManager.Macros[MacroManager.Macros.Count - 1]; //sets new macro as current one
+            CurrentMacroText = MacroManager.CurrentMacro.Name;                              //and update text above editor
+            MacroEditor.Text = MacroManager.CurrentMacro.Content;                           //aswell as editor itself
+
+            MacroManager.ToTxt();
         }
 
         private void Load(object obj)
         {
-            throw new NotImplementedException();
+            if (SelectedMacro != null)
+            {
+                MacroManager.CurrentMacro = SelectedMacro;
+                CurrentMacroText = MacroManager.CurrentMacro.Name;
+                MacroEditor.Text = MacroManager.CurrentMacro.Content;
+
+                SelectedMacro = null;
+            }
         }
 
         private void Save(object obj)
         {
-            throw new NotImplementedException();
+            MacroManager.CurrentMacro.Content = MacroEditor.Text;
+
+            var macros = MacroManager.Macros;
+
+            MacroManager.ToTxt();
+
+            SelectedMacro = null;
         }
 
         private void Delete(object obj)
         {
-            throw new NotImplementedException();
+            if (SelectedMacro != null)
+            {
+                if (SelectedMacro == MacroManager.CurrentMacro)
+                {
+                    MacroEditor.Text = string.Empty;
+                    MacroManager.CurrentMacro = null;
+                    CurrentMacroText = null;
+                }
+                MacroManager.Macros.Remove(SelectedMacro);
+
+                MacroManager.ToTxt();
+
+                SelectedMacro = null;
+            }
         }
 
         #endregion
@@ -102,11 +158,20 @@ namespace IDE.Common.ViewModels
         private void DeclareCommands()
         {
             CreateCommand = new RelayCommand(Create);
-            LoadCommand = new RelayCommand(Load);
-            SaveCommand = new RelayCommand(Save);
-            DeleteCommand = new RelayCommand(Delete);
+            LoadCommand = new RelayCommand(Load, IsItemSelected);
+            SaveCommand = new RelayCommand(Save, IsCurrentMacroNotNull);
+            DeleteCommand = new RelayCommand(Delete, IsItemSelected);
         }
 
+        private bool IsItemSelected(object obj)
+        {
+            return SelectedMacro != null;
+        }
+
+        private bool IsCurrentMacroNotNull(object obj)
+        {
+            return MacroManager.CurrentMacro != null;
+        }
 
         #endregion
 

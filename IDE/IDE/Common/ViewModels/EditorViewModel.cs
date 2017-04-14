@@ -127,7 +127,7 @@ namespace IDE.Common.ViewModels
                     if (!list[i])
                         ProgramEditor.TextArea.TextView.LineTransformers.Add(new LineColorizer(i + 1, LineColorizer.IsValid.No));
                     else
-                        ProgramEditor.TextArea.TextView.LineTransformers.Add(new LineColorizer(i + 1, LineColorizer.IsValid.Yes));
+                        ProgramEditor.TextArea.TextView.LineTransformers.Clear();
                 }
             }
         }

@@ -41,7 +41,7 @@ namespace IDE.Common.Models
             InitializeAvalon();
 
             regexTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            regexTimer.Interval = 1000;
+            regexTimer.Interval = 10000;
             regexTimer.Enabled = true;
         }
 
@@ -62,6 +62,7 @@ namespace IDE.Common.Models
         }
 
         public List<bool> IsLineValid { get; private set; }
+        public bool DoSyntaxCheck { get; set; }
         
         #endregion
 
@@ -156,10 +157,20 @@ namespace IDE.Common.Models
             IsLineValid = isLineValid;
         }
 
+        public static bool CheckLineValidationManually(string line)
+        {
+            if (!string.IsNullOrEmpty(line))
+            {
+                return RegexMatching.InputMatching(line);
+            }
+            return false;
+        }
+
 
         private void OnTimedEvent(object sender, ElapsedEventArgs e)
         {
-            CheckLineValidation();
+            if (DoSyntaxCheck == true)
+                CheckLineValidation();
         }
 
         #endregion

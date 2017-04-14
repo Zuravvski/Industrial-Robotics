@@ -39,7 +39,7 @@ namespace IDE.Common.Models
             if (isValid == IsValid.No)
                 element.TextRunProperties.SetBackgroundBrush(Brushes.Red);
             else
-                element.TextRunProperties.SetBackgroundBrush(Brushes.White);
+                element.TextRunProperties.SetBackgroundBrush(Brushes.White);    //is this even needed?
         }
     }
 }

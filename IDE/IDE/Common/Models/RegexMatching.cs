@@ -36,7 +36,8 @@ namespace IDE.Common.Models
             regexes.Add(new Regex(@"^\s*MRA\s+([0-9]|[1-9][0-9]|[1-9][0-9][0-9])\s*((,\s*)(O|C))?\s*$"));                                                //MRA
             regexes.Add(new Regex(@"^\s*RC\s+([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-3][0-2][0-7][0-6][0-7])\s*$"));                  //RC
             regexes.Add(new Regex(@"^\s*NX\s*$"));                                                                                                      //NX
-            regexes.Add(new Regex("^\\s*N\\s+(\\d+|\"\\w+\")\\s*$"));                                                                                       //N
+            regexes.Add(new Regex("^\\s*N\\s+(\\d+|\"\\w+\")\\s*$"));                                                                                   //N
+            regexes.Add(new Regex(@"^\s*OVR\s+([1-9]|[1-9][0-9]|1[0-9][0-9]|200)\s*$"));                                                                //OVR (1-200)
 
 
             foreach (Regex regex in regexes)

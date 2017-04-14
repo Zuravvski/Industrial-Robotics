@@ -11,6 +11,7 @@ namespace IDE.Common.ViewModels
     public class BrowseViewModel : ObservableObject
     {
         ProgramEditor commandHistory, commandInput;
+        bool lineWasNotValid;
 
         public BrowseViewModel()
         {
@@ -67,6 +68,21 @@ namespace IDE.Common.ViewModels
             CommandInput.BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41));
             CommandInput.BorderThickness = new Thickness(0, 0, 2, 0);   //make only right border visible
             CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown; //to ensure 'enter' triggers Send() event
+            CommandInput.TextChanged += CommandInput_TextChanged;
+        }
+
+        private void CommandInput_TextChanged(object sender, EventArgs e)
+        {
+            if (lineWasNotValid)
+            {
+                bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
+
+                if (isLineValid)
+                {
+                    CommandInput.TextArea.TextView.LineTransformers.Clear();
+                    lineWasNotValid = false;
+                }
+            }
         }
 
         private void InitializeCommandHistory()
@@ -98,11 +114,34 @@ namespace IDE.Common.ViewModels
         {
             if (!string.IsNullOrEmpty(CommandInput.Text))
             {
-                MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
-                CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
-                    MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
-                CommandHistory.ScrollToEnd();
-                CommandInput.Text = string.Empty;
+                if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
+                {
+                    CommandInput.TextArea.TextView.LineTransformers.Clear();
+                    MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
+                    CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
+                        MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                    CommandHistory.ScrollToEnd();
+                    CommandInput.Text = string.Empty;
+                }
+                else //if user wants to check syntax
+                {
+                    bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
+
+                    if (isLineValid)    //if line is valid, send it
+                    {
+                        CommandInput.TextArea.TextView.LineTransformers.Clear();
+                        MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
+                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
+                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                        CommandHistory.ScrollToEnd();
+                        CommandInput.Text = string.Empty;
+                    }
+                    else //if line is not valid colorize line and do nothing
+                    {
+                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.IsValid.No));
+                        lineWasNotValid = true;
+                    }
+                }
             }
         }
 
@@ -171,6 +210,15 @@ namespace IDE.Common.ViewModels
                 FontReduce();   //scrolls toward user
         }
 
+        private void OffSyntaxCheck(object obj)
+        {
+            CommandInput.DoSyntaxCheck = false;
+        }
+
+        private void OnSyntaxCheck(object obj)
+        {
+            CommandInput.DoSyntaxCheck = true;
+        }
 
         #endregion
 
@@ -190,6 +238,8 @@ namespace IDE.Common.ViewModels
         public ICommand FontTNRomanCommand { get; private set; }
         public ICommand FontCalibriCommand { get; private set; }
         public ICommand FontArialCommand { get; private set; }
+        public ICommand OnSyntaxCheckCommand { get; private set; }
+        public ICommand OffSyntaxCheckCommand { get; private set; }
 
         private void DeclareCommands()
         {
@@ -204,6 +254,8 @@ namespace IDE.Common.ViewModels
             FontTNRomanCommand = new RelayCommand(FontTimesNewRoman);
             FontCalibriCommand = new RelayCommand(FontCalibri);
             FontArialCommand = new RelayCommand(FontArial);
+            OnSyntaxCheckCommand = new RelayCommand(OnSyntaxCheck);
+            OffSyntaxCheckCommand = new RelayCommand(OffSyntaxCheck);
         }
 
         #endregion

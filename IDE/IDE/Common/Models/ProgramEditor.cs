@@ -20,6 +20,7 @@ namespace IDE.Common.Models
     {
         private readonly Highlighting highlighting;
         private Program currentProgram;
+        private Macro currentMacro;
 
         Timer regexTimer = new Timer();
 
@@ -47,6 +48,19 @@ namespace IDE.Common.Models
 
 
         #region Properties
+
+        public Macro CurrentMacro
+        {
+            set
+            {
+                currentMacro = value;
+                Text = value == null ? string.Empty : CurrentMacro.Content;
+            }
+            get
+            {
+                return currentMacro;
+            }
+        }
 
         public Program CurrentProgram
         {

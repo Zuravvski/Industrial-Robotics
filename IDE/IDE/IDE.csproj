@@ -98,6 +98,8 @@
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\LineColorizer.cs" />
+    <Compile Include="Common\Models\Macro.cs" />
+    <Compile Include="Common\Models\MacroManager.cs" />
     <Compile Include="Common\Models\Message.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\ListManager.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
     <Compile Include="Common\ViewModels\HighlightingViewModel.cs" />
     <Compile Include="Common\ViewModels\HomeViewModel.cs" />
+    <Compile Include="Common\ViewModels\MacroManagerViewModel.cs" />
     <Compile Include="Common\Views\BrowseView.xaml.cs">
       <DependentUpon>BrowseView.xaml</DependentUpon>
     </Compile>
@@ -135,6 +138,9 @@
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MyCompletionData.cs" />
+    <Compile Include="Common\Views\MacroManagerView.xaml.cs">
+      <DependentUpon>MacroManagerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\Views\SaveAsDialog.xaml.cs">
       <DependentUpon>SaveAsDialog.xaml</DependentUpon>
     </Compile>
@@ -156,6 +162,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Common\Views\HighlightingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\MacroManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -158,7 +158,7 @@ namespace IDE.ViewModels
 
                     AppearanceManager.Current.AccentColor = value;
                     
-                    EditorViewModel.Instance.ThemeColor = new SolidColorBrush(selectedAccentColor);
+                    //EditorViewModel.Instance.ThemeColor = new SolidColorBrush(selectedAccentColor);
                 }
             }
         }

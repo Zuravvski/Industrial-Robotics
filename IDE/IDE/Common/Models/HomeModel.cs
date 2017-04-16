@@ -1,4 +1,4 @@
-﻿namespace IDE.Common.Model
+﻿namespace IDE.Common.Models
 {
     public class HomeModel
     {

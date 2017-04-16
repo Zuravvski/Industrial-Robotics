@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace IDE.Common.Models
 {
@@ -14,7 +10,7 @@ namespace IDE.Common.Models
 
         public static bool InputMatching(string line)
         {
-            List<Regex> regexes = new List<Regex>();
+            var regexes = new List<Regex>();
 
             //patterns
             regexes.Add(new Regex(@"^\s*GO\s*$"));                                                                                                      //GO

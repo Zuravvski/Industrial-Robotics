@@ -1,15 +1,7 @@
 ﻿using IDE.Common.ViewModels.Commands;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xaml;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace IDE.Common.Models
 {
@@ -18,7 +10,7 @@ namespace IDE.Common.Models
 
         #region Fields
 
-        private ProgramEditor macroEditor;
+        private readonly ProgramEditor macroEditor;
         private Macro currentMacro;
         private ObservableCollection<Macro> macros;
 

@@ -1,17 +1,12 @@
 ﻿using ICSharpCode.AvalonEdit.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace IDE.Common.Models
 {
-    class LineColorizer : DocumentColorizingTransformer
+    public class LineColorizer : DocumentColorizingTransformer
     {
-        int lineNumber;
-        IsValid isValid;
+        private int lineNumber;
+        private IsValid isValid;
 
         public enum IsValid
         {

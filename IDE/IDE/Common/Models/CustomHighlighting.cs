@@ -1,12 +1,7 @@
-﻿using IDE.Common.Views;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -46,13 +41,7 @@ namespace IDE.Common.Models
             }
         }
 
-        public Color[] ImportDefinitionsColors
-        {
-            get
-            {
-                return Import();
-            }
-        }
+        public Color[] ImportDefinitionsColors => Import();
 
         #endregion
 
@@ -144,14 +133,19 @@ namespace IDE.Common.Models
 
         private Color[] Import()
         {
-            Color[] colors = new Color[7];
+            var colors = new Color[7];
 
             try
             {
-                OpenFileDialog dialog = new OpenFileDialog();
-                dialog.FileName = "CustomHighlighting"; // Default file name
-                dialog.DefaultExt = ".xshd"; // Default file extension
-                dialog.Filter = "xshd files (.xshd)|*.xshd"; // Filter files by extension
+                var dialog = new OpenFileDialog
+                {
+                    FileName = "CustomHighlighting",
+                    DefaultExt = ".xshd",
+                    Filter = "xshd files (.xshd)|*.xshd"
+                };
+                // Default file name
+                // Default file extension
+                // Filter files by extension
 
                 // Process open file dialog box results
                 if (dialog.ShowDialog() == false)
@@ -197,10 +191,15 @@ namespace IDE.Common.Models
         {
             try
             {
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.FileName = "CustomHighlighting"; // Default file name
-                dialog.DefaultExt = ".xshd"; // Default file extension
-                dialog.Filter = "xshd files (.xshd)|*.xshd"; // Filter files by extension
+                var dialog = new SaveFileDialog
+                {
+                    FileName = "CustomHighlighting",
+                    DefaultExt = ".xshd",
+                    Filter = "xshd files (.xshd)|*.xshd"
+                };
+                // Default file name
+                // Default file extension
+                // Filter files by extension
 
                 // Process save file dialog box results
                 if (dialog.ShowDialog() == false)
@@ -209,15 +208,15 @@ namespace IDE.Common.Models
                 }
 
 
-                string movement = colors[0].ToString().Remove(1, 2);
-                string grip = colors[1].ToString().Remove(1, 2);
-                string counters = colors[2].ToString().Remove(1, 2);
-                string programming = colors[3].ToString().Remove(1, 2);
-                string informations = colors[4].ToString().Remove(1, 2);
-                string numbers = colors[5].ToString().Remove(1, 2);
-                string comments = colors[6].ToString().Remove(1, 2);
+                var movement = colors[0].ToString().Remove(1, 2);
+                var grip = colors[1].ToString().Remove(1, 2);
+                var counters = colors[2].ToString().Remove(1, 2);
+                var programming = colors[3].ToString().Remove(1, 2);
+                var informations = colors[4].ToString().Remove(1, 2);
+                var numbers = colors[5].ToString().Remove(1, 2);
+                var comments = colors[6].ToString().Remove(1, 2);
 
-                string[] definitionLines = File.ReadAllLines("CustomHighlighting.xshd");
+                var definitionLines = File.ReadAllLines("CustomHighlighting.xshd");
 
                 //replace outdated colors with new ones
                 definitionLines[2] = $"\t<Color name=\"Comment\" foreground=\"{comments}\" />";

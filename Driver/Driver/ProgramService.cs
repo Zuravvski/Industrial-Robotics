@@ -7,11 +7,11 @@ namespace Driver
 {
     public class ProgramService
     {
-        public E3JManipulator Manipulator { get; private set; }
+        private readonly E3JManipulator manipulator;
 
         public ProgramService(E3JManipulator manipulator)
         {
-            Manipulator = manipulator;
+            this.manipulator = manipulator;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Driver
         /// <param name="program"></param>
         public void DownloadProgram(Program program)
         {
-            if (!Manipulator.Connected) return;
+            if (!manipulator.Connected) return;
             try
             {
                 var lines = program.GetLines();
@@ -48,7 +48,7 @@ namespace Driver
                 {
                     Thread.Sleep(300);
                     var prefix = $"{Convert.ToString(i + 1)} ";
-                    Manipulator.SendCustom(prefix + lines[i]);
+                    manipulator.SendCustom(prefix + lines[i]);
                 }
             }
             catch (Exception ex)

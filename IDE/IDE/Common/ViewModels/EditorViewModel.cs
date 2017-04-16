@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using Driver;
@@ -13,8 +12,6 @@ using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 using IDE.ViewModels;
-using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.AvalonEdit.Document;
 using System.Collections.Generic;
 
 namespace IDE.Common.ViewModels
@@ -120,9 +117,9 @@ namespace IDE.Common.ViewModels
         {
             if (ProgramEditor.IsLineValid != null)
             {
-                List<bool> list = ProgramEditor.IsLineValid;
+                var list = ProgramEditor.IsLineValid;
 
-                for (int i = 0; i < list.Count; i++)
+                for (var i = 0; i < list.Count; i++)
                 {
                     if (!list[i])
                         ProgramEditor.TextArea.TextView.LineTransformers.Add(new LineColorizer(i + 1, LineColorizer.IsValid.No));

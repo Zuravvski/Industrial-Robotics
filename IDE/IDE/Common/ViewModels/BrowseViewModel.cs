@@ -1,17 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using IDE.Common.Models.Intellisense;
+using IDE.Common.Views;
 
 namespace IDE.Common.ViewModels
 {
     public class BrowseViewModel : ObservableObject
     {
-        ProgramEditor commandHistory, commandInput;
-        bool lineWasNotValid;
+        private ProgramEditor commandHistory, commandInput;
+        private bool lineWasNotValid;
+        private bool runIntellisense;
+        private readonly SyntaxChecker syntaxChecker;
+        private readonly Intellisense intellisense;
+        private CompletionWindow completionWindow;
 
         public BrowseViewModel()
         {
@@ -20,9 +29,9 @@ namespace IDE.Common.ViewModels
             InitializeCommandInput();
 
             MessageList = new MessageList();    //list storing sent commands
+            syntaxChecker = new SyntaxChecker();
+            intellisense = new Intellisense();
         }
-
-
 
         #region Properties
 
@@ -62,37 +71,76 @@ namespace IDE.Common.ViewModels
         #region CommandWindow
         private void InitializeCommandInput()
         {
-            CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On);
-            CommandInput.ShowLineNumbers = false;
-            CommandInput.Background = new SolidColorBrush(Color.FromRgb(61, 61, 61));
-            CommandInput.BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41));
-            CommandInput.BorderThickness = new Thickness(0, 0, 2, 0);   //make only right border visible
+            CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On)
+            {
+                ShowLineNumbers = false,
+                Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41)),
+                BorderThickness = new Thickness(0, 0, 2, 0)
+            };
+            //make only right border visible
             CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown; //to ensure 'enter' triggers Send() event
-            CommandInput.TextChanged += CommandInput_TextChanged;
+            CommandInput.TextChanged += CommandInput_TextChanged_SyntaxCheck;
+            CommandInput.TextChanged += CommandInput_TextChanged_Intellisense;
         }
 
-        private void CommandInput_TextChanged(object sender, EventArgs e)
+        private async void CommandInput_TextChanged_Intellisense(object sender, EventArgs e)
         {
-            if (lineWasNotValid)
-            {
-                bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
+            // Run intellisense every second text change to increase performance
+            runIntellisense = !runIntellisense;
+            if (!runIntellisense) return;
 
+            var tips = await intellisense.GetCompletionAsync(CommandInput.Text);
+            completionWindow = new CompletionWindow(CommandInput.TextArea);
+            var data = completionWindow.CompletionList.CompletionData;
+
+            foreach (var command in tips)
+            {
+                var completionData = new MyCompletionData(command.Content, command.Description);
+                data.Add(completionData);
+            }
+            completionWindow.Show();
+            completionWindow.Closed += delegate 
+            {
+                completionWindow = null;
+            };
+
+        }
+
+        private async void CommandInput_TextChanged_SyntaxCheck(object sender, EventArgs e)
+        {
+            if (!CommandInput.DoSyntaxCheck)
+            {
+                CommandInput.TextArea.TextView.LineTransformers.Clear();
+                lineWasNotValid = false;
+            }
+            else
+            {
+                var isLineValid = await syntaxChecker.ValidateAsync(CommandInput.Text);
                 if (isLineValid)
                 {
                     CommandInput.TextArea.TextView.LineTransformers.Clear();
                     lineWasNotValid = false;
+                }
+                else
+                {
+                    CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.IsValid.No));
+                    lineWasNotValid = true;
                 }
             }
         }
 
         private void InitializeCommandHistory()
         {
-            CommandHistory = new ProgramEditor(ProgramEditor.Highlighting.On);
-            CommandHistory.IsReadOnly = true;
-            CommandHistory.Background = new SolidColorBrush(Color.FromRgb(61, 61, 61));
-            CommandHistory.BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41));
-            CommandHistory.BorderThickness = new Thickness(0, 0, 0, 2);   //make only bottom border visible
-            CommandHistory.ShowLineNumbers = false;
+            CommandHistory = new ProgramEditor(ProgramEditor.Highlighting.On)
+            {
+                IsReadOnly = true,
+                Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41)),
+                BorderThickness = new Thickness(0, 0, 0, 2),
+                ShowLineNumbers = false
+            };
+            //make only bottom border visible
             CommandHistory.PreviewMouseWheel += CommandHistory_PreviewMouseWheel; CommandHistory.TextArea.FontFamily = new FontFamily("Cambria");
         }
 
@@ -110,7 +158,7 @@ namespace IDE.Common.ViewModels
             //tbi
         }
 
-        private void Send(object obj = null)
+        private async void Send(object obj = null)
         {
             if (!string.IsNullOrEmpty(CommandInput.Text))
             {
@@ -125,7 +173,8 @@ namespace IDE.Common.ViewModels
                 }
                 else //if user wants to check syntax
                 {
-                    bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
+                    //bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
+                    var isLineValid = await syntaxChecker.ValidateAsync(CommandInput.Text);
 
                     if (isLineValid)    //if line is valid, send it
                     {
@@ -172,7 +221,7 @@ namespace IDE.Common.ViewModels
 
         private void ClearHistory(object obj)
         {
-            CommandHistory.Text = String.Empty;
+            CommandHistory.Text = string.Empty;
         }
         private void FontTimesNewRoman(object obj)
         {

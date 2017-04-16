@@ -44,11 +44,6 @@ namespace Driver
             Plus,
             Minus
         };
-
-        private enum ResponsiveCommand
-        {
-            INVALID, WH, LR
-        };
         #endregion
 
         #region Fields and Properties
@@ -61,21 +56,17 @@ namespace Driver
         public double A { get; private set; }
         public double B { get; private set; }
         public GrabE Grab { get; private set; }
-        private ResponsiveCommand lastRequest;
         #endregion
 
         public E3JManipulator()
         {
             Port = new SerialBuilder().Build();
-            lastRequest = ResponsiveCommand.INVALID;
             Port.DataReceived += Port_DataReceived;
         }
 
         public void Connect(string portName)
         {
-            // TODO: Launching servo seems a pretty good idea
             Port.OpenPort(portName);
-            //Where();
         }
 
         public void Disconnect()
@@ -416,7 +407,6 @@ namespace Driver
         public void LineRead()
         {
             Port.Write("LR");
-            lastRequest = ResponsiveCommand.LR;
         }
 
 
@@ -427,7 +417,6 @@ namespace Driver
         public void LineRead(uint lineNumber = 0)
         {
             Port.Write($"LR {lineNumber}");
-            lastRequest = ResponsiveCommand.LR;
         }
 
         /// <summary>
@@ -541,7 +530,6 @@ namespace Driver
         public void MoveRA(uint positionNumber)
         {
             Port.Write($"MRA {positionNumber}");
-            Where();
         }
 
         /// <summary>
@@ -552,7 +540,6 @@ namespace Driver
         public void MoveRA(uint positionNumber, GrabE grab)
         {
             Port.Write($"MRA {positionNumber},{GrabStateToString(grab)}");
-            Where();
         }
 
         /// <summary>
@@ -1007,7 +994,6 @@ namespace Driver
         public void Where()
         {
             Port.Write("WH");
-            lastRequest = ResponsiveCommand.WH;
         }
 
         /// <summary>
@@ -1045,38 +1031,6 @@ namespace Driver
         private void Port_DataReceived(string data)
         {
             Debug.WriteLine(data);
-            switch (lastRequest)
-            {
-                case ResponsiveCommand.WH:
-                    Parse(data);
-                    lastRequest = ResponsiveCommand.INVALID;
-                    break;
-
-                case ResponsiveCommand.LR:
-                    lastRequest = ResponsiveCommand.INVALID;
-                    break;
-            }
-        }
-
-        // TODO: Completely useless - to remove
-        private void Parse(string position)
-        {
-            var splitted = position.Replace("+", "").Replace("\r", "").Split(',');
-            if (splitted.Length != 10) return;
-
-            try
-            {
-                X = double.Parse(splitted[0], CultureInfo.InvariantCulture);
-                Y = double.Parse(splitted[1], CultureInfo.InvariantCulture);
-                Z = double.Parse(splitted[2], CultureInfo.InvariantCulture);
-                A = double.Parse(splitted[3], CultureInfo.InvariantCulture);
-                B = double.Parse(splitted[4], CultureInfo.InvariantCulture);
-                Grab = splitted[9] == "O" ? GrabE.Open : GrabE.Closed;
-            }
-            catch (FormatException ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-            }
         }
     }
 }

@@ -98,8 +98,10 @@
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\AppSession.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
+    <Compile Include="Common\Models\Command.cs" />
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
+    <Compile Include="Common\Models\Intellisense\Intellisense.cs" />
     <Compile Include="Common\Models\LineColorizer.cs" />
     <Compile Include="Common\Models\Macro.cs" />
     <Compile Include="Common\Models\MacroManager.cs" />
@@ -110,6 +112,7 @@
     <Compile Include="Common\Models\RegexMatching.cs" />
     <Compile Include="Common\Models\RemoteListManager.cs" />
     <Compile Include="Common\Models\RemoteProgram.cs" />
+    <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />
     <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
@@ -141,6 +144,9 @@
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MyCompletionData.cs" />
+    <Compile Include="Common\Views\IntellisenseList.xaml.cs">
+      <DependentUpon>IntellisenseList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\Views\MacroManagerView.xaml.cs">
       <DependentUpon>MacroManagerView.xaml</DependentUpon>
     </Compile>
@@ -165,6 +171,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Common\Views\HighlightingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\IntellisenseList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -272,6 +282,7 @@
   <ItemGroup>
     <Resource Include="Icons\Open.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

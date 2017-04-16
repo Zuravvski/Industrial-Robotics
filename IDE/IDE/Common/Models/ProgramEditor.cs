@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -45,7 +44,8 @@ namespace IDE.Common.Models
             this.highlighting = highlighting;
             InitializeAvalon();
 
-            regexTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            var syntaxChecker = new SyntaxChecker();
+            regexTimer.Elapsed += OnTimedEvent;
             regexTimer.Interval = 10000;
             regexTimer.Enabled = true;
         }
@@ -137,10 +137,15 @@ namespace IDE.Common.Models
         {
             try
             {
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.FileName = defaultFileName; // Default file name
-                dialog.DefaultExt = extension; // Default file extension
-                dialog.Filter = $"{extension} files (.{extension}|*.{extension}"; // Filter files by extension
+                var dialog = new SaveFileDialog
+                {
+                    FileName = defaultFileName,
+                    DefaultExt = extension,
+                    Filter = $"{extension} files (.{extension}|*.{extension}"
+                };
+                // Default file name
+                // Default file extension
+                // Filter files by extension
 
                 // Process save file dialog box results
                 if (dialog.ShowDialog() == false)
@@ -148,7 +153,7 @@ namespace IDE.Common.Models
                     return;
                 }
 
-                string[] lines = Text.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                var lines = Text.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 
                 File.WriteAllLines($"{dialog.FileName}", lines);
@@ -162,10 +167,10 @@ namespace IDE.Common.Models
 
         private void CheckLineValidation()
         {
-            List<bool> isLineValid = new List<bool>();
+            var isLineValid = new List<bool>();
             if (CurrentProgram != null && !string.IsNullOrEmpty(CurrentProgram.Content))
             {
-                string[] lines = CurrentProgram.Content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                var lines = CurrentProgram.Content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 
                 for (int i = 0; i < lines.Length; i++)
                 {

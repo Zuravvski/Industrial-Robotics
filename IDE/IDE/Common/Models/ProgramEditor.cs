@@ -10,7 +10,6 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Microsoft.Win32;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Services;
@@ -149,26 +148,34 @@ namespace IDE.Common.Models
 
         private async void ValidateAllLines()
         {
-            if (!string.IsNullOrEmpty(CurrentProgram?.Content))
+            if (!string.IsNullOrEmpty(CurrentProgram?.Content) && DoSyntaxCheck)
             {
                 for(var i = 0; i < TextArea.Document.Lines.Count; i++)
                 {
                     var lineText = TextArea.Document.GetText(TextArea.Document.Lines[i]);
                     var isValid = await syntaxChecker.ValidateAsync(lineText);
                     TextArea.TextView.LineTransformers.Add(new LineColorizer(i+1, 
-                        isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
+                        isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No, Background));
                 }
             }
         }
 
         private async void ValidateLine(int lineNum)
         {
-            var line = TextArea.Document.GetLineByNumber(lineNum);
-            var lineText = TextArea.Document.GetText(line);
-            var isValid = await syntaxChecker.ValidateAsync(lineText);
-            
-            TextArea.TextView.LineTransformers.Add(new LineColorizer(lineNum,
-                isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
+            if (DoSyntaxCheck)
+            {
+                var line = TextArea.Document.GetLineByNumber(lineNum);
+                var lineText = TextArea.Document.GetText(line);
+                var isValid = await syntaxChecker.ValidateAsync(lineText);
+
+                TextArea.TextView.LineTransformers.Add(new LineColorizer(lineNum,
+                    isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No, Background));
+            }
+            else
+            {
+                TextArea.TextView.LineTransformers.Add(
+                    new LineColorizer(lineNum, LineColorizer.ValidityE.Yes, Background));
+            }
         }
 
         public async void RunIntellisense(bool isForced)

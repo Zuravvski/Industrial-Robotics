@@ -12,7 +12,6 @@ using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 using IDE.ViewModels;
-using System.Collections.Generic;
 using IDE.Common.Models.Services;
 
 namespace IDE.Common.ViewModels

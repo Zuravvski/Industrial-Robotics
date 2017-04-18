@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
@@ -11,7 +9,6 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Intellisense;
 using IDE.Common.Models.Services;
 using IDE.Common.Models.Value_Objects;
-using IDE.Common.Views;
 
 namespace IDE.Common.ViewModels
 {
@@ -82,55 +79,6 @@ namespace IDE.Common.ViewModels
             };
             //make only right border visible
             CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown; //to ensure 'enter' triggers Send() event
-            CommandInput.TextChanged += CommandInput_TextChanged_SyntaxCheck;
-            CommandInput.TextChanged += CommandInput_TextChanged_Intellisense;
-        }
-
-        private async void CommandInput_TextChanged_Intellisense(object sender, EventArgs e)
-        {
-            // Run intellisense every second text change to increase performance
-            runIntellisense = !runIntellisense;
-            if (!runIntellisense) return;
-
-            var tips = await intellisense.GetCompletionAsync(CommandInput.Text);
-            completionWindow = new CompletionWindow(CommandInput.TextArea);
-            var data = completionWindow.CompletionList.CompletionData;
-
-            foreach (var command in tips)
-            {
-                var completionData = new MyCompletionData(command.Content, command.Description);
-                data.Add(completionData);
-            }
-            completionWindow.Show();
-            completionWindow.Closed += delegate 
-            {
-                completionWindow = null;
-            };
-
-        }
-
-        // TODO: Refactor to fit ProgramEditor events
-        private async void CommandInput_TextChanged_SyntaxCheck(object sender, EventArgs e)
-        {
-            if (!CommandInput.DoSyntaxCheck)
-            {
-                CommandInput.TextArea.TextView.LineTransformers.Clear();
-                lineWasNotValid = false;
-            }
-            else
-            {
-                var isLineValid = await syntaxChecker.ValidateAsync(CommandInput.Text);
-                if (isLineValid)
-                {
-                    CommandInput.TextArea.TextView.LineTransformers.Clear();
-                    lineWasNotValid = false;
-                }
-                else
-                {
-                    CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.No));
-                    lineWasNotValid = true;
-                }
-            }
         }
 
         private void InitializeCommandHistory()
@@ -167,30 +115,31 @@ namespace IDE.Common.ViewModels
             {
                 if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
-                    CommandInput.TextArea.TextView.LineTransformers.Clear();
+                    var colorizer = new LineColorizer(1, LineColorizer.ValidityE.Yes, CommandInput.Background);
+                    CommandInput.TextArea.TextView.LineTransformers.Add(colorizer);
                     MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
                     CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
                         MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
                     CommandHistory.ScrollToEnd();
                     CommandInput.Text = string.Empty;
                 }
-                else //if user wants to check syntax
+                else
                 {
-                    //bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
                     var isLineValid = await syntaxChecker.ValidateAsync(CommandInput.Text);
 
                     if (isLineValid)    //if line is valid, send it
                     {
-                        CommandInput.TextArea.TextView.LineTransformers.Clear();
+                        var colorizer = new LineColorizer(1, LineColorizer.ValidityE.Yes, CommandInput.Background);
                         MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
-                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
-                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime + ": " +
+                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage + "\n";
                         CommandHistory.ScrollToEnd();
                         CommandInput.Text = string.Empty;
                     }
                     else //if line is not valid colorize line and do nothing
                     {
-                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.No));
+                        var colorizer = new LineColorizer(1, LineColorizer.ValidityE.No, CommandInput.Background);
+                        CommandInput.TextArea.TextView.LineTransformers.Add(colorizer);
                         lineWasNotValid = true;
                     }
                 }
@@ -219,7 +168,7 @@ namespace IDE.Common.ViewModels
         private void ExportHistory(object obj)
         {
 
-            CommandHistory.ExportContent(DateTime.Now.ToString().Replace(':', '-'), "txt");
+            CommandHistory.ExportContent(DateTime.Now.ToString(CultureInfo.InvariantCulture).Replace(':', '-'), "txt");
         }
 
         private void ClearHistory(object obj)

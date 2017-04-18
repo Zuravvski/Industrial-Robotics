@@ -13,6 +13,7 @@ using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 using IDE.ViewModels;
 using System.Collections.Generic;
+using IDE.Common.Models.Services;
 
 namespace IDE.Common.ViewModels
 {
@@ -31,6 +32,7 @@ namespace IDE.Common.ViewModels
         private ICommand saveAs;
         private ICommand delete;
         private ICommand send;
+        private ICommand intellisense;
         #endregion
 
         #region Properties
@@ -110,23 +112,9 @@ namespace IDE.Common.ViewModels
 
             Instance = this;
 
-            ProgramEditor.TextArea.TextEntering += TextArea_TextEntering;
-        }
-
-        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
-        {
-            if (ProgramEditor.IsLineValid != null)
-            {
-                var list = ProgramEditor.IsLineValid;
-
-                for (var i = 0; i < list.Count; i++)
-                {
-                    if (!list[i])
-                        ProgramEditor.TextArea.TextView.LineTransformers.Add(new LineColorizer(i + 1, LineColorizer.IsValid.No));
-                    else
-                        ProgramEditor.TextArea.TextView.LineTransformers.Clear();
-                }
-            }
+            // Add ctrl + space for intellisense
+            var intellisenseShortcut = new KeyBinding(Intellisense, Key.Space, ModifierKeys.Control);
+            programEditor.TextArea.InputBindings.Add(intellisenseShortcut);
         }
         #endregion
 
@@ -336,6 +324,18 @@ namespace IDE.Common.ViewModels
                 }));
             }
         }
+
+        public ICommand Intellisense
+        {
+            get
+            {
+                return intellisense ?? (intellisense = new DelegateCommand(delegate
+                {
+                    programEditor.RunIntellisense(true);
+                }));
+            }
+        }
+
         #endregion
     }
 }

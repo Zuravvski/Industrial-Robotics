@@ -96,23 +96,22 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\Models\AboutModel.cs" />
-    <Compile Include="Common\Models\AppSession.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
-    <Compile Include="Common\Models\Command.cs" />
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\Intellisense\Intellisense.cs" />
-    <Compile Include="Common\Models\LineColorizer.cs" />
-    <Compile Include="Common\Models\Macro.cs" />
-    <Compile Include="Common\Models\MacroManager.cs" />
-    <Compile Include="Common\Models\Message.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
-    <Compile Include="Common\Models\ListManager.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
-    <Compile Include="Common\Models\RegexMatching.cs" />
     <Compile Include="Common\Models\RemoteListManager.cs" />
     <Compile Include="Common\Models\RemoteProgram.cs" />
+    <Compile Include="Common\Models\Services\LineColorizer.cs" />
+    <Compile Include="Common\Models\Services\ListManager.cs" />
+    <Compile Include="Common\Models\Services\MacroManager.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />
+    <Compile Include="Common\Models\Value Objects\Command.cs" />
+    <Compile Include="Common\Models\Value Objects\Macro.cs" />
+    <Compile Include="Common\Models\Value Objects\Message.cs" />
+    <Compile Include="Common\Utilities\AppSession.cs" />
     <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />

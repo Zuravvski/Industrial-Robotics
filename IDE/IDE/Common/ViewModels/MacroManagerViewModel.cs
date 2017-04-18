@@ -1,14 +1,9 @@
 ﻿using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using IDE.Common.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Input;
+using IDE.Common.Models.Services;
+using IDE.Common.Models.Value_Objects;
 
 namespace IDE.Common.ViewModels
 {

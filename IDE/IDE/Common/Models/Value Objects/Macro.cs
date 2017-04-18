@@ -1,4 +1,4 @@
-﻿namespace IDE.Common.Models
+﻿namespace IDE.Common.Models.Value_Objects
 {
     public class Macro
     {

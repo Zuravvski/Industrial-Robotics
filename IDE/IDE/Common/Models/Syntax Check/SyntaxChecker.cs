@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using IDE.Common.Models.Value_Objects;
 
 namespace IDE.Common.Models
 {
@@ -32,7 +33,7 @@ namespace IDE.Common.Models
                     var regex = new Regex(commandNode.Attributes[2].Value);
                     var description = commandNode.FirstChild.InnerText;
 
-                    Commands.Add(new Command(name, content, description, regex));
+                    Commands.Add(Command.CreateCommand(name, content, description, regex));
                 }
             }
             catch

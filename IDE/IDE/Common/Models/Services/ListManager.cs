@@ -4,15 +4,16 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using Driver;
+using IDE.Common.Utilities;
 using IDE.Common.ViewModels.Commands;
 
-namespace IDE.Common.Models
+namespace IDE.Common.Models.Services
 {
     public class ListManager : ObservableObject
     {
         public ListManager()
         {
-            Programs = AppSession.Instance.LoadLastSession();
+            Programs = AppSession.LoadSession();
         }
       
         #region Properties
@@ -41,7 +42,7 @@ namespace IDE.Common.Models
                 };
                 program.Content = File.ReadAllText(program.Path, Encoding.ASCII);
                 Programs.Add(program);
-                AppSession.Instance.SaveSession(Programs);
+                AppSession.SaveSession(Programs);
             }
             catch (Exception)
             {
@@ -57,13 +58,18 @@ namespace IDE.Common.Models
             {
                 var path = program.Path;
                 File.WriteAllText(path, program.Content, Encoding.ASCII);
-                AppSession.Instance.SaveSession(Programs);
+                AppSession.SaveSession(Programs);
             }
             catch (Exception)
             {
                 MessageBox.Show("Could not save program due to invalid data.", "Error", 
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        public void AddProgram(Program program)
+        {
+            Programs.Add(program);
         }
 
         public void RemoveProgram(Program program)
@@ -74,23 +80,13 @@ namespace IDE.Common.Models
         public void DeleteProgram(Program program)
         {
             if (string.IsNullOrEmpty(program.Name)) return;
-            try
+            if (File.Exists(program.Path))
             {
                 File.Delete(program.Path);
-                RemoveProgram(program);
-                AppSession.Instance.SaveSession(Programs);
             }
-            catch (Exception)
-            {
-                // TBD
-            };
+            RemoveProgram(program);
+            AppSession.SaveSession(Programs);
         }
-
-        public void AddProgram(Program program)
-        {
-            Programs.Add(program);
-        }
-
         #endregion
 
     }

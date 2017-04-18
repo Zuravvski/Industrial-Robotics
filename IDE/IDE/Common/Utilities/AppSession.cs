@@ -8,24 +8,18 @@ using System.Threading.Tasks;
 using System.Xml;
 using Driver;
 
-namespace IDE.Common.Models
+namespace IDE.Common.Utilities
 {
-    public class AppSession
+    public static class AppSession
     {
         private const string DEFAULT_FILE_PATH = "Session.xml";
-        private static readonly Lazy<AppSession> instance = new Lazy<AppSession>(() => new AppSession());
-        private readonly XmlDocument document;
-        public static AppSession Instance => instance.Value;
-
-        private AppSession()
-        {
-            document = new XmlDocument();
-        }
-
-        // TODO: Consider this method to be async - probably there's no need as it runs only once
-        public ObservableCollection<Program> LoadLastSession()
+        private static readonly XmlDocument document = new XmlDocument();
+        
+        public static ObservableCollection<Program> LoadSession()
         {
             var list = new ObservableCollection<Program>();
+
+            // Create session file if it does not exist
             if (!File.Exists(DEFAULT_FILE_PATH))
             {
                 document.AppendChild(document.CreateElement("Session"));
@@ -33,6 +27,7 @@ namespace IDE.Common.Models
                 return list;
             }
 
+            // Load session if file containing it exists
             try
             {
                 document.Load(DEFAULT_FILE_PATH);
@@ -42,7 +37,7 @@ namespace IDE.Common.Models
 
                 foreach (var child in root.ChildNodes)
                 {
-                    var path = ((XmlNode)child).InnerText;
+                    var path = ((XmlNode) child).InnerText;
                     try
                     {
                         if (!string.IsNullOrEmpty(path))
@@ -68,7 +63,12 @@ namespace IDE.Common.Models
             }
         }
 
-        public async void SaveSession(IEnumerable<Program> programsList)
+        public static Task<ObservableCollection<Program>> LoadSessionAsync()
+        {
+            return new Task<ObservableCollection<Program>>(LoadSession);
+        }
+
+        public static async void SaveSession(IEnumerable<Program> programsList)
         {
             await Task.Run(() =>
             {

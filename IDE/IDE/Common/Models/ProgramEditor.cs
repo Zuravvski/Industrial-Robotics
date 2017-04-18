@@ -10,8 +10,11 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Microsoft.Win32;
 using System;
-using System.Timers;
-using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using IDE.Common.Models.Services;
+using IDE.Common.Models.Value_Objects;
 
 namespace IDE.Common.Models
 {
@@ -23,7 +26,8 @@ namespace IDE.Common.Models
         private readonly Highlighting highlighting;
         private Program currentProgram;
         private Macro currentMacro;
-        Timer regexTimer = new Timer();
+        private readonly SyntaxChecker syntaxChecker;
+        private readonly Intellisense.Intellisense intellisense;
 
         #endregion
 
@@ -44,12 +48,10 @@ namespace IDE.Common.Models
             this.highlighting = highlighting;
             InitializeAvalon();
 
-            var syntaxChecker = new SyntaxChecker();
-            regexTimer.Elapsed += OnTimedEvent;
-            regexTimer.Interval = 10000;
-            regexTimer.Enabled = true;
+            syntaxChecker = new SyntaxChecker();
+            intellisense = new Intellisense.Intellisense();
         }
-
+        
         #endregion
 
         #region Properties
@@ -79,8 +81,6 @@ namespace IDE.Common.Models
                 return currentProgram;
             }
         }
-
-        public List<bool> IsLineValid { get; private set; }
         public bool DoSyntaxCheck { get; set; }
         
         #endregion
@@ -110,42 +110,114 @@ namespace IDE.Common.Models
                 }
             }
 
-            TextArea.TextEntering += TextEntering;
-            TextArea.TextEntered += TextEntered;
-            TextArea.PreviewKeyDown += KeyIsDown;     
+            // Dispatching events
+            TextChanged += OnSyntaxCheck;
+            TextArea.TextEntered += OnIntellisense;
+            TextArea.TextEntered += OnTextEntered;
+            DataObject.AddPastingHandler(this, OnPaste);
         }
 
-        private void KeyIsDown(object sender, KeyEventArgs e)
+        #region Event Handlers
+        private void OnIntellisense(object sender, TextCompositionEventArgs textCompositionEventArgs)
         {
-            //tbi
+            RunIntellisense(false);
         }
 
-        private void TextEntered(object sender, TextCompositionEventArgs e)
+        private void OnSyntaxCheck(object sender, EventArgs e)
+        {
+            ValidateLine(TextArea.Caret.Line);
+        }
+
+        private void OnPaste(object sender, DataObjectPastingEventArgs e)
+        {
+            var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
+            if (!isText) return;
+
+            var text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
+            currentProgram.Content = text;
+            ValidateAllLines();
+        }
+
+        private void OnTextEntered(object sender, TextCompositionEventArgs e)
         {
             if (currentProgram != null)
             {
                 currentProgram.Content = Text;
             }
         }
+        #endregion
 
-        private void TextEntering(object sender, TextCompositionEventArgs e)
+        private async void ValidateAllLines()
         {
-            //tbi
+            if (!string.IsNullOrEmpty(CurrentProgram?.Content))
+            {
+                for(var i = 0; i < TextArea.Document.Lines.Count; i++)
+                {
+                    var lineText = TextArea.Document.GetText(TextArea.Document.Lines[i]);
+                    var isValid = await syntaxChecker.ValidateAsync(lineText);
+                    TextArea.TextView.LineTransformers.Add(new LineColorizer(i+1, 
+                        isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
+                }
+            }
         }
 
+        private async void ValidateLine(int lineNum)
+        {
+            var line = TextArea.Document.GetLineByNumber(lineNum);
+            var lineText = TextArea.Document.GetText(line);
+            var isValid = await syntaxChecker.ValidateAsync(lineText);
+            
+            TextArea.TextView.LineTransformers.Add(new LineColorizer(lineNum,
+                isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
+        }
+
+        public async void RunIntellisense(bool isForced)
+        {
+            var line = TextArea.Document.GetLineByNumber(TextArea.Caret.Line);
+            var lineText = TextArea.Document.GetText(line);
+
+            // Don't show intellisense if theres no text in the line unless user forces intellisense by pressing ctrl+space
+            if (!string.IsNullOrWhiteSpace(lineText) || isForced)
+            {
+                var tips = await intellisense.GetCompletionAsync(lineText);
+
+                var completionWindow = new CompletionWindow(TextArea);
+                completionWindow.Closed += delegate
+                {
+                    completionWindow = null;
+                };
+                var data = completionWindow.CompletionList.CompletionData;
+
+                await Task.Run(() =>
+                {
+                    foreach (var command in tips)
+                    {
+                        var completionData = new MyCompletionData(command.Content, command.Description);
+                        data.Add(completionData);
+                    }
+
+                });
+
+                // Don't show empty results
+                if(data.Count > 0)
+                    completionWindow.Show();
+            }
+        }
+
+        // TODO: Review this
         public void ExportContent(string defaultFileName, string extension)
         {
             try
             {
                 var dialog = new SaveFileDialog
                 {
+                    // Default file name
                     FileName = defaultFileName,
+                    // Default file extension
                     DefaultExt = extension,
+                    // Filter files by extension
                     Filter = $"{extension} files (.{extension}|*.{extension}"
                 };
-                // Default file name
-                // Default file extension
-                // Filter files by extension
 
                 // Process save file dialog box results
                 if (dialog.ShowDialog() == false)
@@ -163,38 +235,6 @@ namespace IDE.Common.Models
                 MessageBox.Show("Something went very wrong here. Try again tommorow.",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private void CheckLineValidation()
-        {
-            var isLineValid = new List<bool>();
-            if (CurrentProgram != null && !string.IsNullOrEmpty(CurrentProgram.Content))
-            {
-                var lines = CurrentProgram.Content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    isLineValid.Add(RegexMatching.InputMatching(lines[i]));
-                }
-            }
-
-            IsLineValid = isLineValid;
-        }
-
-        public static bool CheckLineValidationManually(string line)
-        {
-            if (!string.IsNullOrEmpty(line))
-            {
-                return RegexMatching.InputMatching(line);
-            }
-            return false;
-        }
-
-
-        private void OnTimedEvent(object sender, ElapsedEventArgs e)
-        {
-            if (DoSyntaxCheck == true)
-                CheckLineValidation();
         }
 
         #endregion

@@ -1,9 +1,10 @@
-﻿using IDE.Common.ViewModels.Commands;
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
+using IDE.Common.Models.Value_Objects;
+using IDE.Common.ViewModels.Commands;
+using Newtonsoft.Json;
 
-namespace IDE.Common.Models
+namespace IDE.Common.Models.Services
 {
     public class MacroManager : ObservableObject
     {

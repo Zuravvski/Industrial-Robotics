@@ -9,6 +9,8 @@ using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Intellisense;
+using IDE.Common.Models.Services;
+using IDE.Common.Models.Value_Objects;
 using IDE.Common.Views;
 
 namespace IDE.Common.ViewModels
@@ -107,6 +109,7 @@ namespace IDE.Common.ViewModels
 
         }
 
+        // TODO: Refactor to fit ProgramEditor events
         private async void CommandInput_TextChanged_SyntaxCheck(object sender, EventArgs e)
         {
             if (!CommandInput.DoSyntaxCheck)
@@ -124,7 +127,7 @@ namespace IDE.Common.ViewModels
                 }
                 else
                 {
-                    CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.IsValid.No));
+                    CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.No));
                     lineWasNotValid = true;
                 }
             }
@@ -187,7 +190,7 @@ namespace IDE.Common.ViewModels
                     }
                     else //if line is not valid colorize line and do nothing
                     {
-                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.IsValid.No));
+                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.No));
                         lineWasNotValid = true;
                     }
                 }

@@ -5,6 +5,7 @@ using System.Windows.Input;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
+using Driver;
 
 namespace IDE.Common.ViewModels
 {
@@ -12,6 +13,8 @@ namespace IDE.Common.ViewModels
     {
         ProgramEditor commandHistory, commandInput;
         bool lineWasNotValid;
+        E3JManipulator manipulator;
+        int messageSelectionArrows;
 
         public BrowseViewModel()
         {
@@ -20,6 +23,11 @@ namespace IDE.Common.ViewModels
             InitializeCommandInput();
 
             MessageList = new MessageList();    //list storing sent commands
+
+
+            //to usun
+            manipulator = new E3JManipulator();
+            manipulator.Connect("COM4");
         }
 
 
@@ -69,6 +77,19 @@ namespace IDE.Common.ViewModels
             CommandInput.BorderThickness = new Thickness(0, 0, 2, 0);   //make only right border visible
             CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown; //to ensure 'enter' triggers Send() event
             CommandInput.TextChanged += CommandInput_TextChanged;
+
+            CommandInput.TextArea.TextEntered += TextArea_TextEntered;
+            CommandInput.TextArea.TextEntering += TextArea_TextEntering;
+        }
+
+        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+
+        }
+
+        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+
         }
 
         private void CommandInput_TextChanged(object sender, EventArgs e)
@@ -93,7 +114,8 @@ namespace IDE.Common.ViewModels
             CommandHistory.BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41));
             CommandHistory.BorderThickness = new Thickness(0, 0, 0, 2);   //make only bottom border visible
             CommandHistory.ShowLineNumbers = false;
-            CommandHistory.PreviewMouseWheel += CommandHistory_PreviewMouseWheel; CommandHistory.TextArea.FontFamily = new FontFamily("Cambria");
+            CommandHistory.PreviewMouseWheel += CommandHistory_PreviewMouseWheel;
+
         }
 
         private void Refresh(object obj)
@@ -107,13 +129,15 @@ namespace IDE.Common.ViewModels
         }
         private void Upload(object obj)
         {
-            //tbi
+            manipulator.SendCustom("MO 1");
         }
 
         private void Send(object obj = null)
         {
             if (!string.IsNullOrEmpty(CommandInput.Text))
             {
+                messageSelectionArrows = 0; //clear value for message completion with arrows
+
                 if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
                     CommandInput.TextArea.TextView.LineTransformers.Clear();
@@ -121,6 +145,8 @@ namespace IDE.Common.ViewModels
                     CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
                         MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
                     CommandHistory.ScrollToEnd();
+
+                    manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage);
                     CommandInput.Text = string.Empty;
                 }
                 else //if user wants to check syntax
@@ -134,6 +160,8 @@ namespace IDE.Common.ViewModels
                         CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
                             MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
                         CommandHistory.ScrollToEnd();
+
+                        manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage);
                         CommandInput.Text = string.Empty;
                     }
                     else //if line is not valid colorize line and do nothing
@@ -195,6 +223,28 @@ namespace IDE.Common.ViewModels
             {
                 Send();
                 e.Handled = true;
+            }
+
+            if (e.Key == Key.Up)
+            {
+                if (messageSelectionArrows < MessageList.Messages.Count)
+                {
+                    CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - ++messageSelectionArrows].MyMessage;
+                    CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
+                }
+            }
+            else if (e.Key == Key.Down)
+            {
+                if (messageSelectionArrows > 1)
+                {
+                    CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - --messageSelectionArrows].MyMessage;
+                    CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
+                }
+                else if (messageSelectionArrows > 0)
+                {
+                    --messageSelectionArrows;
+                    CommandInput.Text = string.Empty;
+                }
             }
         }
 

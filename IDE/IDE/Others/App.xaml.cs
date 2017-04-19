@@ -8,6 +8,6 @@ namespace IDE.Others
     /// </summary>
     public partial class App : Application
     {
-        DriverSettings settings = DriverSettings.Instance;
+
     }
 }

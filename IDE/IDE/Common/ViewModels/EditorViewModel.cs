@@ -75,8 +75,6 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        public static EditorViewModel Instance { set; get; }
-
         public string Text
         {
             get { return SelectedProgram.Content; }
@@ -99,16 +97,14 @@ namespace IDE.Common.ViewModels
             ListManager = new ListManager();
             programEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
 
-            manipulator = new E3JManipulator();
+            manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             manipulator.Connect("COM5");
             programService = new ProgramService(manipulator);
 
-            //ThemeColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2")); //default color
+            // (Color)ColorConverter.ConvertFromString("#FF1BA1E2")
 
             ThemeColor = AppearanceViewModel.Instance != null ? 
-                new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF1BA1E2"));
-
-            Instance = this;
+                new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush(Color.FromArgb(255, 27, 161, 226));
 
             // Add ctrl + space for intellisense
             var intellisenseShortcut = new KeyBinding(Intellisense, Key.Space, ModifierKeys.Control);

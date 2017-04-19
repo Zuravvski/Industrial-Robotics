@@ -1,228 +1,102 @@
 ﻿using System;
 using System.IO;
 using System.IO.Ports;
-using System.Xml;
+using Newtonsoft.Json;
 
 namespace Driver
 {
-    public class DriverSettings : IXMLObject
+    public class DriverSettings
     {
         #region Constants
         private const int DEFAULT_DATA_BITS = 8;
         private const int DEFAULT_BAUDRATE = 9600;
-        private const Parity DEFAULT_PARITY = System.IO.Ports.Parity.Even;
-        private const StopBits DEFAULT_STOP_BITS = System.IO.Ports.StopBits.Two;
+        private const Parity DEFAULT_PARITY = Parity.Even;
+        private const StopBits DEFAULT_STOP_BITS = StopBits.Two;
         private const bool DEFAULT_RTSENABLE = true;
         private const int DEFAULT_READTIMEOUT = 4000;
         private const int DEFAULT_WRITETIMEOUT = 4000;
+
+        private const string DEFAULT_SERIAL_SETTINGS_PATH = "SerialSettings.json";
         #endregion
 
-        #region Node 
-        private const string BaudRateToken = "BaudRate";
-        private const string DataBitsToken = "DataBits";
-        private const string ParityToken = "Parity";
-        private const string StopBitsToken = "StopBits";
-        private const string RtsEnableToken = "RtsEnable";
-        private const string ReadTimeoutToken = "ReadTimeout";
-        private const string WriteTimeoutToken = "WriteTimeout";
-        #endregion
+        public int BaudRate { get; set; }
+        public int DataBits { get; set; }
+        public Parity Parity { get; set; }
+        public StopBits StopBits { get; set; }
+        public bool RtsEnable { get; set; }
+        public int ReadTimeout { get; set; }
+        public int WriteTimeout { get; set; }
 
-        public int BaudRate { get; private set; }
-        public int DataBits { get; private set; }
-        public Parity Parity { get; private set; }
-        public StopBits StopBits { get; private set; }
-        public bool RtsEnable { get; private set; }
-        public int ReadTimeout { get; private set; }
-        public int WriteTimeout { get; private set; }
-
-        private static readonly Lazy<DriverSettings> instance = new Lazy<DriverSettings>(() => new DriverSettings());
-
-        public static DriverSettings Instance => instance.Value;
+        public string Path { get; protected set; }
 
 
         protected DriverSettings()
         {
-            FromXML();
         }
 
-        public void ToXML()
+        public static DriverSettings CreateDefaultSettings()
         {
-            var doc = new XmlDocument();
-            var node = doc.AppendChild(doc.CreateElement("DriverSettings"));
-
-            var temp = doc.CreateElement(BaudRateToken);
-            temp.InnerText = Convert.ToString(BaudRate);
-            node.AppendChild(temp);
-
-            temp = doc.CreateElement(DataBitsToken);
-            temp.InnerText = Convert.ToString(DataBits);
-            node.AppendChild(temp);
-
-            temp = doc.CreateElement(ParityToken);
-            temp.InnerText = Convert.ToString(Parity);
-            node.AppendChild(temp);
-
-            temp = doc.CreateElement(StopBitsToken);
-            temp.InnerText = Convert.ToString(StopBits);
-            node.AppendChild(temp);
-
-            temp = doc.CreateElement(RtsEnableToken);
-            temp.InnerText = Convert.ToString(RtsEnable);
-            node.AppendChild(temp);
-
-            temp = doc.CreateElement(ReadTimeoutToken);
-            temp.InnerText = Convert.ToString(ReadTimeout);
-            node.AppendChild(temp);
-
-            temp = doc.CreateElement(WriteTimeoutToken);
-            temp.InnerText = Convert.ToString(WriteTimeout);
-            node.AppendChild(temp);
-
-            doc.Save("DriverSettings.xml");
+            var settings = new DriverSettings();
+            settings.RestoreDefaults();
+            settings.Path = string.Empty;
+            return settings;
         }
 
-        public void FromXML()
+        public static DriverSettings CreateFromSettingFile(string filePath = DEFAULT_SERIAL_SETTINGS_PATH)
         {
-            var doc = new XmlDocument();
-            var path = "..\\Debug\\DriverSettings.xml";
-
-            if (!File.Exists(path))
+            var settings = new DriverSettings();
+            try
             {
-                BaudRate = DEFAULT_BAUDRATE;
-                DataBits = DEFAULT_DATA_BITS;
-                Parity = DEFAULT_PARITY;
-                StopBits = DEFAULT_STOP_BITS;
-                RtsEnable = DEFAULT_RTSENABLE;
-                ReadTimeout = DEFAULT_READTIMEOUT;
-                WriteTimeout = DEFAULT_WRITETIMEOUT;
-                ToXML();
-                return;
+                var json = File.ReadAllText(filePath);
+                dynamic deserialized = JsonConvert.DeserializeObject(json);
+                settings.BaudRate = deserialized.BaudRate;
+                settings.DataBits = deserialized.DataBits;
+                settings.Parity = deserialized.Parity;
+                settings.RtsEnable = deserialized.RtsEnable;
+                settings.ReadTimeout = deserialized.ReadTimeout;
+                settings.WriteTimeout = deserialized.WriteTimeout;
+                settings.Path = filePath;
             }
-
-            doc.Load("..\\Debug\\DriverSettings.xml");
-
-            var node = doc.DocumentElement?.SelectSingleNode("/DriverSettings");
-
-            if (node == null) return;
-            // BAUDRATE
-
-            var baudrateNode = node.SelectSingleNode(BaudRateToken);
-            if (baudrateNode != null)
+            catch (FileNotFoundException)
             {
-                int baudrate;
-                if (!int.TryParse(baudrateNode.InnerText, out baudrate))
-                {
-                    baudrate = DEFAULT_BAUDRATE;
-                }
-                BaudRate = baudrate;
+                Console.Error.WriteLine("Specified file does not exist. Restoring defaults.");
+                settings.RestoreDefaults();
             }
-            else
+            catch
             {
-                BaudRate = DEFAULT_BAUDRATE;
+                Console.Error.WriteLine("Could not load settings from specified file. File may be corrupted. Restoring defaults.");
+                settings.RestoreDefaults();
             }
+            return settings;
+        }
 
-            // DATABITS    
+        public static SerialBuilder CreateCustom()
+        {
+            return new SerialBuilder();
+        }
 
-            var databitsNode = node.SelectSingleNode(DataBitsToken);
-            if (databitsNode != null)
+        public void SaveToFile(string path = DEFAULT_SERIAL_SETTINGS_PATH)
+        {
+            try
             {
-                int databits;
-                if (!int.TryParse(databitsNode.InnerText, out databits))
-                {
-                    databits = DEFAULT_DATA_BITS;
-                }
-                DataBits = databits;
+                var json = JsonConvert.SerializeObject(this);
+                File.WriteAllText(path, json);
             }
-            else
+            catch(Exception ex)
             {
-                DataBits = DEFAULT_DATA_BITS;
+                Console.Error.WriteLine(ex.Message);
             }
+        }
 
-            // PARITY
-
-            var parityNode = node.SelectSingleNode(ParityToken);
-            if (parityNode != null)
-            {
-                int parity;
-                if (!int.TryParse(parityNode.InnerText, out parity))
-                {
-
-                    parity = (int)DEFAULT_PARITY;
-                }
-                Parity = (Parity)parity;
-            }
-            else
-            {
-                Parity = DEFAULT_PARITY;
-            }
-
-            // STOPBITS
-
-            var stopbitsNode = node.SelectSingleNode(StopBitsToken);
-            if (stopbitsNode != null)
-            {
-                int stopbits;
-                if (!int.TryParse(stopbitsNode.InnerText, out stopbits))
-                {
-                    stopbits = (int)DEFAULT_STOP_BITS;
-                }
-                StopBits = (StopBits)stopbits;
-            }
-            else
-            {
-                StopBits = DEFAULT_STOP_BITS;
-            }
-
-            // RTSENABLE
-
-            var rtsenableNode = node.SelectSingleNode(RtsEnableToken);
-            if (rtsenableNode != null)
-            {
-                bool rtsenable;
-                if (!bool.TryParse(rtsenableNode.InnerText, out rtsenable))
-                {
-                    rtsenable = DEFAULT_RTSENABLE;
-                }
-                RtsEnable = rtsenable;
-            }
-            else
-            {
-                RtsEnable = DEFAULT_RTSENABLE;
-            }
-
-            // READTIMEOUT
-
-            var readtimeoutNode = node.SelectSingleNode(ReadTimeoutToken);
-            if (readtimeoutNode != null)
-            {
-                int readtimeout;
-                if (!int.TryParse(readtimeoutNode.InnerText, out readtimeout))
-                {
-                    readtimeout = DEFAULT_READTIMEOUT;
-                }
-                ReadTimeout = readtimeout;
-            }
-            else
-            {
-                ReadTimeout = DEFAULT_READTIMEOUT;
-            }
-
-            // WRITETIMEOUT
-
-            var writetimeoutNode = node.SelectSingleNode(WriteTimeoutToken);
-            if (writetimeoutNode != null)
-            {
-                int writetimeout;
-                if (!int.TryParse(writetimeoutNode.InnerText, out writetimeout))
-                {
-                    writetimeout = DEFAULT_WRITETIMEOUT;
-                }
-                WriteTimeout = writetimeout;
-            }
-            else
-            {
-                WriteTimeout = DEFAULT_WRITETIMEOUT;
-            }
+        private void RestoreDefaults()
+        {
+            BaudRate = DEFAULT_BAUDRATE;
+            DataBits = DEFAULT_DATA_BITS;
+            StopBits = DEFAULT_STOP_BITS;
+            Parity = DEFAULT_PARITY;
+            RtsEnable = DEFAULT_RTSENABLE;
+            ReadTimeout = DEFAULT_READTIMEOUT;
+            WriteTimeout = DEFAULT_WRITETIMEOUT;
         }
     }
 }    

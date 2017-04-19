@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
+﻿using System.Diagnostics;
 
 namespace Driver
 {
@@ -58,9 +56,9 @@ namespace Driver
         public GrabE Grab { get; private set; }
         #endregion
 
-        public E3JManipulator()
+        public E3JManipulator(DriverSettings settings)
         {
-            Port = new SerialBuilder().Build();
+            Port = new SerialComm(settings);
             Port.DataReceived += Port_DataReceived;
         }
 

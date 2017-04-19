@@ -3,7 +3,7 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 
-namespace IDE.Common
+namespace IDE.Common.Models.Code_Completion
 {
     public class MyCompletionData : ICompletionData
     {

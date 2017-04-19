@@ -99,7 +99,7 @@
     <Compile Include="Common\Models\BrowseModel.cs" />
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
-    <Compile Include="Common\Models\Intellisense\Intellisense.cs" />
+    <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
     <Compile Include="Common\Models\RemoteListManager.cs" />
@@ -112,7 +112,8 @@
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
     <Compile Include="Common\Utilities\AppSession.cs" />
-    <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />
+    <Compile Include="Common\Utilities\IXMLObject.cs" />
+    <Compile Include="Common\Utilities\LazyLibraryLoader.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
@@ -142,10 +143,7 @@
     <Compile Include="Common\Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\MyCompletionData.cs" />
-    <Compile Include="Common\Views\IntellisenseList.xaml.cs">
-      <DependentUpon>IntellisenseList.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Common\Models\Code Completion\MyCompletionData.cs" />
     <Compile Include="Common\Views\MacroManagerView.xaml.cs">
       <DependentUpon>MacroManagerView.xaml</DependentUpon>
     </Compile>
@@ -170,10 +168,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Common\Views\HighlightingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Common\Views\IntellisenseList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

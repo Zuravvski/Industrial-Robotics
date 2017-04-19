@@ -4,67 +4,67 @@ namespace Driver
 {
     public class SerialBuilder
     {
-        // TODO: Reconsider building
-        private readonly SerialPort port;
+        private readonly DriverSettings settings;
 
         public SerialBuilder()
         {
-            port = new SerialPort()
-            {
-                BaudRate = DriverSettings.Instance.BaudRate,
-                DataBits = DriverSettings.Instance.DataBits,
-                Parity = DriverSettings.Instance.Parity,
-                StopBits = DriverSettings.Instance.StopBits,
-                RtsEnable = DriverSettings.Instance.RtsEnable,
-                ReadTimeout = DriverSettings.Instance.ReadTimeout,
-                WriteTimeout = DriverSettings.Instance.WriteTimeout
-            };
+            settings = DriverSettings.CreateDefaultSettings();
         }
 
-        public SerialComm Build()
+        public DriverSettings Build()
         {
-            return new SerialComm(port);
+            return settings;
+        }
+
+        public DriverSettings BuildAndSave(string filePath)
+        {
+            if(string.IsNullOrWhiteSpace(filePath))
+                settings.SaveToFile();
+            else
+                settings.SaveToFile(filePath);
+
+            return Build();
         }
 
         public SerialBuilder BaudRate(int baudrate)
         {
-            port.BaudRate = baudrate;
+            settings.BaudRate = baudrate;
             return this;
         }
 
         public SerialBuilder Parity(Parity parity)
         {
-            port.Parity = parity;
+            settings.Parity = parity;
             return this;
         }
 
         public SerialBuilder StopBits(StopBits stopBits)
         {
-            port.StopBits = stopBits;
+            settings.StopBits = stopBits;
             return this;
         }
 
         public SerialBuilder RtsEnable(bool state)
         {
-            port.RtsEnable = state;
+            settings.RtsEnable = state;
             return this;
         }
 
         public SerialBuilder DataBits(int databits)
         {
-            port.DataBits = databits;
+            settings.DataBits = databits;
             return this;
         }
 
         public SerialBuilder ReadTimeout(int readtimeout)
         {
-            port.ReadTimeout = readtimeout;
+            settings.ReadTimeout = readtimeout;
             return this;
         }
 
         public SerialBuilder WriteTimeout(int writetimeout)
         {
-            port.WriteTimeout = writetimeout;
+            settings.WriteTimeout = writetimeout;
             return this;
         }
     }

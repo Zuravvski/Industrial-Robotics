@@ -18,7 +18,6 @@ namespace Driver
             CRLF    // Both
         };
         private const Terminator DEFAULT_FRAME_TERMINATOR = SerialComm.Terminator.CR;
-        public static readonly int DEFAULT_BUFFER_SIZE = 1024;
         #endregion
 
         #region Events
@@ -60,28 +59,24 @@ namespace Driver
             set { port.RtsEnable = value; }
         }
 
-        public int BufferSize { get; set; }
-
         public Terminator FrameTerminator { get; set; }
 
         public bool Opened => port.IsOpen;
 
         #endregion
 
-        // TODO: Builder instead of constructors
-        public SerialComm()
+        public SerialComm(DriverSettings settings)
         {
             port = new SerialPort();
-            FrameTerminator = DEFAULT_FRAME_TERMINATOR;
-            BufferSize = DEFAULT_BUFFER_SIZE;
-            port.DataReceived += Port_DataReceived;
-        }
+            BaudRate = settings.BaudRate;
+            DataBits = settings.DataBits;
+            Parity = settings.Parity;
+            StopBits = settings.StopBits;
+            RtsEnable = settings.RtsEnable;
+            port.WriteTimeout = settings.WriteTimeout;
+            port.ReadTimeout = settings.ReadTimeout;
 
-        public SerialComm(SerialPort port)
-        {
-            this.port = port;
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
-            BufferSize = DEFAULT_BUFFER_SIZE;
             port.DataReceived += Port_DataReceived;
         }
 

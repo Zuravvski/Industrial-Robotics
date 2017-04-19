@@ -7,18 +7,8 @@ using System.Windows.Media;
 
 namespace IDE.Common.Models
 {
-    class CustomHighlighting
+    public class CustomHighlighting
     {
-
-        #region Constructor
-
-        public CustomHighlighting()
-        {
-
-        }
-
-        #endregion
-
         #region Properties
 
         public Color[] HighlightingDefinitionColors

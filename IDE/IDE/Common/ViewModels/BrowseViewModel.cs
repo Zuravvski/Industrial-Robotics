@@ -6,6 +6,7 @@ using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
 using Driver;
+using IDE.Common.Utilities;
 
 namespace IDE.Common.ViewModels
 {
@@ -120,7 +121,7 @@ namespace IDE.Common.ViewModels
 
         private void Refresh(object obj)
         {
-            //tbi
+            MissingFileCreator.CreateHighlightingDefinitionFile();
         }
 
         private void Download(object obj)
@@ -134,11 +135,27 @@ namespace IDE.Common.ViewModels
 
         private void Send(object obj = null)
         {
-            if (!string.IsNullOrEmpty(CommandInput.Text))
-            {
-                messageSelectionArrows = 0; //clear value for message completion with arrows
+            if (!IsCommandInputNotEmpty(null))
+                return;
 
-                if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
+            messageSelectionArrows = 0; //clear value for message completion with arrows
+
+            if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
+            {
+                CommandInput.TextArea.TextView.LineTransformers.Clear();
+                MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
+                CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
+                    MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                CommandHistory.ScrollToEnd();
+
+                manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage);
+                CommandInput.Text = string.Empty;
+            }
+            else //if user wants to check syntax
+            {
+                bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
+
+                if (isLineValid)    //if line is valid, send it
                 {
                     CommandInput.TextArea.TextView.LineTransformers.Clear();
                     MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
@@ -149,26 +166,10 @@ namespace IDE.Common.ViewModels
                     manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage);
                     CommandInput.Text = string.Empty;
                 }
-                else //if user wants to check syntax
+                else //if line is not valid colorize line and do nothing
                 {
-                    bool isLineValid = ProgramEditor.CheckLineValidationManually(CommandInput.Text);
-
-                    if (isLineValid)    //if line is valid, send it
-                    {
-                        CommandInput.TextArea.TextView.LineTransformers.Clear();
-                        MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
-                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
-                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
-                        CommandHistory.ScrollToEnd();
-
-                        manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage);
-                        CommandInput.Text = string.Empty;
-                    }
-                    else //if line is not valid colorize line and do nothing
-                    {
-                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.IsValid.No));
-                        lineWasNotValid = true;
-                    }
+                    CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.IsValid.No));
+                    lineWasNotValid = true;
                 }
             }
         }
@@ -296,7 +297,7 @@ namespace IDE.Common.ViewModels
             RefreshClickCommand = new RelayCommand(Refresh);
             DownloadClickCommand = new RelayCommand(Download);
             UploadClickCommand = new RelayCommand(Upload);
-            SendClickCommand = new RelayCommand(Send);
+            SendClickCommand = new RelayCommand(Send, IsCommandInputNotEmpty);
             FontEnlargeCommand = new RelayCommand(FontEnlarge);
             FontReduceCommand = new RelayCommand(FontReduce);
             ClearHistoryCommand = new RelayCommand(ClearHistory);
@@ -307,6 +308,13 @@ namespace IDE.Common.ViewModels
             OnSyntaxCheckCommand = new RelayCommand(OnSyntaxCheck);
             OffSyntaxCheckCommand = new RelayCommand(OffSyntaxCheck);
         }
+
+        private bool IsCommandInputNotEmpty(object obj)
+        {
+            return !string.IsNullOrWhiteSpace(CommandInput.Text);
+        }
+
+
 
         #endregion
 

@@ -13,6 +13,8 @@ using Microsoft.Win32;
 using System;
 using System.Timers;
 using System.Collections.Generic;
+using IDE.Common.Utilities;
+using System.Diagnostics;
 
 namespace IDE.Common.Models
 {
@@ -94,7 +96,7 @@ namespace IDE.Common.Models
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
 
-            if (highlighting == Highlighting.On)
+            if (highlighting == Highlighting.On && !MissingFileCreator.HighlightingErrorWasAlreadyShown)
             {
                 try
                 {
@@ -105,8 +107,7 @@ namespace IDE.Common.Models
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("Highlighting definitions not found. Support for syntax highlighting will be switched off " +
-                        "during this session.", "No definitions", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MissingFileCreator.CreateHighlightingDefinitionFile();
                 }
             }
 

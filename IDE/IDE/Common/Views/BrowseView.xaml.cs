@@ -13,13 +13,7 @@ namespace IDE.Views
         public Browse()
         {
             InitializeComponent();
-            DataObject.AddPastingHandler(CommandInput, this.diablepaste);
             DataContext = new BrowseViewModel();
-        }
-
-        private void diablepaste(object sender, DataObjectPastingEventArgs e)
-        {
-            e.CancelCommand();
         }
 
         //private FlowDocument document;

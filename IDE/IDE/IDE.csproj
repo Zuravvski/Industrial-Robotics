@@ -110,6 +110,7 @@
     <Compile Include="Common\Models\RegexMatching.cs" />
     <Compile Include="Common\Models\RemoteListManager.cs" />
     <Compile Include="Common\Models\RemoteProgram.cs" />
+    <Compile Include="Common\Utilities\MissingFileCreator.cs" />
     <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />

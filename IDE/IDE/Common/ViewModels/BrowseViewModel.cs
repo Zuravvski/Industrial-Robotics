@@ -6,8 +6,9 @@ using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using IDE.Common.Models.Intellisense;
+using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
+using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Models.Value_Objects;
 
 namespace IDE.Common.ViewModels

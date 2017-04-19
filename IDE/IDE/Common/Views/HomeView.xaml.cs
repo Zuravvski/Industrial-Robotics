@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace IDE.Views
+namespace IDE.Common.Views
 {
     /// <summary>
     /// Interaction logic for Home.xaml

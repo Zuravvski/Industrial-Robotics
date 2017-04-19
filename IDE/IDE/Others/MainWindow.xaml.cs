@@ -1,7 +1,6 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
-using System.Windows;
 
-namespace IDE
+namespace IDE.Others
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

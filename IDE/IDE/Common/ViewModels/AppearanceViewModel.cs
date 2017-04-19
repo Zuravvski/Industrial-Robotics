@@ -1,14 +1,9 @@
-﻿using FirstFloor.ModernUI.Presentation;
-using IDE.Common.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
+using FirstFloor.ModernUI.Presentation;
 
-namespace IDE.ViewModels
+namespace IDE.Common.ViewModels
 {
     /// <summary>
     /// A simple view model for configuring theme, font and accent colors.

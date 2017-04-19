@@ -1,8 +1,7 @@
 ﻿using System.Windows.Controls;
-using IDE.Common.ViewModel;
 using IDE.Common.ViewModels;
 
-namespace IDE.Views
+namespace IDE.Common.Views
 {
     /// <summary>
     /// Interaction logic for Editor.xaml

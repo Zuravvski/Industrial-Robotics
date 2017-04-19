@@ -1,8 +1,8 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using IDE.Common.ViewModels;
-using System.Windows;
 
-namespace IDE.Views
+namespace IDE.Common.Views
 {
     /// <summary>
     /// Interaction logic for Browse.xaml

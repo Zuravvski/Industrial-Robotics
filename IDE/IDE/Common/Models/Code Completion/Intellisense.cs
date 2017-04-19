@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using IDE.Common.Models.Value_Objects;
 
-namespace IDE.Common.Models.Intellisense
+namespace IDE.Common.Models.Code_Completion
 {
     public class Intellisense
     {

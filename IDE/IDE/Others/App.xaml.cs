@@ -1,7 +1,7 @@
-﻿using Driver;
-using System.Windows;
+﻿using System.Windows;
+using Driver;
 
-namespace IDE
+namespace IDE.Others
 {
     /// <summary>
     /// Interaction logic for App.xaml

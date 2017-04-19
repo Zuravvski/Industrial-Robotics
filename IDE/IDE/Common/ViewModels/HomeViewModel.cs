@@ -1,4 +1,4 @@
-﻿namespace IDE.Common.ViewModel
+﻿namespace IDE.Common.ViewModels
 {
     class HomeViewModel
     {

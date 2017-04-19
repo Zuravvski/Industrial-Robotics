@@ -1,9 +1,7 @@
-﻿using IDE.Common.ViewModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
+﻿using System.Windows.Controls;
+using IDE.Common.ViewModels;
 
-namespace IDE.Views.Settings
+namespace IDE.Common.Views
 {
     /// <summary>
     /// Interaction logic for About.xaml

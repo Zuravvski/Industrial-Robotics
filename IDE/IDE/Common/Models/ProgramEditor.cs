@@ -12,7 +12,9 @@ using Microsoft.Win32;
 using System;
 using System.Threading.Tasks;
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
+using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Models.Value_Objects;
 
 namespace IDE.Common.Models
@@ -26,7 +28,7 @@ namespace IDE.Common.Models
         private Program currentProgram;
         private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
-        private readonly Intellisense.Intellisense intellisense;
+        private readonly Intellisense intellisense;
 
         #endregion
 
@@ -48,7 +50,7 @@ namespace IDE.Common.Models
             InitializeAvalon();
 
             syntaxChecker = new SyntaxChecker();
-            intellisense = new Intellisense.Intellisense();
+            intellisense = new Intellisense();
         }
         
         #endregion

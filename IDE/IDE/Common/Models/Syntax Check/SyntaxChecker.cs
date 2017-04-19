@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using IDE.Common.Models.Value_Objects;
 
-namespace IDE.Common.Models
+namespace IDE.Common.Models.Syntax_Check
 {
     public class SyntaxChecker
     {

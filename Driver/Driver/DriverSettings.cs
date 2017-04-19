@@ -12,9 +12,9 @@ namespace Driver
         private const int DEFAULT_BAUDRATE = 9600;
         private const Parity DEFAULT_PARITY = Parity.Even;
         private const StopBits DEFAULT_STOP_BITS = StopBits.Two;
-        private const bool DEFAULT_RTSENABLE = true;
-        private const int DEFAULT_READTIMEOUT = 4000;
-        private const int DEFAULT_WRITETIMEOUT = 4000;
+        private const bool DEFAULT_RTS_ENABLE = true;
+        private const int DEFAULT_READ_TIMEOUT = 5000;
+        private const int DEFAULT_WRITE_TIMEOUT = 2000;
 
         private const string DEFAULT_SERIAL_SETTINGS_PATH = "SerialSettings.json";
         #endregion
@@ -94,9 +94,9 @@ namespace Driver
             DataBits = DEFAULT_DATA_BITS;
             StopBits = DEFAULT_STOP_BITS;
             Parity = DEFAULT_PARITY;
-            RtsEnable = DEFAULT_RTSENABLE;
-            ReadTimeout = DEFAULT_READTIMEOUT;
-            WriteTimeout = DEFAULT_WRITETIMEOUT;
+            RtsEnable = DEFAULT_RTS_ENABLE;
+            ReadTimeout = DEFAULT_READ_TIMEOUT;
+            WriteTimeout = DEFAULT_WRITE_TIMEOUT;
         }
     }
 }    

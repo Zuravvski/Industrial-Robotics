@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
+using Driver.Exceptions;
 
 namespace Driver
 {
@@ -15,13 +17,32 @@ namespace Driver
         }
 
         /// <summary>
-        /// Upload program from manipulator to local memory
+        /// Uploads program from manipulator to PC memory
         /// </summary>
         /// <param name="programName">Name of program on manipulator</param>
         /// <returns>Requested program or null when program with given name does not exist</returns>
-        public Program UploadProgram(string programName)
+        public async Task<Program> UploadProgram(string programName)
         {
-            throw new NotImplementedException();
+            // TODO: Test if this works
+            manipulator.Number(programName);
+            await Task.Delay(500);
+            var errorCode = await manipulator.ErrorRead();
+
+            if (errorCode != 0)
+            {
+                throw new AlarmException(errorCode);
+            }
+
+            var program = new Program(programName);
+            for (uint i = 1;; i++)
+            {
+                var line = await manipulator.StepRead(i);
+                if (string.IsNullOrEmpty(line))
+                    break;
+                program.Content += line + manipulator.Port.FrameTerminator;
+                await Task.Delay(300);
+            }
+            return program;
         }
 
         /// <summary>
@@ -30,6 +51,7 @@ namespace Driver
         /// <returns></returns>
         public List<Program> UploadPrograms()
         {
+            var infos = ReadProgramInfo();
             throw new NotImplementedException();
         }
 
@@ -65,6 +87,16 @@ namespace Driver
         public void DeleteProgram(string programName)
         {
             throw new NotImplementedException();
+        }
+
+        private async Task<List<Program>> ReadProgramInfo()
+        {
+            manipulator.SendCustom("EXE0, \"Fd < *.RE2\"");
+            await manipulator.Port.WaitForMessageAsync();
+            manipulator.Port.Read();
+            // Decode data
+            throw new NotImplementedException();
+            return new List<Program>();
         }
     }
 }

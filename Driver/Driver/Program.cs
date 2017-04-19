@@ -14,9 +14,10 @@ namespace Driver
 
         #region Properties
 
-        public string Name { private set; get; }
-        public string Path { set; get; }
-        public string Content { set; get; }
+        public string Name { get; }
+        public string Path { get; set; }
+        public string Content { get; set; }
+        //public Timestamp Timestamp { get; private set; }
         //public List<Position> Positions;
 
         #endregion

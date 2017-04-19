@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Driver
 {
-   public class SerialComm
+   public class SerialCOM
     {
         private readonly SerialPort port;
+        private readonly Queue<string> bufferedMessages;
 
         #region Enums and data structures
         public enum Terminator
@@ -17,7 +21,7 @@ namespace Driver
             LF,     // Line feed
             CRLF    // Both
         };
-        private const Terminator DEFAULT_FRAME_TERMINATOR = SerialComm.Terminator.CR;
+        private const Terminator DEFAULT_FRAME_TERMINATOR = SerialCOM.Terminator.CR;
         #endregion
 
         #region Events
@@ -65,9 +69,10 @@ namespace Driver
 
         #endregion
 
-        public SerialComm(DriverSettings settings)
+        public SerialCOM(DriverSettings settings)
         {
             port = new SerialPort();
+            bufferedMessages = new Queue<string>();
             BaudRate = settings.BaudRate;
             DataBits = settings.DataBits;
             Parity = settings.Parity;
@@ -87,16 +92,19 @@ namespace Driver
             {
                 read += port.ReadExisting();
             }
+            bufferedMessages.Enqueue(read);
             DataReceived?.Invoke(read);
         }
 
-        public void OpenPort(string portName)
+        public async void OpenPort(string portName)
         {
             if (port.IsOpen) return;
             port.PortName = portName;
             try
             {
                 port.Open();
+                // delay for initialization purposes
+                await Task.Delay(1000);
             }
             catch(Exception ex)
             {
@@ -122,33 +130,20 @@ namespace Driver
             }
         }
 
-        public async Task WriteAsync(string data)
+        public string Read()
         {
-            try
-            {
-                var buffer = Encoding.ASCII.GetBytes(data);
-                await port.BaseStream.WriteAsync(buffer, 0, buffer.Length);
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine(e.Message);
-            }
+            return bufferedMessages.Count != 0 ? bufferedMessages.Dequeue() : string.Empty;
         }
 
-        public async Task<string> ReadAsync()
+        public async Task WaitForMessageAsync()
         {
-            var buffer = new byte[1024];
-            try
+            await Task.Run(() =>
             {
-                var bytesRead = await port.BaseStream.ReadAsync(buffer, 0, buffer.Length);
-                Array.Resize(ref buffer, bytesRead);
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine(e.Message);
-            }
+                var timeout = new Stopwatch();
+                timeout.Start();
+                while (bufferedMessages.Count == 0 || timeout.ElapsedMilliseconds < port.ReadTimeout) ;
+            });
 
-            return Encoding.ASCII.GetString(buffer);
         }
 
         private string GetTerminator()

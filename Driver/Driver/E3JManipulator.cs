@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Driver
 {
@@ -45,13 +48,13 @@ namespace Driver
         #endregion
 
         #region Fields and Properties
-        public SerialComm Port { get; }
+        public SerialCOM Port { get; }
         public bool Connected => Port.Opened;
         #endregion
 
         public E3JManipulator(DriverSettings settings)
         {
-            Port = new SerialComm(settings);
+            Port = new SerialCOM(settings);
             Port.DataReceived += Port_DataReceived;
         }
 
@@ -252,9 +255,12 @@ namespace Driver
         /// <summary>
         /// Reads the current error status and alarm history contents.
         /// </summary>
-        public void ErrorRead()
+        public async Task<int> ErrorRead()
         {
-            Port.Write($"ER");
+            Port.Write("ER");
+            await Port.WaitForMessageAsync();
+            var code = Port.Read();
+            return string.IsNullOrEmpty(code) ? Convert.ToInt32(code) : 0;
         }
 
         /// <summary>
@@ -924,9 +930,11 @@ namespace Driver
         /// Reads the contents of the specified step number, or the stopping step number.
         /// </summary>
         /// <param name="stepNumber">Specify the step number reading. [0..999]</param>
-        public void StepRead(uint stepNumber)
+        public async Task<string> StepRead(uint stepNumber)
         {
             Port.Write($"STR {stepNumber}");
+            await Port.WaitForMessageAsync();
+            return Port.Read() ?? string.Empty;
         }
 
         /// <summary>
@@ -982,9 +990,11 @@ namespace Driver
         /// <summary>
         /// Reads the coordinates of the current position and the open or close state of the hand. (Using RS-232C)
         /// </summary>
-        public void Where()
+        public async Task<Position> Where()
         {
             Port.Write("WH");
+            await Port.WaitForMessageAsync();
+            return Position.FromWHResponse(Port.Read());
         }
 
         /// <summary>

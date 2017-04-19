@@ -45,15 +45,8 @@ namespace Driver
         #endregion
 
         #region Fields and Properties
-
-        public SerialComm Port { get; private set; }
+        public SerialComm Port { get; }
         public bool Connected => Port.Opened;
-        public double X { get; private set; }
-        public double Y { get; private set; }
-        public double Z { get; private set; }
-        public double A { get; private set; }
-        public double B { get; private set; }
-        public GrabE Grab { get; private set; }
         #endregion
 
         public E3JManipulator(DriverSettings settings)
@@ -1020,7 +1013,7 @@ namespace Driver
             Port.Write($"' {comment}");
         }
 
-        private string GrabStateToString(GrabE grab)
+        private static string GrabStateToString(GrabE grab)
         {
             return grab == GrabE.Open ? "O" : "C";
         }

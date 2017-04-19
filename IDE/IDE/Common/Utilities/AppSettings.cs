@@ -15,6 +15,7 @@ namespace IDE.Common.Utilities
 
         private readonly XmlDocument document;
 
+        // TODO: Initialize settings from paths given in settings file
         private AppSettings()
         {
             document = new XmlDocument();

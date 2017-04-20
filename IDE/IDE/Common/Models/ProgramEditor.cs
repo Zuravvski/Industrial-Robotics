@@ -82,6 +82,7 @@ namespace IDE.Common.Models
             }
         }
 
+        public bool IsOneLine { set; get; }
         public List<bool> IsLineValid { get; private set; }
         public bool DoSyntaxCheck { get; set; }
         
@@ -113,7 +114,14 @@ namespace IDE.Common.Models
 
             TextArea.TextEntering += TextEntering;
             TextArea.TextEntered += TextEntered;
-            TextArea.PreviewKeyDown += KeyIsDown;     
+            TextArea.PreviewKeyDown += KeyIsDown;
+            TextChanged += TextHasChanged;
+        }
+
+        private void TextHasChanged(object sender, EventArgs e)
+        {
+            //if (IsOneLine)
+            //    Text = Text.Replace(System.Environment.NewLine, "replacement text");
         }
 
         private void KeyIsDown(object sender, KeyEventArgs e)

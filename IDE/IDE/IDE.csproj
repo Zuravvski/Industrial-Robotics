@@ -100,6 +100,7 @@
     <Compile Include="Common\Models\BrowseModel.cs" />
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
+    <Compile Include="Common\Models\Intellisense\Intellisense.cs" />
     <Compile Include="Common\Models\LineColorizer.cs" />
     <Compile Include="Common\Models\Macro.cs" />
     <Compile Include="Common\Models\MacroManager.cs" />
@@ -110,6 +111,8 @@
     <Compile Include="Common\Models\RegexMatching.cs" />
     <Compile Include="Common\Models\RemoteListManager.cs" />
     <Compile Include="Common\Models\RemoteProgram.cs" />
+    <Compile Include="Common\Models\Value Objects\Command.cs" />
+    <Compile Include="Common\Utilities\Json.cs" />
     <Compile Include="Common\Utilities\MissingFileCreator.cs" />
     <Compile Include="Common\Utilities\ProgramEditorBuilder.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />

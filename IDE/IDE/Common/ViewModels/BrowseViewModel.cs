@@ -7,6 +7,11 @@ using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
 using Driver;
 using IDE.Common.Utilities;
+using IDE.Common.Models.Value_Objects;
+using System.Collections.Generic;
+using IDE.Common.Models.Intellisense;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using IDE.Views;
 
 namespace IDE.Common.ViewModels
 {
@@ -16,6 +21,10 @@ namespace IDE.Common.ViewModels
         bool lineWasNotValid;
         E3JManipulator manipulator;
         int messageSelectionArrows;
+        CompletionWindow completionWindow;
+        IList<ICompletionData> data;
+        Intellisense intellisense;
+        IEnumerable<Command> commands;
 
         public BrowseViewModel()
         {
@@ -24,13 +33,13 @@ namespace IDE.Common.ViewModels
             InitializeCommandInput();
 
             MessageList = new MessageList();    //list storing sent commands
+            intellisense = new Intellisense();
 
 
             //to usun
             manipulator = new E3JManipulator();
             manipulator.Connect("COM4");
         }
-
 
 
         #region Properties
@@ -73,6 +82,7 @@ namespace IDE.Common.ViewModels
         {
             CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On);
             CommandInput.ShowLineNumbers = false;
+            CommandInput.IsOneLine = true;
             CommandInput.Background = new SolidColorBrush(Color.FromRgb(61, 61, 61));
             CommandInput.BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41));
             CommandInput.BorderThickness = new Thickness(0, 0, 2, 0);   //make only right border visible
@@ -85,12 +95,42 @@ namespace IDE.Common.ViewModels
 
         private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
+            if (completionWindow == null)
+            {
+                completionWindow = new CompletionWindow(CommandInput.TextArea);
+                data = completionWindow.CompletionList.CompletionData;
 
+                commands = intellisense.Commands;
+                foreach (var command in commands)
+                {
+                    data.Add(new MyCompletionData(command.Content, command.Description, command.Type));
+                }
+            }
+
+            completionWindow.Closed += delegate
+            {
+                completionWindow = null;
+                data = null;
+            };
+
+
+            if (e.Text.Length > 0 && completionWindow != null)
+            {
+                if (!char.IsLetterOrDigit(e.Text[0]))
+                {
+                    // Whenever a non-letter is typed while the completion window is open,
+                    // insert the currently selected element.
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
+            }
+            // Do not set e.Handled=true.
+            // We still want to insert the character that was typed.
         }
 
         private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-
+            if (completionWindow != null)
+                completionWindow.Show();
         }
 
         private void CommandInput_TextChanged(object sender, EventArgs e)
@@ -135,7 +175,7 @@ namespace IDE.Common.ViewModels
 
         private void Send(object obj = null)
         {
-            if (!IsCommandInputNotEmpty(null))
+            if (!IsCommandInputNotEmpty(null) || (completionWindow != null && completionWindow.IsEnabled))
                 return;
 
             messageSelectionArrows = 0; //clear value for message completion with arrows
@@ -223,7 +263,6 @@ namespace IDE.Common.ViewModels
             if (e.Key == Key.Enter)
             {
                 Send();
-                e.Handled = true;
             }
 
             if (e.Key == Key.Up)

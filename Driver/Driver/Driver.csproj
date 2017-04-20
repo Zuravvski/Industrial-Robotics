@@ -30,12 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FirstFloor.ModernUI">
-      <HintPath>..\..\..\..\Roboty-Mobilne\Repo\robotymobilne_projekt\packages\ModernUI.WPF.1.0.9\lib\net45\FirstFloor.ModernUI.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.AvalonEdit">
-      <HintPath>..\..\..\..\Visual Studio 2015\Projects\WpfApplication2\WpfApplication2\bin\Debug\ICSharpCode.AvalonEdit.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

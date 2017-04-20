@@ -130,7 +130,9 @@ namespace IDE.Common.ViewModels
         private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
             if (completionWindow != null)
+            {
                 completionWindow.Show();
+            }
         }
 
         private void CommandInput_TextChanged(object sender, EventArgs e)
@@ -241,7 +243,7 @@ namespace IDE.Common.ViewModels
 
         private void ClearHistory(object obj)
         {
-            CommandHistory.Text = String.Empty;
+            CommandHistory.Text = string.Empty;
         }
         private void FontTimesNewRoman(object obj)
         {
@@ -262,7 +264,10 @@ namespace IDE.Common.ViewModels
         {
             if (e.Key == Key.Enter)
             {
+                completionWindow?.Focus();
                 Send();
+                e.Handled = true;
+                
             }
 
             if (e.Key == Key.Up)

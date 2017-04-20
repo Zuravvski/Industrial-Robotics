@@ -276,6 +276,30 @@
   <ItemGroup>
     <Resource Include="Icons\Open.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Comment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Grip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Information.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Invalid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Macros.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Movement.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Programming.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\TimersCounters.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

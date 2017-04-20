@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -27,35 +30,35 @@ namespace IDE.Views
                 switch (type)
                 {
                     case "Comment":
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\comment.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.Comment);
                         break;
 
                     case "Movement":
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\movement.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.Movement);
                         break;
 
                     case "Grip":
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\grip.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.Grip);
                         break;
 
                     case "TimersCounters":
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\timer.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.TimersCounters);
                         break;
 
                     case "Programming":
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\programming.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.Programming);
                         break;
 
                     case "Information":
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\information.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.Information);
                         break;
 
                     case "Macro":
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\macro.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.Macros);
                         break;
 
                     default:
-                        bitmapImage = new BitmapImage(new Uri(@"C:\Users\PR6\workspace\VisualStudio2015\STM\WpfApplication2\WpfApplication2\Icons\invalid.png"));
+                        bitmapImage = Bitmap2BitmapImage(Properties.Resources.Invalid);
                         break;
                 }
                 return bitmapImage;
@@ -84,6 +87,22 @@ namespace IDE.Views
             EventArgs insertionRequestEventArgs)
         {
             textArea.Document.Replace(completionSegment, this.Text);
+        }
+
+        public BitmapImage Bitmap2BitmapImage(Bitmap bitmap)
+        {
+            var bitmapImage = new BitmapImage();
+            using (var memory = new MemoryStream())
+            {
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+                
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+            }
+            return bitmapImage;
         }
     }
 }

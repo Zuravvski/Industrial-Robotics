@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +13,6 @@ using System;
 using System.Timers;
 using System.Collections.Generic;
 using IDE.Common.Utilities;
-using System.Diagnostics;
 
 namespace IDE.Common.Models
 {
@@ -96,6 +94,7 @@ namespace IDE.Common.Models
             Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            Padding = new Thickness(5);
 
             if (highlighting == Highlighting.On && !MissingFileCreator.HighlightingErrorWasAlreadyShown)
             {
@@ -111,22 +110,8 @@ namespace IDE.Common.Models
                     MissingFileCreator.CreateHighlightingDefinitionFile();
                 }
             }
-
-            TextArea.TextEntering += TextEntering;
+            
             TextArea.TextEntered += TextEntered;
-            TextArea.PreviewKeyDown += KeyIsDown;
-            TextChanged += TextHasChanged;
-        }
-
-        private void TextHasChanged(object sender, EventArgs e)
-        {
-            //if (IsOneLine)
-            //    Text = Text.Replace(System.Environment.NewLine, "replacement text");
-        }
-
-        private void KeyIsDown(object sender, KeyEventArgs e)
-        {
-            //tbi
         }
 
         private void TextEntered(object sender, TextCompositionEventArgs e)
@@ -135,11 +120,6 @@ namespace IDE.Common.Models
             {
                 currentProgram.Content = Text;
             }
-        }
-
-        private void TextEntering(object sender, TextCompositionEventArgs e)
-        {
-            //tbi
         }
 
         public void ExportContent(string defaultFileName, string extension)

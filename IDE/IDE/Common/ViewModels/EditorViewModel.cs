@@ -101,8 +101,6 @@ namespace IDE.Common.ViewModels
             manipulator.Connect("COM5");
             programService = new ProgramService(manipulator);
 
-            // (Color)ColorConverter.ConvertFromString("#FF1BA1E2")
-
             ThemeColor = AppearanceViewModel.Instance != null ? 
                 new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush(Color.FromArgb(255, 27, 161, 226));
 

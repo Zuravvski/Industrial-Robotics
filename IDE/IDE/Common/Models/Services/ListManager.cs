@@ -13,7 +13,7 @@ namespace IDE.Common.Models.Services
     {
         public ListManager()
         {
-            Programs = AppSession.LoadSession();
+            Programs = Session.LoadSession();
         }
       
         #region Properties
@@ -42,7 +42,7 @@ namespace IDE.Common.Models.Services
                 };
                 program.Content = File.ReadAllText(program.Path, Encoding.ASCII);
                 Programs.Add(program);
-                AppSession.SaveSession(Programs);
+                Session.SaveSession(Programs);
             }
             catch (Exception)
             {
@@ -58,7 +58,7 @@ namespace IDE.Common.Models.Services
             {
                 var path = program.Path;
                 File.WriteAllText(path, program.Content, Encoding.ASCII);
-                AppSession.SaveSession(Programs);
+                Session.SaveSession(Programs);
             }
             catch (Exception)
             {
@@ -85,7 +85,7 @@ namespace IDE.Common.Models.Services
                 File.Delete(program.Path);
             }
             RemoveProgram(program);
-            AppSession.SaveSession(Programs);
+            Session.SaveSession(Programs);
         }
         #endregion
 

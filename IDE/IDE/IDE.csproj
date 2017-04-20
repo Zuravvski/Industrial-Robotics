@@ -112,6 +112,7 @@
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
     <Compile Include="Common\Utilities\AppSession.cs" />
+    <Compile Include="Common\Utilities\Extensions\EnumExtensions.cs" />
     <Compile Include="Common\Utilities\IXMLObject.cs" />
     <Compile Include="Common\Utilities\LazyLibraryLoader.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />

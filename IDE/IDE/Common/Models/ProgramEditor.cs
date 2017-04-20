@@ -99,7 +99,7 @@ namespace IDE.Common.Models
             {
                 try
                 {
-                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), 
+                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xml"), 
                         HighlightingManager.Instance);
                     HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
                     SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
@@ -116,6 +116,7 @@ namespace IDE.Common.Models
             TextArea.TextEntered += OnIntellisense;
             TextArea.TextEntered += OnTextEntered;
             DataObject.AddPastingHandler(this, OnPaste);
+            DoSyntaxCheck = true;
         }
 
         #region Event Handlers

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +9,7 @@ using Driver;
 
 namespace IDE.Common.Utilities
 {
-    public static class AppSession
+    public static class Session
     {
         private const string DEFAULT_FILE_PATH = "Session.xml";
         private static readonly XmlDocument document = new XmlDocument();
@@ -61,11 +60,6 @@ namespace IDE.Common.Utilities
             {
                 return list;
             }
-        }
-
-        public static Task<ObservableCollection<Program>> LoadSessionAsync()
-        {
-            return new Task<ObservableCollection<Program>>(LoadSession);
         }
 
         public static async void SaveSession(IEnumerable<Program> programsList)

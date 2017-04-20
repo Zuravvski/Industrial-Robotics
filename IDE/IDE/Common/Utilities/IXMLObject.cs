@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 
-namespace Driver
+namespace IDE.Common.Utilities
 {
     public interface IXMLObject
     {

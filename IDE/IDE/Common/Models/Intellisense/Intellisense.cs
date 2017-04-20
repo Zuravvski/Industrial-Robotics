@@ -1,13 +1,12 @@
-﻿using System;
+﻿using IDE.Common.Models.Value_Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
-using IDE.Common.Models.Value_Objects;
-using IDE.Common.Utilities.Extensions;
 
-namespace IDE.Common.Models.Code_Completion
+namespace IDE.Common.Models.Intellisense
 {
     public class Intellisense
     {
@@ -34,8 +33,7 @@ namespace IDE.Common.Models.Code_Completion
                     var regex = new Regex(commandNode.Attributes[2].Value);
                     var description = commandNode.FirstChild.InnerText;
 
-                    Commands.Add(Command.CreateCommand(name, content, description, regex, 
-                        EnumExtensions.GetValueFromDescription<Command.TypeE>(type)));
+                    Commands.Add(Command.CreateCommand(type, name, content, description, regex));
                 }
             }
             catch

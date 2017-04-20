@@ -96,7 +96,7 @@ namespace IDE.Common.ViewModels
             CurrentMacroText = MacroManager.CurrentMacro.Name;                              //and update text above editor
             MacroEditor.Text = MacroManager.CurrentMacro.Content;                           //aswell as editor itself
 
-            MacroManager.ToTxt();
+            MacroManager.SaveMacrosToFile();
         }
 
         private void Load(object obj)
@@ -117,7 +117,7 @@ namespace IDE.Common.ViewModels
 
             var macros = MacroManager.Macros;
 
-            MacroManager.ToTxt();
+            MacroManager.SaveMacrosToFile();
 
             SelectedMacro = null;
         }
@@ -134,7 +134,7 @@ namespace IDE.Common.ViewModels
                 }
                 MacroManager.Macros.Remove(SelectedMacro);
 
-                MacroManager.ToTxt();
+                MacroManager.SaveMacrosToFile();
 
                 SelectedMacro = null;
             }

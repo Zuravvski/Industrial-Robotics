@@ -10,12 +10,12 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Microsoft.Win32;
 using System;
-using System.Threading.Tasks;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
 using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Models.Value_Objects;
+using IDE.Common.Utilities;
 
 namespace IDE.Common.Models
 {
@@ -94,35 +94,41 @@ namespace IDE.Common.Models
             Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            Padding = new Thickness(5);
 
-            if (highlighting == Highlighting.On)
+            if (highlighting == Highlighting.On && !MissingFileCreator.HighlightingErrorWasAlreadyShown)
             {
                 try
                 {
-                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xml"), 
+                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), 
                         HighlightingManager.Instance);
                     HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
                     SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
                 }
                 catch (FileNotFoundException)
                 {
-                    MessageBox.Show("Highlighting definitions not found. Support for syntax highlighting will be switched off " +
-                        "during this session.", "No definitions", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MissingFileCreator.CreateHighlightingDefinitionFile();
                 }
             }
 
-            // Dispatching events
-            TextChanged += OnSyntaxCheck;
-            TextArea.TextEntered += OnIntellisense;
-            TextArea.TextEntered += OnTextEntered;
-            DataObject.AddPastingHandler(this, OnPaste);
-            DoSyntaxCheck = true;
+            TextArea.TextEntering += TextEntering;     
         }
+
+        public bool CheckLineValidationManually(string line)
+        {
+            if (!string.IsNullOrEmpty(line))
+            {
+                return syntaxChecker.Validate(line);
+            }
+            return false;
+        }
+
+        #endregion
 
         #region Event Handlers
         private void OnIntellisense(object sender, TextCompositionEventArgs textCompositionEventArgs)
         {
-            RunIntellisense(false);
+            //tbi
         }
 
         private void OnSyntaxCheck(object sender, EventArgs e)
@@ -140,14 +146,10 @@ namespace IDE.Common.Models
             ValidateAllLines();
         }
 
-        private void OnTextEntered(object sender, TextCompositionEventArgs e)
+        private void TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (currentProgram != null)
-            {
-                currentProgram.Content = Text;
-            }
+            //tbi
         }
-        #endregion
 
         private async void ValidateAllLines()
         {
@@ -158,7 +160,7 @@ namespace IDE.Common.Models
                     var lineText = TextArea.Document.GetText(TextArea.Document.Lines[i]);
                     var isValid = await syntaxChecker.ValidateAsync(lineText);
                     TextArea.TextView.LineTransformers.Add(new LineColorizer(i+1, 
-                        isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No, Background));
+                        isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
                 }
             }
         }
@@ -172,12 +174,12 @@ namespace IDE.Common.Models
                 var isValid = await syntaxChecker.ValidateAsync(lineText);
 
                 TextArea.TextView.LineTransformers.Add(new LineColorizer(lineNum,
-                    isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No, Background));
+                    isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
             }
             else
             {
                 TextArea.TextView.LineTransformers.Add(
-                    new LineColorizer(lineNum, LineColorizer.ValidityE.Yes, Background));
+                    new LineColorizer(lineNum, LineColorizer.ValidityE.Yes));
             }
         }
 
@@ -198,23 +200,22 @@ namespace IDE.Common.Models
                 };
                 var data = completionWindow.CompletionList.CompletionData;
 
-                await Task.Run(() =>
-                {
-                    foreach (var command in tips)
-                    {
-                        var completionData = new MyCompletionData(command.Content, command.Description);
-                        data.Add(completionData);
-                    }
+                //await Task.Run(() =>
+                //{
+                //    foreach (var command in tips)
+                //    {
+                //        var completionData = new MyCompletionData(command.Content, command.Description, Command.TypeE.None);
+                //        data.Add(completionData);
+                //    }
 
-                });
+                //});
 
                 // Don't show empty results
                 if(data.Count > 0)
                     completionWindow.Show();
             }
         }
-
-        // TODO: Review this
+        
         public void ExportContent(string defaultFileName, string extension)
         {
             try

@@ -7,8 +7,6 @@ namespace IDE.Common.Models.Services
     {
         private readonly int lineNumber;
         private readonly ValidityE isValid;
-        private readonly Brush validColor;
-        private readonly Brush invalidColor;
 
         public enum ValidityE
         {
@@ -16,12 +14,10 @@ namespace IDE.Common.Models.Services
             No
         }
 
-        public LineColorizer(int lineNumber, ValidityE isValid, Brush validColor, Brush invalidColor = null)
+        public LineColorizer(int lineNumber, ValidityE isValid)
         {
             this.lineNumber = lineNumber;
             this.isValid = isValid;
-            this.validColor = validColor;
-            this.invalidColor = invalidColor ?? Brushes.Red;
         }
 
         protected override void ColorizeLine(ICSharpCode.AvalonEdit.Document.DocumentLine line)
@@ -30,7 +26,7 @@ namespace IDE.Common.Models.Services
             {
                 ChangeLinePart(line.Offset, line.EndOffset, element =>
                 {
-                    element.TextRunProperties.SetBackgroundBrush(isValid == ValidityE.No ? invalidColor : validColor);
+                    element.TextRunProperties.SetBackgroundBrush(isValid == ValidityE.No ? Brushes.Red : Brushes.White);
                 });
             }
         }

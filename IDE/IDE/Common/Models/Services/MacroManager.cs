@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using IDE.Common.Models.Value_Objects;
+using IDE.Common.Utilities;
 using IDE.Common.ViewModels.Commands;
-using Newtonsoft.Json;
 
 namespace IDE.Common.Models.Services
 {
@@ -23,7 +23,7 @@ namespace IDE.Common.Models.Services
         {
             Macros = new ObservableCollection<Macro>();
             this.macroEditor = macroEditor;
-            FromTxt();  //to populate list with already created macros
+            LoadMacrosFromFile();  //to populate list with already created macros
         }
 
         #endregion
@@ -63,25 +63,21 @@ namespace IDE.Common.Models.Services
 
         #region Actions
 
-        public void ToTxt()
+        public void SaveMacrosToFile()
         {
-            string json = JsonConvert.SerializeObject(Macros);
-            File.WriteAllText("MacroDefinitions.FLAJS", json);
+            Json.SerializeObject(Macros, "MacroDefinitions");
         }
 
-        public void FromTxt()
+
+        public void LoadMacrosFromFile()
         {
             DirectoryInfo dirInfo = new DirectoryInfo(@".\");
             FileInfo[] info = dirInfo.GetFiles("MacroDefinitions.FLAJS");
 
             if (info.Length == 0)
                 File.Create("MacroDefinitions.FLAJS").Close();
-            
-            string text = File.ReadAllText("MacroDefinitions.FLAJS");
 
-            var json = JsonConvert.DeserializeObject<ObservableCollection<Macro>>(text);
-            if (!string.IsNullOrEmpty(text))
-                Macros = json;
+            Macros = Json.DeserializeObject<ObservableCollection<Macro>>("MacroDefinitions");
         }
 
         #endregion

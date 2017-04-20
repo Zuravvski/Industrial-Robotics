@@ -97,9 +97,9 @@
     </ApplicationDefinition>
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
+    <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
-    <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
     <Compile Include="Common\Models\RemoteListManager.cs" />
@@ -111,10 +111,13 @@
     <Compile Include="Common\Models\Value Objects\Command.cs" />
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
-    <Compile Include="Common\Utilities\AppSession.cs" />
+    <Compile Include="Common\Utilities\AppSettings.cs" />
     <Compile Include="Common\Utilities\Extensions\EnumExtensions.cs" />
     <Compile Include="Common\Utilities\IXMLObject.cs" />
+    <Compile Include="Common\Utilities\Json.cs" />
     <Compile Include="Common\Utilities\LazyLibraryLoader.cs" />
+    <Compile Include="Common\Utilities\MissingFileCreator.cs" />
+    <Compile Include="Common\Utilities\Session.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
@@ -234,6 +237,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Others\packages.config" />
     <None Include="packages.config" />
@@ -276,7 +280,30 @@
   <ItemGroup>
     <Resource Include="Icons\Open.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Icons\Comment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Grip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Information.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Invalid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Macros.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Movement.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Programming.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\TimersCounters.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

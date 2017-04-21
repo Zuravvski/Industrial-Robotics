@@ -12,7 +12,7 @@ namespace IDE.Common.Models.Syntax_Check
 
         public SyntaxChecker()
         {
-            Commands = LazyLibraryLoader.Instance.LoadCommands();
+            Commands = ConfigurationService.Instance.LoadCommands();
         }
 
         public void AddCommand(Command command)

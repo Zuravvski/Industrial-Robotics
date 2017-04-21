@@ -111,11 +111,10 @@
     <Compile Include="Common\Models\Value Objects\Command.cs" />
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
-    <Compile Include="Common\Utilities\AppSettings.cs" />
     <Compile Include="Common\Utilities\Extensions\EnumExtensions.cs" />
     <Compile Include="Common\Utilities\IXMLObject.cs" />
     <Compile Include="Common\Utilities\Json.cs" />
-    <Compile Include="Common\Utilities\LazyLibraryLoader.cs" />
+    <Compile Include="Common\Utilities\ConfigurationService.cs" />
     <Compile Include="Common\Utilities\MissingFileCreator.cs" />
     <Compile Include="Common\Utilities\Session.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />

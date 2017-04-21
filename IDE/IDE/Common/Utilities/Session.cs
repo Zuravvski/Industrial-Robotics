@@ -9,30 +9,59 @@ using Driver;
 
 namespace IDE.Common.Utilities
 {
+    // TODO: This should be singleton
     public static class Session
     {
-        private const string DEFAULT_FILE_PATH = "Session.xml";
+        #region Constants
+        private const string DEFAULT_SESSION_PATH = "Session.xml";
+        private const string DEFAULT_COMMANDS_PATH = "Commands.xml";
+        private const string DEFAULT_HIGHLIGHTING_PATH = "CustomHighlighting.xshd";
+        #endregion
+
         private static readonly XmlDocument document = new XmlDocument();
+
         
-        public static ObservableCollection<Program> LoadSession()
+        public static void LoadSession()
+        {
+            // TODO: Load previous configuration paths and files
+        }
+
+        public static async void SaveSession(IEnumerable<Program> programsList)
+        {
+            await Task.Run(() =>
+            {
+                document.RemoveAll();
+                var node = document.AppendChild(document.CreateElement("Session"));
+                foreach (var program in programsList)
+                {
+                    var element = document.CreateElement("Program");
+                    element.InnerText = program.Path;
+                    node.AppendChild(element);
+                }
+                document.Save(DEFAULT_SESSION_PATH);
+            });
+        }
+
+        public static ObservableCollection<Program> LoadPrograms()
         {
             var list = new ObservableCollection<Program>();
 
             // Create session file if it does not exist
-            if (!File.Exists(DEFAULT_FILE_PATH))
+            if (!File.Exists(DEFAULT_SESSION_PATH))
             {
                 document.AppendChild(document.CreateElement("Session"));
-                document.Save(DEFAULT_FILE_PATH);
+                document.Save(DEFAULT_SESSION_PATH);
                 return list;
             }
 
             // Load session if file containing it exists
             try
             {
-                document.Load(DEFAULT_FILE_PATH);
+                document.Load(DEFAULT_SESSION_PATH);
                 var root = document.SelectSingleNode("/Session");
 
-                if (root == null) return list;
+                if (root == null)
+                    return list;
 
                 foreach (var child in root.ChildNodes)
                 {
@@ -60,22 +89,6 @@ namespace IDE.Common.Utilities
             {
                 return list;
             }
-        }
-
-        public static async void SaveSession(IEnumerable<Program> programsList)
-        {
-            await Task.Run(() =>
-            {
-                document.RemoveAll();
-                var node = document.AppendChild(document.CreateElement("Session"));
-                foreach (var program in programsList)
-                {
-                    var element = document.CreateElement("Program");
-                    element.InnerText = program.Path;
-                    node.AppendChild(element);
-                }
-                document.Save(DEFAULT_FILE_PATH);
-            });
         }
     }
 }

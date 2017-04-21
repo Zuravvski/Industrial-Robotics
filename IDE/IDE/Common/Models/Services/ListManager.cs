@@ -13,7 +13,7 @@ namespace IDE.Common.Models.Services
     {
         public ListManager()
         {
-            Programs = Session.LoadSession();
+            Programs = Session.LoadPrograms();
         }
       
         #region Properties

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using Driver;
+using System.Xml;
 
 namespace IDE.Common.Utilities
 {
@@ -24,6 +24,20 @@ namespace IDE.Common.Utilities
                 Process.Start(Application.ResourceAssembly.Location);
                 Application.Current.Shutdown();
             }
+        }
+
+        public static void CreateSessionFile()
+        {
+            var document = new XmlDocument();
+            document.CreateElement("Session");
+            document.Save("Session.xml");
+        }
+
+        public static void CreateCommandsFile()
+        {
+            var document = new XmlDocument();
+            document.CreateElement("Commands");
+            document.Save("Commands.xml");
         }
     }
 }

@@ -98,7 +98,7 @@
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
     <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
-    <Compile Include="Common\Models\CustomHighlighting.cs" />
+    <Compile Include="Common\Utilities\Highlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
@@ -114,7 +114,7 @@
     <Compile Include="Common\Utilities\Extensions\EnumExtensions.cs" />
     <Compile Include="Common\Utilities\IXMLObject.cs" />
     <Compile Include="Common\Utilities\Json.cs" />
-    <Compile Include="Common\Utilities\ConfigurationService.cs" />
+    <Compile Include="Common\Utilities\Commands.cs" />
     <Compile Include="Common\Utilities\MissingFileCreator.cs" />
     <Compile Include="Common\Utilities\Session.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />

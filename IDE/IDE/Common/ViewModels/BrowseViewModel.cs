@@ -9,7 +9,9 @@ using Driver;
 using IDE.Common.Utilities;
 using IDE.Common.Models.Value_Objects;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Documents;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
@@ -20,14 +22,13 @@ namespace IDE.Common.ViewModels
 {
     public class BrowseViewModel : ObservableObject
     {
-        ProgramEditor commandHistory, commandInput;
-        bool lineWasNotValid;
-        E3JManipulator manipulator;
-        int messageSelectionArrows;
-        CompletionWindow completionWindow;
-        IList<ICompletionData> data;
-        Intellisense intellisense;
-        IEnumerable<Command> commands;
+        private ProgramEditor commandHistory, commandInput;
+        private bool lineWasNotValid;
+        private readonly E3JManipulator manipulator;
+        private int messageSelectionArrows;
+        private CompletionWindow completionWindow;
+        private IList<ICompletionData> data;
+        private readonly Intellisense intellisense;
 
         public BrowseViewModel()
         {
@@ -83,7 +84,7 @@ namespace IDE.Common.ViewModels
         #region CommandWindow
         private void InitializeCommandInput()
         {
-            CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On)
+            CommandInput = new ProgramEditor(ProgramEditor.HighlightingE.On)
             {
                 ShowLineNumbers = false,
                 Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
@@ -105,7 +106,7 @@ namespace IDE.Common.ViewModels
                 completionWindow = new CompletionWindow(CommandInput.TextArea);
                 data = completionWindow.CompletionList.CompletionData;
 
-                commands = intellisense.Commands;
+                var commands = intellisense.Commands;
                 foreach (var command in commands)
                 {
                     data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
@@ -134,10 +135,7 @@ namespace IDE.Common.ViewModels
 
         private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (completionWindow != null)
-            {
-                completionWindow.Show();
-            }
+            completionWindow?.Show();
         }
 
         private void CommandInput_TextChanged(object sender, EventArgs e)
@@ -156,7 +154,7 @@ namespace IDE.Common.ViewModels
 
         private void InitializeCommandHistory()
         {
-            CommandHistory = new ProgramEditor(ProgramEditor.Highlighting.On)
+            CommandHistory = new ProgramEditor(ProgramEditor.HighlightingE.On)
             {
                 IsReadOnly = true,
                 Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
@@ -182,16 +180,16 @@ namespace IDE.Common.ViewModels
             throw new NotImplementedException();
         }
 
-        private async void Send(object obj = null)
+        private void Send(object obj = null)
         {
             if (!string.IsNullOrEmpty(CommandInput.Text))
             {
                 if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
                     CommandInput.TextArea.TextView.LineTransformers.Clear();
-                    MessageList.AddMessage(new Models.Value_Objects.Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
-                    CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
-                        MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                    MessageList.AddMessage(new Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
+                    CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime + ": " +
+                        MessageList.Messages[MessageList.Messages.Count - 1].MyMessage + "\n";
                     CommandHistory.ScrollToEnd();
                     CommandInput.Text = string.Empty;
                 }
@@ -203,8 +201,8 @@ namespace IDE.Common.ViewModels
                     {
                         CommandInput.TextArea.TextView.LineTransformers.Clear();
                         MessageList.AddMessage(new Models.Value_Objects.Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
-                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
-                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime + ": " +
+                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage + "\n";
                         CommandHistory.ScrollToEnd();
                         CommandInput.Text = string.Empty;
                     }

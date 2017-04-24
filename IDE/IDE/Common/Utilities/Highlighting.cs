@@ -1,14 +1,16 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using Microsoft.Win32;
 
-namespace IDE.Common.Models
+namespace IDE.Common.Utilities
 {
-    public class CustomHighlighting
+    public class Highlighting
     {
+        private const string DEFAULT_HIGHLIGHTING_PATH = "CustomHighlighting.xshd";
+
         #region Properties
 
         public Color[] HighlightingDefinitionColors
@@ -23,17 +25,15 @@ namespace IDE.Common.Models
             }
         }
 
-        public Color[] ExportDefinitionsColors
-        {
-            set
-            {
-                Export(value);
-            }
-        }
-
         public Color[] ImportDefinitionsColors => Import();
+        private string path;
 
         #endregion
+
+        public Highlighting(string path = DEFAULT_HIGHLIGHTING_PATH)
+        {
+            this.path = Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute) ? DEFAULT_HIGHLIGHTING_PATH : path;
+        }
 
         #region Actions
 
@@ -49,7 +49,7 @@ namespace IDE.Common.Models
                 string numbers = colors[5].ToString().Remove(1, 2);
                 string comments = colors[6].ToString().Remove(1, 2);
 
-                string[] definitionLines = File.ReadAllLines("CustomHighlighting.xshd");
+                string[] definitionLines = File.ReadAllLines(path);
 
                 //replace outdated colors with new ones
                 definitionLines[2] = $"\t<Color name=\"Comment\" foreground=\"{comments}\" />";
@@ -60,7 +60,7 @@ namespace IDE.Common.Models
                 definitionLines[93] = $"\t\t<Keywords fontWeight=\"bold\" foreground=\"{informations}\">\t<!--INFORMATION COMMANDS-->";
                 definitionLines[119] = $"\t\t<Rule foreground=\"{numbers}\">";
 
-                File.WriteAllLines("CustomHighlighting.xshd", definitionLines);
+                File.WriteAllLines(path, definitionLines);
 
                 if (MessageBox.Show("In order for the changes to take effect, please restart the program. Do you wish to restart now?", 
                     "Custom redefinition completed", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
@@ -83,11 +83,11 @@ namespace IDE.Common.Models
 
         private Color[] GetDefinitions()
         {
-            Color[] colors = new Color[7];
+            var colors = new Color[7];
 
             try
             {
-                string[] definitionLines = File.ReadAllLines("CustomHighlighting.xshd");
+                string[] definitionLines = File.ReadAllLines(path);
 
                 //read hex color for every type
                 string comments = definitionLines[2].Substring(definitionLines[2].IndexOf('#'), 7);
@@ -133,18 +133,16 @@ namespace IDE.Common.Models
                     DefaultExt = ".xshd",
                     Filter = "xshd files (.xshd)|*.xshd"
                 };
-                // Default file name
-                // Default file extension
-                // Filter files by extension
 
                 // Process open file dialog box results
                 if (dialog.ShowDialog() == false)
                 {
-                    return new Color[] { Color.FromRgb(193, 193, 193), Color.FromRgb(193, 193, 193), Color.FromRgb(193, 193, 193),
+                    return new[] { Color.FromRgb(193, 193, 193), Color.FromRgb(193, 193, 193), Color.FromRgb(193, 193, 193),
                      Color.FromRgb(193, 193, 193), Color.FromRgb(193, 193, 193), Color.FromRgb(193, 193, 193), Color.FromRgb(193, 193, 193) };
                 }
 
                 string[] definitionLines = File.ReadAllLines($"{dialog.FileName}");
+                Session.Instance.SubmitHighlighting(dialog.FileName);
 
                 //read hex color for every type
                 string comments = definitionLines[2].Substring(definitionLines[2].IndexOf('#'), 7);
@@ -177,7 +175,7 @@ namespace IDE.Common.Models
             return colors;
         }
 
-        private void Export(Color[] colors)
+        public void Export(Color[] colors)
         {
             try
             {
@@ -187,11 +185,7 @@ namespace IDE.Common.Models
                     DefaultExt = ".xshd",
                     Filter = "xshd files (.xshd)|*.xshd"
                 };
-                // Default file name
-                // Default file extension
-                // Filter files by extension
 
-                // Process save file dialog box results
                 if (dialog.ShowDialog() == false)
                 {
                     return;
@@ -218,6 +212,7 @@ namespace IDE.Common.Models
                 definitionLines[119] = $"\t\t<Rule foreground=\"{numbers}\">";
                 
                 File.WriteAllLines($"{dialog.FileName}", definitionLines);
+                Session.Instance.SubmitHighlighting(dialog.FileName);
             }
             catch (FileNotFoundException)
             {

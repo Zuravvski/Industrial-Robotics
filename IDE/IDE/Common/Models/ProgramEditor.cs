@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
 using Driver;
@@ -10,7 +9,6 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Microsoft.Win32;
 using System;
-using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
 using IDE.Common.Models.Syntax_Check;
@@ -24,7 +22,8 @@ namespace IDE.Common.Models
 
         #region Fields
 
-        private readonly Highlighting highlighting;
+        private readonly HighlightingE highlighting;
+        private SyntaxCheckerModeE syntaxCheckerMode;
         private Program currentProgram;
         private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
@@ -34,26 +33,20 @@ namespace IDE.Common.Models
 
         #region enums
 
-        public enum Highlighting
+        public enum HighlightingE
         {
             On,
             Off
         }
 
-        #endregion
-
-        #region Constructor
-
-        public ProgramEditor(Highlighting highlighting)
+        public enum SyntaxCheckerModeE
         {
-            this.highlighting = highlighting;
-            InitializeAvalon();
-
-            syntaxChecker = new SyntaxChecker();
-            intellisense = new Intellisense();
+            RealTime,
+            OnDemand
         }
-        
+
         #endregion
+
 
         #region Properties
 
@@ -69,7 +62,6 @@ namespace IDE.Common.Models
                 return currentMacro;
             }
         }
-
         public Program CurrentProgram
         {
             set
@@ -82,8 +74,51 @@ namespace IDE.Common.Models
                 return currentProgram;
             }
         }
+
+        public SyntaxCheckerModeE SyntaxCheckerMode
+        {
+            get { return syntaxCheckerMode; }
+            set
+            {
+                if (value == SyntaxCheckerModeE.RealTime)
+                {
+                    TextChanged += OnSyntaxCheck;
+                    DataObject.AddPastingHandler(this, OnPaste);
+                }
+                else
+                {
+                    TextChanged -= OnSyntaxCheck;
+                    DataObject.RemovePastingHandler(this, OnPaste);
+                }
+                syntaxCheckerMode = value;
+            }
+        }
+
         public bool DoSyntaxCheck { get; set; }
-        
+
+        #endregion
+
+        #region Constructor
+
+        public ProgramEditor(HighlightingE highlighting)
+        {
+            InitializeAvalon();
+            this.highlighting = highlighting;
+            syntaxChecker = new SyntaxChecker();
+            intellisense = new Intellisense();
+            syntaxCheckerMode = SyntaxCheckerModeE.OnDemand;
+
+            TextChanged += OnTextChanged;
+        }
+
+        private void OnTextChanged(object sender, EventArgs e)
+        {
+            if (currentProgram != null)
+            {
+                currentProgram.Content = Text;
+            }
+        }
+
         #endregion
 
         #region Actions
@@ -96,22 +131,27 @@ namespace IDE.Common.Models
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             Padding = new Thickness(5);
 
-            if (highlighting == Highlighting.On && !MissingFileCreator.HighlightingErrorWasAlreadyShown)
+            if (highlighting == HighlightingE.On && !MissingFileCreator.HighlightingErrorWasAlreadyShown)
             {
                 try
                 {
-                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), 
-                        HighlightingManager.Instance);
-                    HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
-                    SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
+                    LoadHighligtingDefinition();
                 }
                 catch (FileNotFoundException)
                 {
                     MissingFileCreator.CreateHighlightingDefinitionFile();
+                    LoadHighligtingDefinition();
                 }
-            }
 
-            TextArea.TextEntering += TextEntering;     
+            }   
+        }
+
+        private void LoadHighligtingDefinition()
+        {
+            var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"),
+                HighlightingManager.Instance);
+            HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
+            SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
         }
 
         public bool CheckLineValidationManually(string line)
@@ -126,10 +166,6 @@ namespace IDE.Common.Models
         #endregion
 
         #region Event Handlers
-        private void OnIntellisense(object sender, TextCompositionEventArgs textCompositionEventArgs)
-        {
-            //tbi
-        }
 
         private void OnSyntaxCheck(object sender, EventArgs e)
         {
@@ -146,12 +182,7 @@ namespace IDE.Common.Models
             ValidateAllLines();
         }
 
-        private void TextEntering(object sender, TextCompositionEventArgs e)
-        {
-            //tbi
-        }
-
-        private async void ValidateAllLines()
+        public async void ValidateAllLines()
         {
             if (!string.IsNullOrEmpty(CurrentProgram?.Content) && DoSyntaxCheck)
             {
@@ -180,39 +211,6 @@ namespace IDE.Common.Models
             {
                 TextArea.TextView.LineTransformers.Add(
                     new LineColorizer(lineNum, LineColorizer.ValidityE.Yes));
-            }
-        }
-
-        public async void RunIntellisense(bool isForced)
-        {
-            var line = TextArea.Document.GetLineByNumber(TextArea.Caret.Line);
-            var lineText = TextArea.Document.GetText(line);
-
-            // Don't show intellisense if theres no text in the line unless user forces intellisense by pressing ctrl+space
-            if (!string.IsNullOrWhiteSpace(lineText) || isForced)
-            {
-                var tips = await intellisense.GetCompletionAsync(lineText);
-
-                var completionWindow = new CompletionWindow(TextArea);
-                completionWindow.Closed += delegate
-                {
-                    completionWindow = null;
-                };
-                var data = completionWindow.CompletionList.CompletionData;
-
-                //await Task.Run(() =>
-                //{
-                //    foreach (var command in tips)
-                //    {
-                //        var completionData = new MyCompletionData(command.Content, command.Description, Command.TypeE.None);
-                //        data.Add(completionData);
-                //    }
-
-                //});
-
-                // Don't show empty results
-                if(data.Count > 0)
-                    completionWindow.Show();
             }
         }
         

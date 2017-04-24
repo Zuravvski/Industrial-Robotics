@@ -1,32 +1,23 @@
-﻿using IDE.Common.Models;
-using IDE.Common.ViewModels.Commands;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using IDE.Common.ViewModels.Commands;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Xceed.Wpf.Toolkit;
+using IDE.Common.Utilities;
 
 namespace IDE.Common.ViewModels
 {
-    class HighlightingViewModel : INotifyPropertyChanged
+    public class HighlightingViewModel : ObservableObject
     {
         private Color colorMovement, colorGrip, colorCounters, colorProgramming, colorInformations, colorNumbers, colorComments;
         private Brush foregroundMovement, foregroundGrip, foregroundCounters, foregroundProgramming, foregroundInformations, foregroundNumbers, foregroundComments;
-        CustomHighlighting highlighting;
+        private readonly Highlighting highlighting;
 
 
         #region Constructor
 
         public HighlightingViewModel()
         {
-            highlighting = new CustomHighlighting();
+            highlighting = Session.Instance.Highlighting;
 
             //default colors
             var currentDefinitions = highlighting.HighlightingDefinitionColors;
@@ -69,7 +60,7 @@ namespace IDE.Common.ViewModels
                 colorMovement = value;
                 SolidColorBrush brush = new SolidColorBrush(ColorMovement);
                 ForegroundMovement = brush;
-                OnPropertyChanged("ColorMovement");
+                NotifyPropertyChanged("ColorMovement");
             }
             get
             {
@@ -84,7 +75,7 @@ namespace IDE.Common.ViewModels
                 colorGrip = value;
                 SolidColorBrush brush = new SolidColorBrush(ColorGrip);
                 ForegroundGrip = brush;
-                OnPropertyChanged("ColorGrip");
+                NotifyPropertyChanged("ColorGrip");
             }
             get
             {
@@ -99,7 +90,7 @@ namespace IDE.Common.ViewModels
                 colorCounters = value;
                 SolidColorBrush brush = new SolidColorBrush(ColorCounters);
                 ForegroundCounters = brush;
-                OnPropertyChanged("ColorCounters");
+                NotifyPropertyChanged("ColorCounters");
             }
             get
             {
@@ -114,7 +105,7 @@ namespace IDE.Common.ViewModels
                 colorProgramming = value;
                 SolidColorBrush brush = new SolidColorBrush(ColorProgramming);
                 ForegroundProgramming = brush;
-                OnPropertyChanged("ColorProgramming");
+                NotifyPropertyChanged("ColorProgramming");
             }
             get
             {
@@ -129,7 +120,7 @@ namespace IDE.Common.ViewModels
                 colorInformations = value;
                 SolidColorBrush brush = new SolidColorBrush(ColorInformations);
                 ForegroundInformations = brush;
-                OnPropertyChanged("ColorInformations");
+                NotifyPropertyChanged("ColorInformations");
             }
             get
             {
@@ -144,7 +135,7 @@ namespace IDE.Common.ViewModels
                 colorNumbers = value;
                 SolidColorBrush brush = new SolidColorBrush(ColorNumbers);
                 ForegroundNumbers = brush;
-                OnPropertyChanged("ColorNumbers");
+                NotifyPropertyChanged("ColorNumbers");
             }
             get
             {
@@ -159,7 +150,7 @@ namespace IDE.Common.ViewModels
                 colorComments = value;
                 SolidColorBrush brush = new SolidColorBrush(ColorComments);
                 ForegroundComments = brush;
-                OnPropertyChanged("ColorComments");
+                NotifyPropertyChanged("ColorComments");
             }
             get
             {
@@ -173,7 +164,7 @@ namespace IDE.Common.ViewModels
             set
             {
                 foregroundMovement = value;
-                OnPropertyChanged("ForegroundMovement");
+                NotifyPropertyChanged("ForegroundMovement");
             }
             get
             {
@@ -186,7 +177,7 @@ namespace IDE.Common.ViewModels
             set
             {
                 foregroundGrip = value;
-                OnPropertyChanged("ForegroundGrip");
+                NotifyPropertyChanged("ForegroundGrip");
             }
             get
             {
@@ -199,7 +190,7 @@ namespace IDE.Common.ViewModels
             set
             {
                 foregroundCounters = value;
-                OnPropertyChanged("ForegroundCounters");
+                NotifyPropertyChanged("ForegroundCounters");
             }
             get
             {
@@ -212,7 +203,7 @@ namespace IDE.Common.ViewModels
             set
             {
                 foregroundProgramming = value;
-                OnPropertyChanged("ForegroundProgramming");
+                NotifyPropertyChanged("ForegroundProgramming");
             }
             get
             {
@@ -225,7 +216,7 @@ namespace IDE.Common.ViewModels
             set
             {
                 foregroundInformations = value;
-                OnPropertyChanged("ForegroundInformations");
+                NotifyPropertyChanged("ForegroundInformations");
             }
             get
             {
@@ -238,7 +229,7 @@ namespace IDE.Common.ViewModels
             set
             {
                 foregroundNumbers = value;
-                OnPropertyChanged("ForegroundNumbers");
+                NotifyPropertyChanged("ForegroundNumbers");
             }
             get
             {
@@ -251,7 +242,7 @@ namespace IDE.Common.ViewModels
             set
             {
                 foregroundComments = value;
-                OnPropertyChanged("ForegroundComments");
+                NotifyPropertyChanged("ForegroundComments");
             }
             get
             {
@@ -276,25 +267,15 @@ namespace IDE.Common.ViewModels
 
         private void Export(object obj)
         {
-            Color[] colorList = new Color[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
-            highlighting.ExportDefinitionsColors = colorList;   //send current colors into export method
+            Color[] colorList = { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
+            Session.Instance.SubmitHighlighting("CustomHighlighting.xshd");
+            highlighting.Export(colorList);   //send current colors into export method
         }
 
         private void Apply(object obj)
         {
-            Color[] colorList = new Color[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
+            var colorList = new[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
             highlighting.HighlightingDefinitionColors = colorList;  //
-        }
-
-        #endregion
-
-        #region PropertyChangedEvents
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

@@ -30,7 +30,6 @@ namespace IDE.Common.ViewModels
         private ICommand saveAs;
         private ICommand delete;
         private ICommand send;
-        private ICommand intellisense;
         #endregion
 
         #region Properties
@@ -42,6 +41,7 @@ namespace IDE.Common.ViewModels
             {
                 selectedProgram = value;
                 programEditor.CurrentProgram = value;
+                programEditor.ValidateAllLines();
                 NotifyPropertyChanged("SelectedProgram");
             }
             get
@@ -95,7 +95,11 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {    
             ListManager = new ListManager();
-            programEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
+            programEditor = new ProgramEditor(ProgramEditor.HighlightingE.On)
+            {
+                DoSyntaxCheck = true,
+                SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime
+            };
 
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             manipulator.Connect("COM5");
@@ -103,10 +107,6 @@ namespace IDE.Common.ViewModels
 
             ThemeColor = AppearanceViewModel.Instance != null ? 
                 new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush(Color.FromArgb(255, 27, 161, 226));
-
-            // Add ctrl + space for intellisense
-            var intellisenseShortcut = new KeyBinding(Intellisense, Key.Space, ModifierKeys.Control);
-            programEditor.TextArea.InputBindings.Add(intellisenseShortcut);
         }
         #endregion
 
@@ -313,17 +313,6 @@ namespace IDE.Common.ViewModels
                 return send ?? (send = new DelegateCommand(delegate
                 {
                     programService.DownloadProgram(ProgramEditor.CurrentProgram);
-                }));
-            }
-        }
-
-        public ICommand Intellisense
-        {
-            get
-            {
-                return intellisense ?? (intellisense = new DelegateCommand(delegate
-                {
-                    programEditor.RunIntellisense(true);
                 }));
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Driver;
+using IDE.Common.Utilities;
 
 namespace IDE.Others
 {
@@ -8,6 +9,9 @@ namespace IDE.Others
     /// </summary>
     public partial class App : Application
     {
-
+        public App()
+        {
+            Session.Instance.Initialize();
+        }
     }
 }

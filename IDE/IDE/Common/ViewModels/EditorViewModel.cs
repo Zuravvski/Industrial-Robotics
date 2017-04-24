@@ -49,6 +49,7 @@ namespace IDE.Common.ViewModels
                 return selectedProgram;
             }
         }
+
         public ProgramEditor ProgramEditor
         {
             get

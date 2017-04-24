@@ -23,6 +23,7 @@ namespace IDE.Common.ViewModels
         #region Fields
 
         ProgramEditor commandHistory, commandInput;
+        RemoteProgram selectedRemoteProgram;
         bool lineWasNotValid;
         E3JManipulator manipulator;
         int messageSelectionArrows;
@@ -31,6 +32,9 @@ namespace IDE.Common.ViewModels
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of BrowseViewModel class.
+        /// </summary>
         public BrowseViewModel()
         {
             DeclareCommands();
@@ -47,8 +51,14 @@ namespace IDE.Common.ViewModels
 
         #region Properties
 
+        /// <summary>
+        /// List storing sent commands,
+        /// </summary>
         public MessageList MessageList { get; }
 
+        /// <summary>
+        /// Read only editor for displaying send and received commands.
+        /// </summary>
         public ProgramEditor CommandHistory
         {
             set
@@ -62,6 +72,9 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Single line editor for user to send commands.
+        /// </summary>
         public ProgramEditor CommandInput
         {
             set
@@ -75,12 +88,32 @@ namespace IDE.Common.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// Selected remote program from RV-E3J list of remote programs.
+        /// </summary>
+        public RemoteProgram SelectedProgram
+        {
+            set
+            {
+                selectedRemoteProgram = value;
+                NotifyPropertyChanged("SelectedRemoteProgram");
+            }
+            get
+            {
+                return selectedRemoteProgram;
+            }
+        }
+
         #endregion
 
         #region Actions
         
         #region CommandWindow
 
+        /// <summary>
+        /// Initializes command input editor.
+        /// </summary>
         private void InitializeCommandInput()
         {
             CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.UseIntellisense.Yes)
@@ -94,7 +127,10 @@ namespace IDE.Common.ViewModels
             CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown;
             CommandInput.TextChanged += CommandInput_TextChanged;
         }
-
+        
+        /// <summary>
+        /// Occurs when there is any text change in Command Input editor.
+        /// </summary>
         private void CommandInput_TextChanged(object sender, EventArgs e)
         {
             if (lineWasNotValid)
@@ -109,6 +145,9 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Initializes command history editor.
+        /// </summary>
         private void InitializeCommandHistory()
         {
             CommandHistory = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.UseIntellisense.No)
@@ -122,20 +161,34 @@ namespace IDE.Common.ViewModels
             CommandHistory.PreviewMouseWheel += CommandHistory_PreviewMouseWheel;
         }
 
+        /// <summary>
+        /// Occurs after user triggers upload event.
+        /// </summary>
+        /// <param name="obj"></param>
         private void Refresh(object obj)
         {
             //TODO
         }
 
+        /// <summary>
+        /// Occurs after user triggers upload event.
+        /// </summary>
         private void Download(object obj)
         {
             //TODO
         }
+
+        /// <summary>
+        /// Occurs after user triggers upload event.
+        /// </summary>
         private void Upload(object obj)
         {
             //TODO
         }
 
+        /// <summary>
+        /// Occurs after user triggers send event.
+        /// </summary>
         private async void Send(object obj = null)
         {
             if (!string.IsNullOrWhiteSpace(CommandInput.Text))
@@ -168,7 +221,10 @@ namespace IDE.Common.ViewModels
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Occurs after user triggers font reduce event.
+        /// </summary>
         private void FontReduce(object obj = null)
         {
             if (CommandHistory.FontSize > 3)
@@ -178,6 +234,9 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Occurs after user triggers font enlarge event.
+        /// </summary>
         private void FontEnlarge(object obj = null)
         {
             if (CommandHistory.FontSize < 20)
@@ -187,31 +246,63 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Exports current content of Command History to a file.
+        /// </summary>
+        /// <param name="obj"></param>
         private void ExportHistory(object obj)
         {
             CommandHistory.ExportContent(DateTime.Now.ToString(CultureInfo.InvariantCulture).Replace(':', '-'), "txt");
         }
 
+        /// <summary>
+        /// Clears current content of Command History.
+        /// </summary>
+        /// <param name="obj"></param>
         private void ClearHistory(object obj)
         {
             CommandHistory.Text = string.Empty;
         }
 
+        /// <summary>
+        /// Sets current font as Times New Roman.
+        /// </summary>
         private void FontTimesNewRoman(object obj)
         {
             CommandHistory.TextArea.FontFamily = new FontFamily("Times New Roman");
+            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
         }
 
+        /// <summary>
+        /// Sets current font as Arial.
+        /// </summary>
         private void FontArial(object obj)
         {
             CommandHistory.TextArea.FontFamily = new FontFamily("Arial");
+            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
         }
 
+        /// <summary>
+        /// Sets current font as Calibri.
+        /// </summary>
         private void FontCalibri(object obj)
         {
             CommandHistory.TextArea.FontFamily = new FontFamily("Calibri");
+            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
         }
 
+        /// <summary>
+        /// Sets current font as Segoe UI.
+        /// </summary>
+        private void FontSegoeUI(object obj)
+        {
+            CommandHistory.TextArea.FontFamily = new FontFamily("Segoe UI");
+            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
+        }
+        
+        /// <summary>
+        /// Occurs when there is any key down while having focus on Command Input editor.
+        /// </summary>
         private void CommandInput_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && CommandInput.completionWindow == null)
@@ -240,6 +331,9 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Occurs when there is any mouse scroll press/movement while having focus on Command Input editor.
+        /// </summary>
         private void CommandHistory_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             bool handle = (Keyboard.Modifiers & ModifierKeys.Control) > 0;
@@ -252,11 +346,17 @@ namespace IDE.Common.ViewModels
                 FontReduce();   //scrolls toward user
         }
 
+        /// <summary>
+        /// Disables syntax check for command input.
+        /// </summary>
         private void OffSyntaxCheck(object obj)
         {
             CommandInput.DoSyntaxCheck = false;
         }
 
+        /// <summary>
+        /// Enables syntax check for command input.
+        /// </summary>
         private void OnSyntaxCheck(object obj)
         {
             CommandInput.DoSyntaxCheck = true;
@@ -272,33 +372,106 @@ namespace IDE.Common.ViewModels
         public ICommand DownloadClickCommand { get; private set; }
         public ICommand UploadClickCommand { get; private set; }
         public ICommand SendClickCommand { get; private set; }
-        public ICommand FontEnlargeCommand { get; private set; }
-        public ICommand FontReduceCommand { get; private set; }
         public ICommand ClearHistoryCommand { get; private set; }
         public ICommand ExportHistoryCommand { get; private set; }
         public ICommand FontTNRomanCommand { get; private set; }
         public ICommand FontCalibriCommand { get; private set; }
         public ICommand FontArialCommand { get; private set; }
+        public ICommand FontSegoeUICommand { get; private set; }
         public ICommand OnSyntaxCheckCommand { get; private set; }
         public ICommand OffSyntaxCheckCommand { get; private set; }
 
         private void DeclareCommands()
         {
-            RefreshClickCommand = new RelayCommand(Refresh);
-            DownloadClickCommand = new RelayCommand(Download);
-            UploadClickCommand = new RelayCommand(Upload);
+            RefreshClickCommand = new RelayCommand(Refresh, IsConnectionEstablished);
+            DownloadClickCommand = new RelayCommand(Download, IsItemSelected);
+            UploadClickCommand = new RelayCommand(Upload, IsConnectionEstablished);
             SendClickCommand = new RelayCommand(Send, IsCommandInputNotEmpty);
-            FontEnlargeCommand = new RelayCommand(FontEnlarge);
-            FontReduceCommand = new RelayCommand(FontReduce);
-            ClearHistoryCommand = new RelayCommand(ClearHistory);
-            ExportHistoryCommand = new RelayCommand(ExportHistory);
-            FontTNRomanCommand = new RelayCommand(FontTimesNewRoman);
-            FontCalibriCommand = new RelayCommand(FontCalibri);
-            FontArialCommand = new RelayCommand(FontArial);
+            ClearHistoryCommand = new RelayCommand(ClearHistory, IsCommandHistoryNotEmpty);
+            ExportHistoryCommand = new RelayCommand(ExportHistory, IsCommandHistoryNotEmpty);
+            FontTNRomanCommand = new RelayCommand(FontTimesNewRoman, IsCurrentFontNotTNRoman);
+            FontCalibriCommand = new RelayCommand(FontCalibri, IsCurrentFontNotCalibri);
+            FontArialCommand = new RelayCommand(FontArial, IsCurrentFontNotArial);
+            FontSegoeUICommand = new RelayCommand(FontSegoeUI, IsCurrentFontNotSegoeUI);
             OnSyntaxCheckCommand = new RelayCommand(OnSyntaxCheck);
             OffSyntaxCheckCommand = new RelayCommand(OffSyntaxCheck);
         }
 
+        /// <summary>
+        /// Return a value based upon wheter current font is Calibri or not.
+        /// </summary>
+        private bool IsCurrentFontNotCalibri(object obj)
+        {
+            if (CommandHistory.TextArea.FontFamily.ToString() == "Calibri")
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Return a value based upon wheter current font is Times New Roman or not.
+        /// </summary>
+        private bool IsCurrentFontNotTNRoman(object obj)
+        {
+            if (CommandHistory.TextArea.FontFamily.ToString() == "Times New Roman")
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Return a value based upon wheter current font is Segoe UI or not.
+        /// </summary>
+        private bool IsCurrentFontNotSegoeUI(object obj)
+        {
+            if (CommandHistory.TextArea.FontFamily.ToString() == "Segoe UI")
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Return a value based upon wheter current font is Arial or not.
+        /// </summary>
+        private bool IsCurrentFontNotArial(object obj)
+        {
+            if (CommandHistory.TextArea.FontFamily.ToString() == "Arial")
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Return a value based upon wheter Command History is empty or not.
+        /// </summary>
+        private bool IsCommandHistoryNotEmpty(object obj)
+        {
+            return !string.IsNullOrWhiteSpace(CommandHistory.Text);
+        }
+
+        /// <summary>
+        /// Return a value based upon wheter a connection between computer and RV-E3J manipulator was established or not.
+        /// </summary>
+        private bool IsConnectionEstablished(object obj)
+        {
+            //TODO
+            return false;
+        }
+
+        /// <summary>
+        /// Returns a value based upon wheter a item is selected in remote program list or not.
+        /// </summary>
+        private bool IsItemSelected(object obj)
+        {
+            if (SelectedProgram != null)
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Returns a value based upon wheter a Command Input is empty or not.
+        /// </summary>
         private bool IsCommandInputNotEmpty(object obj)
         {
             return !string.IsNullOrWhiteSpace(CommandInput.Text);

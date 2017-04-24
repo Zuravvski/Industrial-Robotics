@@ -63,18 +63,7 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        public SolidColorBrush ThemeColor
-        {
-            set
-            {
-                themeColor = value;
-                NotifyPropertyChanged("ThemeColor");
-            }
-            get
-            {
-                return themeColor;
-            }
-        }
+        public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
 
         public string Text
         {
@@ -106,8 +95,7 @@ namespace IDE.Common.ViewModels
             manipulator.Connect("COM5");
             programService = new ProgramService(manipulator);
 
-            ThemeColor = AppearanceViewModel.Instance != null ? 
-                new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush(Color.FromArgb(255, 27, 161, 226));
+           // ThemeColor = new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor);
         }
         #endregion
 

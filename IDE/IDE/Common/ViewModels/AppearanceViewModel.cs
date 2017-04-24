@@ -1,34 +1,23 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
 using FirstFloor.ModernUI.Presentation;
+using IDE.Common.ViewModels.Commands;
 
 namespace IDE.Common.ViewModels
 {
     /// <summary>
     /// A simple view model for configuring theme, font and accent colors.
     /// </summary>
-    public class AppearanceViewModel
-        : NotifyPropertyChanged
+    public class AppearanceViewModel : ObservableObject
     {
         private const string FontSmall = "small";
         private const string FontLarge = "large";
 
-        // 9 accent colors from metro design principles
-        /*private Color[] accentColors = new Color[]{
-            Color.FromRgb(0x33, 0x99, 0xff),   // blue
-            Color.FromRgb(0x00, 0xab, 0xa9),   // teal
-            Color.FromRgb(0x33, 0x99, 0x33),   // green
-            Color.FromRgb(0x8c, 0xbf, 0x26),   // lime
-            Color.FromRgb(0xf0, 0x96, 0x09),   // orange
-            Color.FromRgb(0xff, 0x45, 0x00),   // orange red
-            Color.FromRgb(0xe5, 0x14, 0x00),   // red
-            Color.FromRgb(0xff, 0x00, 0x97),   // magenta
-            Color.FromRgb(0xa2, 0x00, 0xff),   // purple            
-        };*/
-
         // 20 accent colors from Windows Phone 8
-        private Color[] accentColors = new Color[]{
+        private readonly Color[] accentColors = 
+        {
             Color.FromRgb(0xa4, 0xc4, 0x00),   // lime
             Color.FromRgb(0x60, 0xa9, 0x17),   // green
             Color.FromRgb(0x00, 0x8a, 0x00),   // emerald
@@ -52,32 +41,34 @@ namespace IDE.Common.ViewModels
         };
 
         private Color selectedAccentColor;
-        private LinkCollection themes = new LinkCollection();
+        private readonly LinkCollection themes = new LinkCollection();
         private Link selectedTheme;
         private string selectedFontSize;
+        private Brush themeColor;
 
-        public AppearanceViewModel()
+        // Sigleton
+        private static readonly Lazy<AppearanceViewModel> instance = new Lazy<AppearanceViewModel>(() => new AppearanceViewModel());
+        public static AppearanceViewModel Instance => instance.Value;
+
+        protected AppearanceViewModel()
         {
             // add the default themes
-            this.themes.Add(new Link { DisplayName = "dark", Source = AppearanceManager.DarkThemeSource });
-            this.themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
+            themes.Add(new Link { DisplayName = "dark", Source = AppearanceManager.DarkThemeSource });
+            themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
 
-            this.SelectedFontSize = AppearanceManager.Current.FontSize == FontSize.Small ? FontLarge : FontSmall;
+            SelectedFontSize = AppearanceManager.Current.FontSize == FontSize.Small ? FontLarge : FontSmall;
             SyncThemeAndColor();
 
             AppearanceManager.Current.PropertyChanged += OnAppearanceManagerPropertyChanged;
-
-            //this is mine
-            Instance = this;
         }
 
         private void SyncThemeAndColor()
         {
             // synchronizes the selected viewmodel theme with the actual theme used by the appearance manager.
-            this.SelectedTheme = this.themes.FirstOrDefault(l => l.Source.Equals(AppearanceManager.Current.ThemeSource));
+            SelectedTheme = themes.FirstOrDefault(l => l.Source.Equals(AppearanceManager.Current.ThemeSource));
 
             // and make sure accent color is up-to-date
-            this.SelectedAccentColor = AppearanceManager.Current.AccentColor;
+            SelectedAccentColor = AppearanceManager.Current.AccentColor;
         }
 
         private void OnAppearanceManagerPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -90,28 +81,28 @@ namespace IDE.Common.ViewModels
 
         public LinkCollection Themes
         {
-            get { return this.themes; }
+            get { return themes; }
         }
 
         public string[] FontSizes
         {
-            get { return new string[] { FontSmall, FontLarge }; }
+            get { return new[] { FontSmall, FontLarge }; }
         }
 
         public Color[] AccentColors
         {
-            get { return this.accentColors; }
+            get { return accentColors; }
         }
 
         public Link SelectedTheme
         {
-            get { return this.selectedTheme; }
+            get { return selectedTheme; }
             set
             {
-                if (this.selectedTheme != value)
+                if (selectedTheme != value)
                 {
-                    this.selectedTheme = value;
-                    OnPropertyChanged("SelectedTheme");
+                    selectedTheme = value;
+                    NotifyPropertyChanged("SelectedTheme");
 
                     // and update the actual theme
                     AppearanceManager.Current.ThemeSource = value.Source;
@@ -121,40 +112,44 @@ namespace IDE.Common.ViewModels
 
         public string SelectedFontSize
         {
-            get { return this.selectedFontSize; }
+            get { return selectedFontSize; }
             set
             {
-                if (this.selectedFontSize != value)
+                if (selectedFontSize != value)
                 {
-                    this.selectedFontSize = value;
-                    OnPropertyChanged("SelectedFontSize");
+                    selectedFontSize = value;
+                    NotifyPropertyChanged("SelectedFontSize");
 
                     AppearanceManager.Current.FontSize = value == FontLarge ? FontSize.Large : FontSize.Small;
                 }
             }
         }
 
-        private static AppearanceViewModel instance;
-        public static AppearanceViewModel Instance
-        {
-            set { instance = value; }
-            get { return instance; }
-        }
-            
         public Color SelectedAccentColor
         {
-            get { return this.selectedAccentColor; }
+            get { return selectedAccentColor; }
             set
             {
-                if (this.selectedAccentColor != value)
+                if (selectedAccentColor != value)
                 {
-                    this.selectedAccentColor = value;
-                    OnPropertyChanged("SelectedAccentColor");
-
+                    selectedAccentColor = value;
+                    NotifyPropertyChanged("SelectedAccentColor");
                     AppearanceManager.Current.AccentColor = value;
-                    
-                    //EditorViewModel.Instance.ThemeColor = new SolidColorBrush(selectedAccentColor);
+                    ThemeColor = new SolidColorBrush(value);
                 }
+            }
+        }
+
+        public Brush ThemeColor
+        {
+            get
+            {
+                return themeColor;
+            }
+            set
+            {
+                themeColor = value;
+                NotifyPropertyChanged("ThemeColor");
             }
         }
     }

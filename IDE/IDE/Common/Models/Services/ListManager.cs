@@ -11,11 +11,16 @@ namespace IDE.Common.Models.Services
 {
     public class ListManager : ObservableObject
     {
+
+        #region Constructor
+
         public ListManager()
         {
             Programs = Session.LoadPrograms();
         }
-      
+
+        #endregion
+
         #region Properties
 
         public ObservableCollection<Program> Programs { get; }

@@ -17,10 +17,14 @@ namespace IDE.Common.ViewModels
 {
     class HighlightingViewModel : INotifyPropertyChanged
     {
+
+        #region Fields
+
         private Color colorMovement, colorGrip, colorCounters, colorProgramming, colorInformations, colorNumbers, colorComments;
         private Brush foregroundMovement, foregroundGrip, foregroundCounters, foregroundProgramming, foregroundInformations, foregroundNumbers, foregroundComments;
         CustomHighlighting highlighting;
 
+        #endregion
 
         #region Constructor
 

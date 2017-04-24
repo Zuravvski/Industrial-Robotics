@@ -6,10 +6,14 @@ namespace IDE.Common.Models
     public class RemoteListManager : ObservableObject
     {
 
+        #region Constructor
+
         public RemoteListManager()
         {
 
         }
+
+        #endregion
 
         #region Properties
 
@@ -40,5 +44,6 @@ namespace IDE.Common.Models
         }
 
         #endregion
+
     }
 }

@@ -7,13 +7,8 @@ using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
 using Driver;
 using IDE.Common.Models.Value_Objects;
-using System.Collections.Generic;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
-using IDE.Common.Utilities.Extensions;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using IDE.Common.Utilities;
 
 namespace IDE.Common.ViewModels
 {

@@ -9,6 +9,7 @@ namespace IDE.Common.Models
 {
     public class CustomHighlighting
     {
+
         #region Properties
 
         public Color[] HighlightingDefinitionColors

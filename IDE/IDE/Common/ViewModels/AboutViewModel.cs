@@ -5,7 +5,12 @@ namespace IDE.Common.ViewModels
 {
     class AboutViewModel : INotifyPropertyChanged
     {
+
+        #region Fields
+
         AboutModel aboutModel;
+
+        #endregion
 
         #region Constructor
 

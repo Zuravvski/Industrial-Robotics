@@ -9,6 +9,18 @@ namespace IDE.Common.Models.Value_Objects
 {
     public class Command : IXMLObject
     {
+
+        #region Constructor
+
+        protected Command()
+        {
+
+        }
+
+        #endregion
+
+        #region enums
+
         public enum TypeE
         {
             [Description("None")]
@@ -29,6 +41,9 @@ namespace IDE.Common.Models.Value_Objects
             Macro
         };
 
+        #endregion
+
+        #region Properties
 
         public string Name { get; private set; }
         public string Content { get; private set; }
@@ -36,9 +51,9 @@ namespace IDE.Common.Models.Value_Objects
         public Regex Regex { get; private set; }
         public TypeE Type { get; private set; }
 
-        protected Command()
-        {
-        }
+        #endregion
+
+        #region Actions
 
         /// <summary>
         /// Creates new command with specified parameters
@@ -84,5 +99,8 @@ namespace IDE.Common.Models.Value_Objects
 
             return root;
         }
+
+        #endregion
+
     }
 }

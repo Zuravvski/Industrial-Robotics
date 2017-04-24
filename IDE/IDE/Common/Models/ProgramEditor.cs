@@ -3,17 +3,21 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml;
-using Driver;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Windows.Input;
+using Driver;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
 using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Models.Value_Objects;
 using IDE.Common.Utilities;
+using IDE.Common.Utilities.Extensions;
+using Microsoft.Win32;
 
 namespace IDE.Common.Models
 {
@@ -21,14 +25,15 @@ namespace IDE.Common.Models
     {
 
         #region Fields
-
         private readonly HighlightingE highlighting;
         private SyntaxCheckerModeE syntaxCheckerMode;
+        private readonly UseIntellisense useIntellisense;
         private Program currentProgram;
         private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
-        private readonly Intellisense intellisense;
-
+        private IList<ICompletionData> data;
+        private Intellisense intellisense;
+        private IEnumerable<Command> commands;
         #endregion
 
         #region enums
@@ -38,11 +43,31 @@ namespace IDE.Common.Models
             On,
             Off
         }
-
+        
         public enum SyntaxCheckerModeE
         {
             RealTime,
             OnDemand
+        }
+
+        public enum UseIntellisense
+        {
+            Yes,
+            No
+        }
+
+        #endregion
+
+        #region Constructor
+
+        public ProgramEditor(HighlightingE highlighting, UseIntellisense useIntellisense)
+        {
+            MissingFileCreator.CheckForRequiredFiles();
+            this.highlighting = highlighting;
+            this.useIntellisense = useIntellisense;
+            InitializeAvalon();
+
+            syntaxChecker = new SyntaxChecker();
         }
 
         #endregion
@@ -94,7 +119,8 @@ namespace IDE.Common.Models
             }
         }
 
-        public bool DoSyntaxCheck { get; set; }
+
+        public CompletionWindow completionWindow { get; set; }
 
         #endregion
 
@@ -118,7 +144,10 @@ namespace IDE.Common.Models
                 currentProgram.Content = Text;
             }
         }
-
+        
+        public bool DoSyntaxCheck { get; set; }
+        public bool IsOneLine { get; set; }
+        
         #endregion
 
         #region Actions
@@ -131,7 +160,7 @@ namespace IDE.Common.Models
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             Padding = new Thickness(5);
 
-            if (highlighting == HighlightingE.On && !MissingFileCreator.HighlightingErrorWasAlreadyShown)
+            if (highlighting == HighlightingE.On)
             {
                 try
                 {
@@ -141,6 +170,8 @@ namespace IDE.Common.Models
                 {
                     MissingFileCreator.CreateHighlightingDefinitionFile();
                     LoadHighligtingDefinition();
+
+                    Console.Error.WriteLine("Error loading HighlightingDefinition file");
                 }
 
             }   
@@ -152,6 +183,14 @@ namespace IDE.Common.Models
                 HighlightingManager.Instance);
             HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
             SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
+
+            if (useIntellisense == UseIntellisense.Yes)
+            {
+                intellisense = new Intellisense();
+                TextArea.TextEntering += TextArea_TextEntering;
+                TextArea.TextEntered += TextArea_TextEntered;
+                TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
+            }
         }
 
         public bool CheckLineValidationManually(string line)
@@ -166,6 +205,60 @@ namespace IDE.Common.Models
         #endregion
 
         #region Event Handlers
+
+        private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (completionWindow != null)
+                {
+                    completionWindow?.Focus();
+                    e.Handled = true;
+                }
+
+                if (IsOneLine)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (completionWindow == null)
+            {
+                completionWindow = new CompletionWindow(TextArea);
+                data = completionWindow.CompletionList.CompletionData;
+
+                commands = intellisense.Commands;
+                foreach (var command in commands)
+                {
+                    data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
+                }
+            }
+
+            completionWindow.Closed += delegate
+            {
+                completionWindow = null;
+                data = null;
+            };
+
+
+            if (e.Text.Length > 0 && completionWindow != null)
+            {
+                if (!char.IsLetterOrDigit(e.Text[0]))
+                {
+                    // Whenever a non-letter is typed while the completion window is open, insert the currently selected element.
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
+            }
+            // Do not set e.Handled=true, we still want to insert the character that was typed.
+        }
+
+        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            completionWindow?.Show();
+        }
 
         private void OnSyntaxCheck(object sender, EventArgs e)
         {
@@ -196,7 +289,7 @@ namespace IDE.Common.Models
             }
         }
 
-        private async void ValidateLine(int lineNum)
+        public async void ValidateLine(int lineNum)
         {
             if (DoSyntaxCheck)
             {
@@ -247,6 +340,5 @@ namespace IDE.Common.Models
         }
 
         #endregion
-
     }
 }

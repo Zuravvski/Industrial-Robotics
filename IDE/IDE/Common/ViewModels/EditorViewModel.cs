@@ -49,6 +49,7 @@ namespace IDE.Common.ViewModels
                 return selectedProgram;
             }
         }
+
         public ProgramEditor ProgramEditor
         {
             get
@@ -95,7 +96,7 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {    
             ListManager = new ListManager();
-            programEditor = new ProgramEditor(ProgramEditor.HighlightingE.On)
+            programEditor = new ProgramEditor(ProgramEditor.HighlightingE.On, ProgramEditor.UseIntellisense.Yes)
             {
                 DoSyntaxCheck = true,
                 SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime
@@ -316,7 +317,6 @@ namespace IDE.Common.ViewModels
                 }));
             }
         }
-
         #endregion
     }
 }

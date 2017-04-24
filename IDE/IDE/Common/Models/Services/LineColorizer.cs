@@ -22,10 +22,12 @@ namespace IDE.Common.Models.Services
 
         protected override void ColorizeLine(ICSharpCode.AvalonEdit.Document.DocumentLine line)
         {
+
             if (!line.IsDeleted && line.LineNumber == lineNumber)
             {
                 ChangeLinePart(line.Offset, line.EndOffset, element =>
                 {
+                    var x = element.TextRunProperties.ForegroundBrush;
                     element.TextRunProperties.SetBackgroundBrush(isValid == ValidityE.No ? Brushes.Red : Brushes.White);
                 });
             }

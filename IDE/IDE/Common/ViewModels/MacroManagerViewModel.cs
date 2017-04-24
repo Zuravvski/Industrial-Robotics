@@ -80,7 +80,7 @@ namespace IDE.Common.ViewModels
 
         private void InitializeMacroEditor()
         {
-            MacroEditor = new ProgramEditor(ProgramEditor.HighlightingE.On);
+            MacroEditor = new ProgramEditor(ProgramEditor.HighlightingE.On, ProgramEditor.UseIntellisense.Yes);
         }
 
         private void Create(object obj)

@@ -24,7 +24,7 @@
 
         <!--List-->
         <TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <ListView Grid.Row="1">
+        <ListView Grid.Row="1" SelectedItem="{Binding SelectedRemoteProgram, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock/>
@@ -57,6 +57,7 @@
                             <MenuItem Header="Times New Roman" Command="{Binding FontTNRomanCommand}"/>
                             <MenuItem Header="Arial" Command="{Binding FontArialCommand}"/>
                             <MenuItem Header="Calibri" Command="{Binding FontCalibriCommand}"/>
+                            <MenuItem Header="Segoe UI" Command="{Binding FontSegoeUICommand}"/>
                         </MenuItem>
 
                         <Separator/>

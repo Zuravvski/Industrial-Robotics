@@ -2,6 +2,15 @@
 {
     public class RemoteProgram
     {
-        // what for?
+        public RemoteProgram(string name)
+        {
+            Name = name;
+        }
+
+        #region Properties
+
+        public string Name { get; }
+
+        #endregion
     }
 }

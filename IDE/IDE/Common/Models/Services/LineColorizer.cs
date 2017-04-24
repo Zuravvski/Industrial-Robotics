@@ -1,5 +1,9 @@
 ﻿using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using System.Xml;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit;
 
 namespace IDE.Common.Models.Services
 {
@@ -22,11 +26,13 @@ namespace IDE.Common.Models.Services
 
         protected override void ColorizeLine(ICSharpCode.AvalonEdit.Document.DocumentLine line)
         {
+
             if (!line.IsDeleted && line.LineNumber == lineNumber)
             {
                 ChangeLinePart(line.Offset, line.EndOffset, element =>
                 {
-                    element.TextRunProperties.SetBackgroundBrush(isValid == ValidityE.No ? Brushes.Red : Brushes.White);
+                    var x = element.TextRunProperties.ForegroundBrush;
+                    element.TextRunProperties.SetBackgroundBrush(isValid == ValidityE.No ? Brushes.Red : new SolidColorBrush(Color.FromRgb(61, 61, 61)));
                 });
             }
         }

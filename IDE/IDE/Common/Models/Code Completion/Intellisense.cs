@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using IDE.Common.Models.Value_Objects;
 using IDE.Common.Utilities.Extensions;
+using System.Diagnostics;
 
 namespace IDE.Common.Models.Code_Completion
 {
@@ -40,7 +40,7 @@ namespace IDE.Common.Models.Code_Completion
             }
             catch
             {
-                Console.Error.WriteLine("Could not load command list into memory");
+                Debug.WriteLine("Command definitions not found");
             }
         }
 

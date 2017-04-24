@@ -10,12 +10,14 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Microsoft.Win32;
 using System;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
 using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Models.Value_Objects;
 using IDE.Common.Utilities;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using System.Collections.Generic;
+using IDE.Common.Models.Code_Completion;
+using IDE.Common.Utilities.Extensions;
 
 namespace IDE.Common.Models
 {
@@ -23,12 +25,15 @@ namespace IDE.Common.Models
     {
 
         #region Fields
-
         private readonly Highlighting highlighting;
+        private readonly UseIntellisense useIntellisense;
         private Program currentProgram;
         private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
-        private readonly Intellisense intellisense;
+        public CompletionWindow completionWindow;
+        private IList<ICompletionData> data;
+        private Intellisense intellisense;
+        private IEnumerable<Command> commands;
 
         #endregion
 
@@ -40,17 +45,24 @@ namespace IDE.Common.Models
             Off
         }
 
+        public enum UseIntellisense
+        {
+            Yes,
+            No
+        }
+
         #endregion
 
         #region Constructor
 
-        public ProgramEditor(Highlighting highlighting)
+        public ProgramEditor(Highlighting highlighting, UseIntellisense useIntellisense)
         {
+            MissingFileCreator.CheckForRequiredFiles();
             this.highlighting = highlighting;
+            this.useIntellisense = useIntellisense;
             InitializeAvalon();
 
             syntaxChecker = new SyntaxChecker();
-            intellisense = new Intellisense();
         }
         
         #endregion
@@ -82,7 +94,9 @@ namespace IDE.Common.Models
                 return currentProgram;
             }
         }
+
         public bool DoSyntaxCheck { get; set; }
+        public bool IsOneLine { get; set; }
         
         #endregion
 
@@ -96,7 +110,7 @@ namespace IDE.Common.Models
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             Padding = new Thickness(5);
 
-            if (highlighting == Highlighting.On && !MissingFileCreator.HighlightingErrorWasAlreadyShown)
+            if (highlighting == Highlighting.On)
             {
                 try
                 {
@@ -107,11 +121,17 @@ namespace IDE.Common.Models
                 }
                 catch (FileNotFoundException)
                 {
-                    MissingFileCreator.CreateHighlightingDefinitionFile();
+                    Console.Error.WriteLine("Error loading HighlightingDefinition file");
                 }
             }
 
-            TextArea.TextEntering += TextEntering;     
+            if (useIntellisense == UseIntellisense.Yes)
+            {
+                intellisense = new Intellisense();
+                TextArea.TextEntering += TextArea_TextEntering;
+                TextArea.TextEntered += TextArea_TextEntered;
+                TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
+            }
         }
 
         public bool CheckLineValidationManually(string line)
@@ -126,9 +146,62 @@ namespace IDE.Common.Models
         #endregion
 
         #region Event Handlers
-        private void OnIntellisense(object sender, TextCompositionEventArgs textCompositionEventArgs)
+
+        private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            //tbi
+            if (e.Key == Key.Enter)
+            {
+                if (completionWindow != null)
+                {
+                    completionWindow?.Focus();
+                    e.Handled = true;
+                }
+
+                if (IsOneLine)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            if (completionWindow == null)
+            {
+                completionWindow = new CompletionWindow(TextArea);
+                data = completionWindow.CompletionList.CompletionData;
+
+                commands = intellisense.Commands;
+                foreach (var command in commands)
+                {
+                    data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
+                }
+            }
+
+            completionWindow.Closed += delegate
+            {
+                completionWindow = null;
+                data = null;
+            };
+
+
+            if (e.Text.Length > 0 && completionWindow != null)
+            {
+                if (!char.IsLetterOrDigit(e.Text[0]))
+                {
+                    // Whenever a non-letter is typed while the completion window is open, insert the currently selected element.
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
+            }
+            // Do not set e.Handled=true, we still want to insert the character that was typed.
+        }
+
+        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            if (completionWindow != null)
+            {
+                completionWindow.Show();
+            }
         }
 
         private void OnSyntaxCheck(object sender, EventArgs e)
@@ -144,11 +217,6 @@ namespace IDE.Common.Models
             var text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
             currentProgram.Content = text;
             ValidateAllLines();
-        }
-
-        private void TextEntering(object sender, TextCompositionEventArgs e)
-        {
-            //tbi
         }
 
         private async void ValidateAllLines()
@@ -183,38 +251,6 @@ namespace IDE.Common.Models
             }
         }
 
-        public async void RunIntellisense(bool isForced)
-        {
-            var line = TextArea.Document.GetLineByNumber(TextArea.Caret.Line);
-            var lineText = TextArea.Document.GetText(line);
-
-            // Don't show intellisense if theres no text in the line unless user forces intellisense by pressing ctrl+space
-            if (!string.IsNullOrWhiteSpace(lineText) || isForced)
-            {
-                var tips = await intellisense.GetCompletionAsync(lineText);
-
-                var completionWindow = new CompletionWindow(TextArea);
-                completionWindow.Closed += delegate
-                {
-                    completionWindow = null;
-                };
-                var data = completionWindow.CompletionList.CompletionData;
-
-                //await Task.Run(() =>
-                //{
-                //    foreach (var command in tips)
-                //    {
-                //        var completionData = new MyCompletionData(command.Content, command.Description, Command.TypeE.None);
-                //        data.Add(completionData);
-                //    }
-
-                //});
-
-                // Don't show empty results
-                if(data.Count > 0)
-                    completionWindow.Show();
-            }
-        }
         
         public void ExportContent(string defaultFileName, string extension)
         {
@@ -247,6 +283,52 @@ namespace IDE.Common.Models
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        #endregion
+
+        #region OLD_INTELLISENSE
+
+        //private readonly Intellisense intellisense;
+        //intellisense = new Intellisense();
+
+        //private void OnIntellisense(object sender, TextCompositionEventArgs textCompositionEventArgs)
+        //{
+        //    //tbi
+        //}
+
+
+        //public async void RunIntellisense(bool isForced)
+        //{
+        //    var line = TextArea.Document.GetLineByNumber(TextArea.Caret.Line);
+        //    var lineText = TextArea.Document.GetText(line);
+
+        //    // Don't show intellisense if theres no text in the line unless user forces intellisense by pressing ctrl+space
+        //    if (!string.IsNullOrWhiteSpace(lineText) || isForced)
+        //    {
+        //        var tips = await intellisense.GetCompletionAsync(lineText);
+
+        //        var completionWindow = new CompletionWindow(TextArea);
+        //        completionWindow.Closed += delegate
+        //        {
+        //            completionWindow = null;
+        //        };
+        //        var data = completionWindow.CompletionList.CompletionData;
+
+        //        //await Task.Run(() =>
+        //        //{
+        //        //    foreach (var command in tips)
+        //        //    {
+        //        //        var completionData = new MyCompletionData(command.Content, command.Description, Command.TypeE.None);
+        //        //        data.Add(completionData);
+        //        //    }
+
+        //        //});
+
+        //        // Don't show empty results
+        //        if (data.Count > 0)
+        //            completionWindow.Show();
+        //    }
+        //}
 
         #endregion
 

@@ -95,7 +95,7 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {    
             ListManager = new ListManager();
-            programEditor = new ProgramEditor(ProgramEditor.Highlighting.On);
+            programEditor = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.UseIntellisense.Yes);
 
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             manipulator.Connect("COM5");
@@ -104,9 +104,6 @@ namespace IDE.Common.ViewModels
             ThemeColor = AppearanceViewModel.Instance != null ? 
                 new SolidColorBrush(AppearanceViewModel.Instance.SelectedAccentColor) : new SolidColorBrush(Color.FromArgb(255, 27, 161, 226));
 
-            // Add ctrl + space for intellisense
-            var intellisenseShortcut = new KeyBinding(Intellisense, Key.Space, ModifierKeys.Control);
-            programEditor.TextArea.InputBindings.Add(intellisenseShortcut);
         }
         #endregion
 
@@ -317,17 +314,26 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        public ICommand Intellisense
-        {
-            get
-            {
-                return intellisense ?? (intellisense = new DelegateCommand(delegate
-                {
-                    programEditor.RunIntellisense(true);
-                }));
-            }
-        }
+        #endregion
+
+        #region OLD_INTELLISENSE
+
+        //// Add ctrl + space for intellisense
+        //var intellisenseShortcut = new KeyBinding(Intellisense, Key.Space, ModifierKeys.Control);
+        //programEditor.TextArea.InputBindings.Add(intellisenseShortcut);
+
+        //public ICommand Intellisense
+        //{
+        //    get
+        //    {
+        //        return intellisense ?? (intellisense = new DelegateCommand(delegate
+        //        {
+        //            programEditor.RunIntellisense(true);
+        //        }));
+        //    }
+        //}
 
         #endregion
+
     }
 }

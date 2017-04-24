@@ -31,7 +31,7 @@
                     <VisualBrush>
                         <VisualBrush.Visual>
                             <Grid>
-                                <Grid Background="{Binding ThemeColor}"/>
+                                <Grid DataContext="" Background="{Binding ThemeColor}"/>
                                 <Image Source="/Icons/Create New.png" Stretch="Uniform"/>
                             </Grid>
                         </VisualBrush.Visual>

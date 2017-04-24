@@ -6,28 +6,30 @@ using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
 using Driver;
-using IDE.Common.Utilities;
 using IDE.Common.Models.Value_Objects;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Services;
 using IDE.Common.Utilities.Extensions;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using IDE.Common.Utilities;
 
 namespace IDE.Common.ViewModels
 {
     public class BrowseViewModel : ObservableObject
     {
+
+        #region Fields
+
         ProgramEditor commandHistory, commandInput;
         bool lineWasNotValid;
         E3JManipulator manipulator;
         int messageSelectionArrows;
-        CompletionWindow completionWindow;
-        IList<ICompletionData> data;
-        Intellisense intellisense;
-        IEnumerable<Command> commands;
+
+        #endregion
+
+        #region Constructor
 
         public BrowseViewModel()
         {
@@ -35,15 +37,13 @@ namespace IDE.Common.ViewModels
             InitializeCommandHistory();
             InitializeCommandInput();
 
-            MessageList = new MessageList();    //list storing sent commands
-            intellisense = new Intellisense();
-
-
-            //to usun
+            MessageList = new MessageList();
+            
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             manipulator.Connect("COM4");
         }
 
+        #endregion
 
         #region Properties
 
@@ -78,66 +78,21 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Actions
-
-
+        
         #region CommandWindow
+
         private void InitializeCommandInput()
         {
-            CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On)
+            CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.UseIntellisense.Yes)
             {
                 ShowLineNumbers = false,
                 Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
                 BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41)),
-                BorderThickness = new Thickness(0, 0, 2, 0)
+                BorderThickness = new Thickness(0, 0, 2, 0), //right border visible = button will be separated from command input.
+                IsOneLine = true
             };
-            //make only right border visible
-            CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown; //to ensure 'enter' triggers Send() event
+            CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown;
             CommandInput.TextChanged += CommandInput_TextChanged;
-
-            CommandInput.TextArea.TextEntered += TextArea_TextEntered;
-            CommandInput.TextArea.TextEntering += TextArea_TextEntering;
-        }
-
-        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
-        {
-            if (completionWindow == null)
-            {
-                completionWindow = new CompletionWindow(CommandInput.TextArea);
-                data = completionWindow.CompletionList.CompletionData;
-
-                commands = intellisense.Commands;
-                foreach (var command in commands)
-                {
-                    data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
-                }
-            }
-
-            completionWindow.Closed += delegate
-            {
-                completionWindow = null;
-                data = null;
-            };
-
-
-            if (e.Text.Length > 0 && completionWindow != null)
-            {
-                if (!char.IsLetterOrDigit(e.Text[0]))
-                {
-                    // Whenever a non-letter is typed while the completion window is open,
-                    // insert the currently selected element.
-                    completionWindow.CompletionList.RequestInsertion(e);
-                }
-            }
-            // Do not set e.Handled=true.
-            // We still want to insert the character that was typed.
-        }
-
-        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
-        {
-            if (completionWindow != null)
-            {
-                completionWindow.Show();
-            }
         }
 
         private void CommandInput_TextChanged(object sender, EventArgs e)
@@ -156,42 +111,40 @@ namespace IDE.Common.ViewModels
 
         private void InitializeCommandHistory()
         {
-            CommandHistory = new ProgramEditor(ProgramEditor.Highlighting.On)
+            CommandHistory = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.UseIntellisense.No)
             {
                 IsReadOnly = true,
                 Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
                 BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41)),
-                BorderThickness = new Thickness(0, 0, 0, 2),  //make only bottom border visible
+                BorderThickness = new Thickness(0, 0, 0, 2),  //make only bottom border visible = C.History separated from C.Input.
                 ShowLineNumbers = false
             };
-
             CommandHistory.PreviewMouseWheel += CommandHistory_PreviewMouseWheel;
         }
 
         private void Refresh(object obj)
         {
-            MissingFileCreator.CreateHighlightingDefinitionFile();
+            //TODO
         }
 
         private void Download(object obj)
         {
-            //tbi
+            //TODO
         }
         private void Upload(object obj)
         {
-            throw new NotImplementedException();
+            //TODO
         }
 
         private async void Send(object obj = null)
         {
-            if (!string.IsNullOrEmpty(CommandInput.Text))
+            if (!string.IsNullOrWhiteSpace(CommandInput.Text))
             {
                 if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
-                    CommandInput.TextArea.TextView.LineTransformers.Clear();
-                    MessageList.AddMessage(new Models.Value_Objects.Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
-                    CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
-                        MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                    CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
+                    MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
+                    CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                     CommandHistory.ScrollToEnd();
                     CommandInput.Text = string.Empty;
                 }
@@ -201,14 +154,13 @@ namespace IDE.Common.ViewModels
 
                     if (isLineValid)    //if line is valid, send it
                     {
-                        CommandInput.TextArea.TextView.LineTransformers.Clear();
-                        MessageList.AddMessage(new Models.Value_Objects.Message(DateTime.Now.ToString(CultureInfo.InvariantCulture), CommandInput.Text));
-                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime.ToString() + ": " +
-                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage.ToString() + "\n";
+                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
+                        MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
+                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                         CommandHistory.ScrollToEnd();
                         CommandInput.Text = string.Empty;
                     }
-                    else //if line is not valid colorize line and do nothing
+                    else //if line is not valid colorize line and don't send
                     {
                         CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.No));
                         lineWasNotValid = true;
@@ -224,7 +176,6 @@ namespace IDE.Common.ViewModels
                 CommandHistory.FontSize--;
                 CommandInput.FontSize--;
             }
-
         }
 
         private void FontEnlarge(object obj = null)
@@ -238,7 +189,6 @@ namespace IDE.Common.ViewModels
 
         private void ExportHistory(object obj)
         {
-
             CommandHistory.ExportContent(DateTime.Now.ToString(CultureInfo.InvariantCulture).Replace(':', '-'), "txt");
         }
 
@@ -246,6 +196,7 @@ namespace IDE.Common.ViewModels
         {
             CommandHistory.Text = string.Empty;
         }
+
         private void FontTimesNewRoman(object obj)
         {
             CommandHistory.TextArea.FontFamily = new FontFamily("Times New Roman");
@@ -263,13 +214,8 @@ namespace IDE.Common.ViewModels
 
         private void CommandInput_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                completionWindow?.Focus();
+            if (e.Key == Key.Enter && CommandInput.completionWindow == null)
                 Send();
-                e.Handled = true;
-                
-            }
 
             if (e.Key == Key.Up)
             {
@@ -318,7 +264,6 @@ namespace IDE.Common.ViewModels
 
         #endregion
 
-
         #endregion
 
         #region Commands
@@ -360,6 +305,50 @@ namespace IDE.Common.ViewModels
         }
 
 
+
+        #endregion
+
+        #region OLD_INTELLISENSE
+
+        //private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        //{
+        //    if (completionWindow == null)
+        //    {
+        //        completionWindow = new CompletionWindow(CommandInput.TextArea);
+        //        data = completionWindow.CompletionList.CompletionData;
+
+        //        commands = intellisense.Commands;
+        //        foreach (var command in commands)
+        //        {
+        //            data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
+        //        }
+        //    }
+
+        //    completionWindow.Closed += delegate
+        //    {
+        //        completionWindow = null;
+        //        data = null;
+        //    };
+
+
+        //    if (e.Text.Length > 0 && completionWindow != null)
+        //    {
+        //        if (!char.IsLetterOrDigit(e.Text[0]))
+        //        {
+        //            // Whenever a non-letter is typed while the completion window is open, insert the currently selected element.
+        //            completionWindow.CompletionList.RequestInsertion(e);
+        //        }
+        //    }
+        //    // Do not set e.Handled=true, we still want to insert the character that was typed.
+        //}
+
+        //private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        //{
+        //    if (completionWindow != null)
+        //    {
+        //        completionWindow.Show();
+        //    }
+        //}
 
         #endregion
 

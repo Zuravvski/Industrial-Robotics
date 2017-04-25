@@ -25,7 +25,7 @@ namespace Driver
         {
             // TODO: Test if this works
             manipulator.Number(programName);
-            await Task.Delay(500);
+            await Task.Delay(1000);
             var errorCode = await manipulator.ErrorRead();
 
             if (errorCode != 0)
@@ -37,40 +37,49 @@ namespace Driver
             for (uint i = 1;; i++)
             {
                 var line = await manipulator.StepRead(i);
-                if (string.IsNullOrEmpty(line))
+                if (line.Equals("\r"))
                     break;
-                program.Content += line + manipulator.Port.FrameTerminator;
-                await Task.Delay(300);
+                program.Content += line + "\n";
             }
             return program;
         }
 
         /// <summary>
-        /// Gets all programs downloaded to manipulator
+        /// Receives all programs downloaded from manipulator
         /// </summary>
         /// <returns></returns>
-        public List<Program> UploadPrograms()
+        public async Task<List<Program>> UploadPrograms()
         {
-            var infos = ReadProgramInfo();
-            throw new NotImplementedException();
+            var infos = await ReadProgramInfo();
+            for(int i = 0; i < infos.Count; i++)
+            {
+                infos[i] = await UploadProgram(infos[i].Name);
+            }
+            return infos;
         }
 
         /// <summary>
         /// Sends program to manipulator
         /// </summary>
         /// <param name="program"></param>
-        public void DownloadProgram(Program program)
+        public async void DownloadProgram(Program program)
         {
             if (!manipulator.Connected) return;
             try
             {
+                manipulator.Number(program.Name);
+                await Task.Delay(1000);
+                manipulator.New();
+                await Task.Delay(1000);
+
                 var lines = program.GetLines();
 
                 for (var i = 0; i < lines.Count; i++)
                 {
-                    Thread.Sleep(300);
+                    await Task.Delay(500);
                     var prefix = $"{Convert.ToString(i + 1)} ";
-                    manipulator.SendCustom(prefix + lines[i]);
+                    manipulator.SendCustom(lines[i]);
+                    Debug.WriteLine(i);
                 }
             }
             catch (Exception ex)
@@ -89,14 +98,25 @@ namespace Driver
             throw new NotImplementedException();
         }
 
-        private async Task<List<Program>> ReadProgramInfo()
+        public async Task<List<Program>> ReadProgramInfo()
         {
-            manipulator.SendCustom("EXE0, \"Fd < *.RE2\"");
-            await manipulator.Port.WaitForMessageAsync();
-            manipulator.Port.Read();
+            List<Program> programList = new List<Program>();
+
             // Decode data
-            throw new NotImplementedException();
-            return new List<Program>();
+            for (int i = 1; ; i++)
+            {
+                if (i == 1)
+                    manipulator.SendCustom("EXE0, \"Fd<*\"");
+                else
+                    manipulator.SendCustom($"EXE0, \"Fd{i}\"");
+
+                await manipulator.Port.WaitForMessageAsync();
+                var QoK = manipulator.Port.Read();
+                if (QoK.Equals("QoK\r"))
+                    break;
+                programList.Add(Program.CreateFromInfoString(QoK));
+            }
+            return programList;
         }
     }
 }

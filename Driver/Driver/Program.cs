@@ -12,6 +12,15 @@ namespace Driver
             Content = string.Empty;
         }
 
+        public static Program CreateFromInfoString(string info)
+        {
+            int startIndex = info.IndexOf("QoK") + "QoK".Length;
+            int endIndex = info.IndexOf(".RE2", startIndex);
+            var name = info.Substring(startIndex, endIndex - startIndex);
+
+            return new Program(name);
+        }
+
         #region Properties
 
         public string Name { get; }

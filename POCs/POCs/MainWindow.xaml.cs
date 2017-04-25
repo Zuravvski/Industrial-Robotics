@@ -1,5 +1,8 @@
 ﻿using System.Windows;
 using Driver;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace POCs
 {
@@ -9,12 +12,13 @@ namespace POCs
     public partial class MainWindow : Window
     {
         private readonly ProgramService programService;
+        E3JManipulator manipulator;
 
         public MainWindow()
         {
             InitializeComponent();
-            var manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
-            manipulator.Connect("COM5");
+            manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
+            manipulator.Connect("COM3");
             
             programService = new ProgramService(manipulator);
             doIt();
@@ -22,7 +26,12 @@ namespace POCs
 
         private async void doIt()
         {
-            await programService.UploadProgram("1");
+            //var program = await programService.UploadProgram("MOJ");
+            Program newProgram = new Program("newProgram");
+            newProgram.Content = File.ReadAllText("ProgramLaborkaAiR.txt");
+            programService.DownloadProgram(newProgram);
+            await Task.Delay(1000);
+            manipulator.Run();
         }
     }
 }

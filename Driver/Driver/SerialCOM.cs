@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Driver
@@ -137,9 +139,7 @@ namespace Driver
         {
             await Task.Run(() =>
             {
-                var timeout = new Stopwatch();
-                timeout.Start();
-                while (bufferedMessages.Count == 0 || timeout.ElapsedMilliseconds < port.ReadTimeout) ;
+                while (bufferedMessages.Count == 0 ) ;
             });
 
         }

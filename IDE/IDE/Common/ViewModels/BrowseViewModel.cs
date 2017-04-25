@@ -134,9 +134,11 @@ namespace IDE.Common.ViewModels
 
                 if (isLineValid)
                 {
-                    CommandInput.TextArea.TextView.LineTransformers.Clear();
                     lineWasNotValid = false;
                 }
+
+                CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1,
+                    isLineValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
             }
         }
 
@@ -184,7 +186,7 @@ namespace IDE.Common.ViewModels
         /// <summary>
         /// Occurs after user triggers send event.
         /// </summary>
-        private async void Send(object obj = null)
+        private void Send(object obj = null)
         {
             if (!string.IsNullOrWhiteSpace(CommandInput.Text))
             {
@@ -475,50 +477,5 @@ namespace IDE.Common.ViewModels
 
 
         #endregion
-
-        #region OLD_INTELLISENSE
-
-        //private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
-        //{
-        //    if (completionWindow == null)
-        //    {
-        //        completionWindow = new CompletionWindow(CommandInput.TextArea);
-        //        data = completionWindow.CompletionList.CompletionData;
-
-        //        commands = intellisense.Commands;
-        //        foreach (var command in commands)
-        //        {
-        //            data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
-        //        }
-        //    }
-
-        //    completionWindow.Closed += delegate
-        //    {
-        //        completionWindow = null;
-        //        data = null;
-        //    };
-
-
-        //    if (e.Text.Length > 0 && completionWindow != null)
-        //    {
-        //        if (!char.IsLetterOrDigit(e.Text[0]))
-        //        {
-        //            // Whenever a non-letter is typed while the completion window is open, insert the currently selected element.
-        //            completionWindow.CompletionList.RequestInsertion(e);
-        //        }
-        //    }
-        //    // Do not set e.Handled=true, we still want to insert the character that was typed.
-        //}
-
-        //private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
-        //{
-        //    if (completionWindow != null)
-        //    {
-        //        completionWindow.Show();
-        //    }
-        //}
-
-        #endregion
-
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using System.Xml;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit;
 
 namespace IDE.Common.Models.Services
 {

@@ -105,7 +105,7 @@
     <Compile Include="Common\Models\ProgramEditor.cs" />
     <Compile Include="Common\Models\Services\RemoteListManager.cs" />
     <Compile Include="Common\Models\RemoteProgram.cs" />
-    <Compile Include="Common\Models\Services\LineColorizer.cs" />
+    <Compile Include="Common\Models\Syntax Check\LineColorizer.cs" />
     <Compile Include="Common\Models\Services\ListManager.cs" />
     <Compile Include="Common\Models\Services\MacroManager.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />

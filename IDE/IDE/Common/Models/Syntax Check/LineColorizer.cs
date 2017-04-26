@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace IDE.Common.Models.Services
+namespace IDE.Common.Models.Syntax_Check
 {
     public class LineColorizer : DocumentColorizingTransformer
     {
@@ -28,7 +28,7 @@ namespace IDE.Common.Models.Services
                 ChangeLinePart(line.Offset, line.EndOffset, element =>
                 {
                     var x = element.TextRunProperties.ForegroundBrush;
-                    element.TextRunProperties.SetBackgroundBrush(isValid == ValidityE.No ? Brushes.Red : Brushes.White);
+                    element.TextRunProperties.SetBackgroundBrush(isValid == ValidityE.No ? Brushes.Red : new SolidColorBrush(Color.FromRgb(61, 61, 61)));
                 });
             }
         }

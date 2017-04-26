@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
@@ -7,25 +6,24 @@ using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using System.Windows.Media;
 using Driver;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using IDE.Common.Models.Code_Completion;
-using IDE.Common.Models.Services;
 using IDE.Common.Models.Value_Objects;
-using IDE.Common.Utilities;
-using IDE.Common.Utilities.Extensions;
+using IDE.Common.Models.Services;
+using IDE.Common.Models.Syntax_Check;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace IDE.Common.ViewModels
 {
     public class BrowseViewModel : ObservableObject
     {
+
         #region Fields
+
         private ProgramEditor commandHistory, commandInput;
-        private bool lineWasNotValid;
-        private readonly E3JManipulator manipulator;
-        private int messageSelectionArrows;
-        private CompletionWindow completionWindow;
         private RemoteProgram selectedRemoteProgram;
-        private IList<ICompletionData> data;
+        private bool lineWasNotValid;
+        private E3JManipulator manipulator;
+        private int messageSelectionArrows;
+
         #endregion
 
         #region Constructor
@@ -40,7 +38,7 @@ namespace IDE.Common.ViewModels
             InitializeCommandInput();
 
             MessageList = new MessageList();
-            
+
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             manipulator.Connect("COM4");
         }
@@ -106,7 +104,7 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Actions
-        
+
         #region CommandWindow
 
         /// <summary>
@@ -115,7 +113,6 @@ namespace IDE.Common.ViewModels
         private void InitializeCommandInput()
         {
             CommandInput = new ProgramEditor(ProgramEditor.HighlightingE.On, ProgramEditor.UseIntellisense.Yes)
-
             {
                 ShowLineNumbers = false,
                 Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
@@ -125,50 +122,8 @@ namespace IDE.Common.ViewModels
             };
             CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown;
             CommandInput.TextChanged += CommandInput_TextChanged;
-
-            CommandInput.TextArea.TextEntered += TextArea_TextEntered;
-            CommandInput.TextArea.TextEntering += TextArea_TextEntering;
         }
 
-        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
-        {
-            if (completionWindow == null)
-            {
-                completionWindow = new CompletionWindow(CommandInput.TextArea);
-                data = completionWindow.CompletionList.CompletionData;
-
-                var commands = Session.Instance.Commands.CommandsMap;
-                foreach (var command in commands)
-                {
-                    data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
-                }
-            }
-
-            completionWindow.Closed += delegate
-            {
-                completionWindow = null;
-                data = null;
-            };
-
-
-            if (e.Text.Length > 0 && completionWindow != null)
-            {
-                if (!char.IsLetterOrDigit(e.Text[0]))
-                {
-                    // Whenever a non-letter is typed while the completion window is open,
-                    // insert the currently selected element.
-                    completionWindow.CompletionList.RequestInsertion(e);
-                }
-            }
-            // Do not set e.Handled=true.
-            // We still want to insert the character that was typed.
-        }
-
-        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
-        {
-            completionWindow?.Show();
-        }
-        
         /// <summary>
         /// Occurs when there is any text change in Command Input editor.
         /// </summary>
@@ -180,9 +135,11 @@ namespace IDE.Common.ViewModels
 
                 if (isLineValid)
                 {
-                    CommandInput.TextArea.TextView.LineTransformers.Clear();
                     lineWasNotValid = false;
                 }
+
+                CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1,
+                    isLineValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
             }
         }
 
@@ -194,6 +151,7 @@ namespace IDE.Common.ViewModels
             CommandHistory = new ProgramEditor(ProgramEditor.HighlightingE.On, ProgramEditor.UseIntellisense.No)
             {
                 IsReadOnly = true,
+                Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
                 BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41)),
                 BorderThickness = new Thickness(0, 0, 0, 2),  //make only bottom border visible = C.History separated from C.Input.
                 ShowLineNumbers = false
@@ -225,6 +183,7 @@ namespace IDE.Common.ViewModels
         {
             //TODO
         }
+
         /// <summary>
         /// Occurs after user triggers send event.
         /// </summary>
@@ -234,10 +193,6 @@ namespace IDE.Common.ViewModels
             {
                 if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
-                    CommandInput.TextArea.TextView.LineTransformers.Clear();
-                    MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
-                    CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime + ": " +
-                        MessageList.Messages[MessageList.Messages.Count - 1].MyMessage + "\n";
                     CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
                     MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
                     CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
@@ -250,10 +205,6 @@ namespace IDE.Common.ViewModels
 
                     if (isLineValid)    //if line is valid, send it
                     {
-                        CommandInput.TextArea.TextView.LineTransformers.Clear();
-                        MessageList.AddMessage(new Models.Value_Objects.Message(DateTime.Now, CommandInput.Text));
-                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].MyTime + ": " +
-                            MessageList.Messages[MessageList.Messages.Count - 1].MyMessage + "\n";
                         CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
                         MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
                         CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
@@ -268,7 +219,7 @@ namespace IDE.Common.ViewModels
                 }
             }
         }
-        
+
         /// <summary>
         /// Occurs after user triggers font reduce event.
         /// </summary>
@@ -346,7 +297,7 @@ namespace IDE.Common.ViewModels
             CommandHistory.TextArea.FontFamily = new FontFamily("Segoe UI");
             CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
         }
-        
+
         /// <summary>
         /// Occurs when there is any key down while having focus on Command Input editor.
         /// </summary>
@@ -451,7 +402,8 @@ namespace IDE.Common.ViewModels
         {
             if (CommandHistory.TextArea.FontFamily.ToString() == "Calibri")
                 return false;
-            return true;
+            else
+                return true;
         }
 
         /// <summary>
@@ -474,7 +426,6 @@ namespace IDE.Common.ViewModels
                 return false;
             else
                 return true;
-            
         }
 
         /// <summary>
@@ -484,7 +435,8 @@ namespace IDE.Common.ViewModels
         {
             if (CommandHistory.TextArea.FontFamily.ToString() == "Arial")
                 return false;
-            return true;
+            else
+                return true;
         }
 
         /// <summary>
@@ -511,7 +463,8 @@ namespace IDE.Common.ViewModels
         {
             if (SelectedProgram != null)
                 return true;
-            return false;
+            else
+                return false;
         }
 
         /// <summary>
@@ -521,6 +474,9 @@ namespace IDE.Common.ViewModels
         {
             return !string.IsNullOrWhiteSpace(CommandInput.Text);
         }
+
+
+
         #endregion
     }
 }

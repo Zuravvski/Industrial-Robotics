@@ -32,7 +32,7 @@ namespace IDE.Common.Models
         private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
         private IList<ICompletionData> data;
-        private Intellisense intellisense;
+        private readonly Intellisense intellisense;
         private IEnumerable<Command> commands;
         #endregion
 
@@ -62,16 +62,24 @@ namespace IDE.Common.Models
 
         public ProgramEditor(HighlightingE highlighting, UseIntellisense useIntellisense)
         {
-            MissingFileCreator.CheckForRequiredFiles();
             this.highlighting = highlighting;
             this.useIntellisense = useIntellisense;
             InitializeAvalon();
-
             syntaxChecker = new SyntaxChecker();
+
+            Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
+            TextChanged += OnTextChanged;
+
+            if (useIntellisense == UseIntellisense.Yes)
+            {
+                intellisense = new Intellisense();
+                TextArea.TextEntering += TextArea_TextEntering;
+                TextArea.TextEntered += TextArea_TextEntered;
+                TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
+            }
         }
 
         #endregion
-
 
         #region Properties
 
@@ -124,31 +132,8 @@ namespace IDE.Common.Models
 
         #endregion
 
-        #region Constructor
-
-        public ProgramEditor(HighlightingE highlighting)
-        {
-            InitializeAvalon();
-            this.highlighting = highlighting;
-            syntaxChecker = new SyntaxChecker();
-            intellisense = new Intellisense();
-            syntaxCheckerMode = SyntaxCheckerModeE.OnDemand;
-
-            TextChanged += OnTextChanged;
-        }
-
-        private void OnTextChanged(object sender, EventArgs e)
-        {
-            if (currentProgram != null)
-            {
-                currentProgram.Content = Text;
-            }
-        }
-        
         public bool DoSyntaxCheck { get; set; }
         public bool IsOneLine { get; set; }
-        
-        #endregion
 
         #region Actions
 
@@ -168,28 +153,21 @@ namespace IDE.Common.Models
                 }
                 catch (FileNotFoundException)
                 {
-                    MissingFileCreator.CreateHighlightingDefinitionFile();
+                    MissingFileManager.CreateHighlightingDefinitionFile();
+                    Console.Error.WriteLine("Could not load highlighting definition. Loading defaults.");
                     LoadHighligtingDefinition();
-
-                    Console.Error.WriteLine("Error loading HighlightingDefinition file");
                 }
-
             }   
         }
 
         private void LoadHighligtingDefinition()
         {
-            var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"),
-                HighlightingManager.Instance);
-            HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
-            SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
+            var filePath = Session.Instance.Highlighting.FilePath;
 
-            if (useIntellisense == UseIntellisense.Yes)
+            using (var reader = new XmlTextReader(filePath))
             {
-                intellisense = new Intellisense();
-                TextArea.TextEntering += TextArea_TextEntering;
-                TextArea.TextEntered += TextArea_TextEntered;
-                TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
+                var definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                SyntaxHighlighting = definition;
             }
         }
 
@@ -336,6 +314,14 @@ namespace IDE.Common.Models
             {
                 MessageBox.Show("Something went very wrong here. Try again tommorow.",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void OnTextChanged(object sender, EventArgs e)
+        {
+            if (currentProgram != null)
+            {
+                currentProgram.Content = Text;
             }
         }
 

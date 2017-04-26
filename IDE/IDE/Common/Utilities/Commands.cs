@@ -9,22 +9,28 @@ namespace IDE.Common.Utilities
 {
     public class Commands
     {
-        private const string DEFAULT_COMMANDS_PATH = "Commands.xml";
-
-        // Configuration related objects
+        private string filePath;
         public ISet<Command> CommandsMap { get; }
 
-        private string path;
+        public string FilePath
+        {
+            get { return filePath; }
+            private set
+            {
+                filePath = value;
+                Session.Instance.SubmitCommands(filePath);
+            }
+        }
 
         // Utils
         private readonly XmlDocument document;
 
-        public Commands(string path = DEFAULT_COMMANDS_PATH)
+        public Commands(string path = MissingFileManager.DEFAULT_COMMANDS_PATH)
         {
             document = new XmlDocument();
             CommandsMap = new HashSet<Command>();
-            this.path = Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute) ? path : DEFAULT_COMMANDS_PATH;
-            Load(path);
+            FilePath = Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute) ? path : MissingFileManager.DEFAULT_COMMANDS_PATH;
+            Load(FilePath);
         }
 
         public void Load(string path)
@@ -49,14 +55,14 @@ namespace IDE.Common.Utilities
 
                     CommandsMap.Add(Command.CreateCommand(name, content, description, regex, type));
                 }
-                this.path = path;
+                FilePath = path;
             }
             catch
             {
                 Console.Error.WriteLine("Could not load command list into memory");
-                this.path = DEFAULT_COMMANDS_PATH;
+                MissingFileManager.CreateCommandsFile();
+                Load(MissingFileManager.DEFAULT_COMMANDS_PATH);
             }
-            Session.Instance.SubmitCommands(this.path);
         }
 
         public void Save(string path)
@@ -73,13 +79,12 @@ namespace IDE.Common.Utilities
                     document.AppendChild(command.ToXML());
                 }
                 document.Save(path);
-                this.path = path;
+                FilePath = path;
             }
             catch
             {
                 Console.Error.WriteLine("Could not save commands.");
             }
-            Session.Instance.SubmitCommands(this.path);
         }
 
         public void AddCommand(Command command)

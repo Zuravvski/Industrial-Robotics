@@ -12,7 +12,6 @@ namespace IDE.Common.Utilities
     public class Session
     {
         #region Constants
-        private const string SESSION_PATH = "Session.xml";
         private const string SESSION_NODE = "/Session";
         private const string COMMANDS_PARAM = "CommandsMap";
         private const string HIGHLIGHTING_PARAM = "HighlightingMap";
@@ -30,21 +29,16 @@ namespace IDE.Common.Utilities
 
         private Session()
         {
-            try
+            document.Load(MissingFileManager.SESSION_PATH);
+            if (document.SelectSingleNode("/Session") == null)
             {
-                document.Load(SESSION_PATH);
-                if(document.SelectSingleNode("/Session") == null)
-                    throw new InvalidOperationException();
-            }
-            catch
-            {
-                MissingFileCreator.CreateSessionFile();
+                MissingFileManager.CreateSessionFile();
             }
         }
 
         public void Initialize()
         {
-            document.Load(SESSION_PATH);
+            document.Load(MissingFileManager.SESSION_PATH);
             var root = document.SelectSingleNode("/Session");
 
             // Loading commands path
@@ -61,24 +55,19 @@ namespace IDE.Common.Utilities
             var list = new ObservableCollection<Program>();
 
             // Create session file if it does not exist
-            if (!File.Exists(SESSION_PATH))
-            {
-                MissingFileCreator.CreateCommandsFile();
-                return list;
-            }
-
-            // Load session if file containing it exists
+            MissingFileManager.CheckForRequiredFiles();
+            
             try
             {
-                document.Load(SESSION_PATH);
+                document.Load(MissingFileManager.SESSION_PATH);
                 var root = document.SelectSingleNode(SESSION_NODE);
 
                 if (root == null)
                     return list;
 
-                foreach (var child in root.ChildNodes)
+                foreach (XmlNode child in root.ChildNodes)
                 {
-                    var path = ((XmlNode)child).InnerText;
+                    var path = child.InnerText;
                     try
                     {
                         if (!string.IsNullOrEmpty(path) && list.All(p => p.Path != path))
@@ -107,7 +96,7 @@ namespace IDE.Common.Utilities
         public void SavePrograms(IEnumerable<Program> programsList)
         {
             // Remove program nodes to override them
-            document.Load(SESSION_PATH);
+            document.Load(MissingFileManager.SESSION_PATH);
             var root = document.SelectSingleNode("Session");
             var programNodes = root.SelectNodes("Program");
             if (programNodes != null)
@@ -125,7 +114,7 @@ namespace IDE.Common.Utilities
                 element.InnerText = program.Path;
                 root.AppendChild(element);
             }
-            document.Save(SESSION_PATH);
+            document.Save(MissingFileManager.SESSION_PATH);
         }
 
         public void SubmitHighlighting(string path)
@@ -139,7 +128,7 @@ namespace IDE.Common.Utilities
             commandsMapParam = document.CreateAttribute(HIGHLIGHTING_PARAM);
             commandsMapParam.Value = path;
             root.Attributes.Append(commandsMapParam);
-            document.Save(SESSION_PATH);
+            document.Save(MissingFileManager.SESSION_PATH);
         }
 
         public void SubmitCommands(string path)
@@ -153,7 +142,7 @@ namespace IDE.Common.Utilities
             commandsMapParam = document.CreateAttribute(COMMANDS_PARAM);
             commandsMapParam.Value = path;
             root.Attributes.Append(commandsMapParam);
-            document.Save(SESSION_PATH);
+            document.Save(MissingFileManager.SESSION_PATH);
         }
     }
 }

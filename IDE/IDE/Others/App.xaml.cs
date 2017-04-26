@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Driver;
 using IDE.Common.Utilities;
 
 namespace IDE.Others
@@ -11,6 +10,7 @@ namespace IDE.Others
     {
         public App()
         {
+            MissingFileManager.CheckForRequiredFiles();
             Session.Instance.Initialize();
         }
     }

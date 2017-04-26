@@ -70,6 +70,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.AvalonDock">
       <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\Xceed.Wpf.AvalonDock.dll</HintPath>
@@ -102,7 +103,7 @@
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
-    <Compile Include="Common\Models\RemoteListManager.cs" />
+    <Compile Include="Common\Models\Services\RemoteListManager.cs" />
     <Compile Include="Common\Models\RemoteProgram.cs" />
     <Compile Include="Common\Models\Services\LineColorizer.cs" />
     <Compile Include="Common\Models\Services\ListManager.cs" />
@@ -115,13 +116,14 @@
     <Compile Include="Common\Utilities\IXMLObject.cs" />
     <Compile Include="Common\Utilities\Json.cs" />
     <Compile Include="Common\Utilities\Commands.cs" />
-    <Compile Include="Common\Utilities\MissingFileCreator.cs" />
+    <Compile Include="Common\Utilities\MissingFileManager.cs" />
     <Compile Include="Common\Utilities\Session.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
     <Compile Include="Common\ViewModels\Commands\ObservableObject.cs" />
     <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
+    <Compile Include="Common\ViewModels\Converters\ColorToBrush.cs" />
     <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />
     <Compile Include="Common\ViewModels\DelegateCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
@@ -239,6 +241,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Others\packages.config" />
+    <EmbeddedResource Include="Others\Resources\Highlighting.xshd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -302,6 +307,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\TimersCounters.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Others\Resources\Commands.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

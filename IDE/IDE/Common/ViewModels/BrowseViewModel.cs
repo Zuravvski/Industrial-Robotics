@@ -9,6 +9,8 @@ using Driver;
 using IDE.Common.Models.Value_Objects;
 using IDE.Common.Models.Services;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace IDE.Common.ViewModels
 {
@@ -18,10 +20,12 @@ namespace IDE.Common.ViewModels
         #region Fields
 
         ProgramEditor commandHistory, commandInput;
-        RemoteProgram selectedRemoteProgram;
         bool lineWasNotValid;
-        E3JManipulator manipulator;
         int messageSelectionArrows;
+        //this should be removed later on
+        E3JManipulator manipulator;
+        ProgramService programServce;
+        ObservableCollection<RemoteProgram> remotePrograms;
 
         #endregion
 
@@ -37,14 +41,30 @@ namespace IDE.Common.ViewModels
             InitializeCommandInput();
 
             MessageList = new MessageList();
-            
+
+            //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
-            manipulator.Connect("COM4");
+            programServce = new ProgramService(manipulator);
+            manipulator.Connect("COM3");
         }
 
         #endregion
 
         #region Properties
+
+        public ObservableCollection<RemoteProgram> RemotePrograms
+        {
+            get
+            {
+                return remotePrograms;
+            }
+            set
+            {
+                remotePrograms = value;
+                NotifyPropertyChanged("RemotePrograms");
+            }
+        }
+        
 
         /// <summary>
         /// List storing sent commands,
@@ -80,23 +100,6 @@ namespace IDE.Common.ViewModels
             get
             {
                 return commandInput;
-            }
-        }
-
-
-        /// <summary>
-        /// Selected remote program from RV-E3J list of remote programs.
-        /// </summary>
-        public RemoteProgram SelectedProgram
-        {
-            set
-            {
-                selectedRemoteProgram = value;
-                NotifyPropertyChanged("SelectedRemoteProgram");
-            }
-            get
-            {
-                return selectedRemoteProgram;
             }
         }
 
@@ -162,17 +165,17 @@ namespace IDE.Common.ViewModels
         /// Occurs after user triggers upload event.
         /// </summary>
         /// <param name="obj"></param>
-        private void Refresh(object obj)
+        private async void Refresh(object obj)
         {
-            //TODO
+            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programServce.ReadProgramInfo()));
         }
 
         /// <summary>
         /// Occurs after user triggers upload event.
         /// </summary>
-        private void Download(object obj)
+        private async void Download(object obj)
         {
-            //TODO
+
         }
 
         /// <summary>
@@ -195,6 +198,7 @@ namespace IDE.Common.ViewModels
                     CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
                     MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
                     CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
+                    manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
                     CommandHistory.ScrollToEnd();
                     CommandInput.Text = string.Empty;
                 }
@@ -207,6 +211,7 @@ namespace IDE.Common.ViewModels
                         CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
                         MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
                         CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
+                        manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
                         CommandHistory.ScrollToEnd();
                         CommandInput.Text = string.Empty;
                     }
@@ -305,25 +310,29 @@ namespace IDE.Common.ViewModels
             if (e.Key == Key.Enter && CommandInput.completionWindow == null)
                 Send();
 
-            if (e.Key == Key.Up)
+
+            if (CommandInput.completionWindow == null)  //if theres no completion window use arrows to show previous messages
             {
-                if (messageSelectionArrows < MessageList.Messages.Count)
+                if (e.Key == Key.Up)
                 {
-                    CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - ++messageSelectionArrows].MyMessage;
-                    CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
+                    if (messageSelectionArrows < MessageList.Messages.Count)
+                    {
+                        CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - ++messageSelectionArrows].MyMessage;
+                        CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
+                    }
                 }
-            }
-            else if (e.Key == Key.Down)
-            {
-                if (messageSelectionArrows > 1)
+                else if (e.Key == Key.Down)
                 {
-                    CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - --messageSelectionArrows].MyMessage;
-                    CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
-                }
-                else if (messageSelectionArrows > 0)
-                {
-                    --messageSelectionArrows;
-                    CommandInput.Text = string.Empty;
+                    if (messageSelectionArrows > 1)
+                    {
+                        CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - --messageSelectionArrows].MyMessage;
+                        CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
+                    }
+                    else if (messageSelectionArrows > 0)
+                    {
+                        --messageSelectionArrows;
+                        CommandInput.Text = string.Empty;
+                    }
                 }
             }
         }
@@ -452,7 +461,7 @@ namespace IDE.Common.ViewModels
         private bool IsConnectionEstablished(object obj)
         {
             //TODO
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -460,10 +469,11 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private bool IsItemSelected(object obj)
         {
-            if (SelectedProgram != null)
-                return true;
-            else
-                return false;
+            //if (SelecteRemotedProgram != null)
+            //    return true;
+            //else
+            //    return false;
+            return true;
         }
 
         /// <summary>

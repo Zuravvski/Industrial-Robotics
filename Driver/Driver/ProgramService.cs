@@ -21,10 +21,10 @@ namespace Driver
         /// </summary>
         /// <param name="programName">Name of program on manipulator</param>
         /// <returns>Requested program or null when program with given name does not exist</returns>
-        public async Task<Program> UploadProgram(string programName)
+        public async Task<Program> UploadProgram(RemoteProgram remoteProgram)
         {
             // TODO: Test if this works
-            manipulator.Number(programName);
+            manipulator.Number(remoteProgram.Name);
             await Task.Delay(1000);
             var errorCode = await manipulator.ErrorRead();
 
@@ -33,29 +33,29 @@ namespace Driver
                 throw new AlarmException(errorCode);
             }
 
-            var program = new Program(programName);
+            var content = string.Empty;
             for (uint i = 1;; i++)
             {
                 var line = await manipulator.StepRead(i);
                 if (line.Equals("\r"))
                     break;
-                program.Content += line + "\n";
+                content += line + "\n";
             }
-            return program;
+            return Program.CreateFromRemoteProgram(remoteProgram, content);
         }
 
         /// <summary>
         /// Receives all programs downloaded from manipulator
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Program>> UploadPrograms()
+        public async Task<List<Program>> UploadPrograms(List<RemoteProgram> remotePrograms)
         {
-            var infos = await ReadProgramInfo();
-            for(int i = 0; i < infos.Count; i++)
+            var programs = new List<Program>();
+            for(int i = 0; i < remotePrograms.Count; i++)
             {
-                infos[i] = await UploadProgram(infos[i].Name);
+                programs.Add(await UploadProgram(remotePrograms[i]));
             }
-            return infos;
+            return programs;
         }
 
         /// <summary>
@@ -98,9 +98,9 @@ namespace Driver
             throw new NotImplementedException();
         }
 
-        public async Task<List<Program>> ReadProgramInfo()
+        public async Task<List<RemoteProgram>> ReadProgramInfo()
         {
-            List<Program> programList = new List<Program>();
+            List<RemoteProgram> remoteProgramList = new List<RemoteProgram>();
 
             // Decode data
             for (int i = 1; ; i++)
@@ -114,9 +114,9 @@ namespace Driver
                 var QoK = manipulator.Port.Read();
                 if (QoK.Equals("QoK\r"))
                     break;
-                programList.Add(Program.CreateFromInfoString(QoK));
+                remoteProgramList.Add(RemoteProgram.Create(QoK));
             }
-            return programList;
+            return remoteProgramList;
         }
     }
 }

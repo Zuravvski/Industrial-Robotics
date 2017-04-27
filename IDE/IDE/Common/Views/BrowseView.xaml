@@ -24,10 +24,10 @@
 
         <!--List-->
         <TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <ListView Grid.Row="1" SelectedItem="{Binding SelectedRemoteProgram, Mode=OneWay}">
+        <ListView ItemsSource="{Binding RemotePrograms}" Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock/>
+                    <TextBlock Text="{Binding Name}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

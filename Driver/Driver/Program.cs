@@ -6,30 +6,31 @@ namespace Driver
 {
     public class Program
     {
+        #region Properties
+
+        public string Name { get; }
+        public string Path { get; set; }
+        public string Content { get; set; }
+        public string Timestamp { get; private set; }
+        public int Size { get; private set; }
+
+        #endregion
+
         public Program(string name)
         {
             Name = name;
             Content = string.Empty;
         }
 
-        public static Program CreateFromInfoString(string info)
+        public static Program CreateFromRemoteProgram(RemoteProgram program, string content)
         {
-            int startIndex = info.IndexOf("QoK") + "QoK".Length;
-            int endIndex = info.IndexOf(".RE2", startIndex);
-            var name = info.Substring(startIndex, endIndex - startIndex);
-
-            return new Program(name);
+            return new Program(program.Name)
+            {
+                Size = program.Size,
+                Timestamp = program.Timestamp,
+                Content = content
+            };
         }
-
-        #region Properties
-
-        public string Name { get; }
-        public string Path { get; set; }
-        public string Content { get; set; }
-        //public Timestamp Timestamp { get; private set; }
-        //public List<Position> Positions;
-
-        #endregion
 
         public List<string> GetLines()
         {

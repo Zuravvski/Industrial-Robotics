@@ -38,6 +38,9 @@
     <ApplicationIcon>app_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dragablz, Version=0.0.3.186, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Dragablz.0.0.3.186\lib\net45\Dragablz.dll</HintPath>
+    </Reference>
     <Reference Include="FirstFloor.ModernUI">
       <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\FirstFloor.ModernUI.dll</HintPath>
     </Reference>
@@ -115,6 +118,7 @@
     <Compile Include="Common\Utilities\ConfigurationService.cs" />
     <Compile Include="Common\Utilities\MissingFileCreator.cs" />
     <Compile Include="Common\Utilities\Session.cs" />
+    <Compile Include="Common\Utilities\TabItemFactory.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
@@ -123,6 +127,7 @@
     <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />
     <Compile Include="Common\ViewModels\DelegateCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
+    <Compile Include="Common\ViewModels\Editor_v2ViewModel.cs" />
     <Compile Include="Common\ViewModels\HighlightingViewModel.cs" />
     <Compile Include="Common\ViewModels\HomeViewModel.cs" />
     <Compile Include="Common\ViewModels\MacroManagerViewModel.cs" />

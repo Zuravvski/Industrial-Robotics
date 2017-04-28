@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using IDE.Common.ViewModels;
+using FirstFloor.ModernUI.Windows.Controls;
 
 namespace IDE.Common.Views
 {
@@ -14,9 +15,10 @@ namespace IDE.Common.Views
         public Editor()
         {
             InitializeComponent();
-            DataContext = new EditorViewModel();
+            DataContext = new Editor_v2ViewModel();
         }
 
         #endregion
+
     }
 }

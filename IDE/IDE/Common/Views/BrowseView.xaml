@@ -70,6 +70,31 @@
                     </VisualBrush>
                 </Button.Background>
             </Button>
+            <Button Command="{Binding PlayClickCommand}" Width="40" Height="40" Margin="165,5,0,0" ToolTip="Run Program">
+                <Button.Background>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Grid>
+                                <Grid Background="{Binding ThemeColor}"/>
+                                <Image Source="/Icons/Play.png" Stretch="Uniform"/>
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Button.Background>
+            </Button>
+            <Button Command="{Binding StopClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Stop Program">
+                <Button.Background>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Grid>
+                                <Grid Background="{Binding ThemeColor}"/>
+                                <Image Source="/Icons/Stop.png" Stretch="Uniform"/>
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Button.Background>
+            </Button>
+            
         </StackPanel>
         <!--Command window-->
         <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1">

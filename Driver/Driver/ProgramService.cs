@@ -18,6 +18,22 @@ namespace Driver
             this.manipulator = manipulator;
         }
 
+        public async void StopProgram()
+        {
+            if (!manipulator.Connected) return;
+            try
+            {
+                manipulator.Halt();
+                await Task.Delay(200);
+                manipulator.Reset(0);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
         public async void RunProgram(RemoteProgram remoteProgram)
         {
             if (!manipulator.Connected) return;
@@ -41,6 +57,10 @@ namespace Driver
         /// <returns>Requested program or null when program with given name does not exist</returns>
         public async Task<Program> UploadProgram(RemoteProgram remoteProgram)
         {
+            var dialog = new SaveFileDialog();
+            if (dialog.ShowDialog() == false)
+                return null;
+
             // TODO: Test if this works
             manipulator.Number(remoteProgram.Name);
             await Task.Delay(1000);
@@ -59,6 +79,7 @@ namespace Driver
                     break;
                 content += line + "\n";
             }
+            File.WriteAllText(dialog.FileName, content);
             return Program.CreateFromRemoteProgram(remoteProgram, content);
         }
 
@@ -144,7 +165,7 @@ namespace Driver
                     await Task.Delay(500);
                     //var prefix = $"{Convert.ToString(i + 1)} ";
                     manipulator.SendCustom(lines[i]);
-                    Debug.WriteLine($"{i}/{lines.Length}, {lines[i]}");
+                    Debug.WriteLine($"{i + 1}/{lines.Length}, {lines[i]}");
                 }
             }
             catch (Exception ex)
@@ -179,7 +200,10 @@ namespace Driver
                 var QoK = manipulator.Port.Read();
                 if (QoK.Equals("QoK\r"))
                     break;
-                remoteProgramList.Add(RemoteProgram.Create(QoK));
+
+                var remoteProgram = RemoteProgram.Create(QoK);
+                if (remoteProgram != null)
+                    remoteProgramList.Add(remoteProgram);
             }
             return remoteProgramList;
         }

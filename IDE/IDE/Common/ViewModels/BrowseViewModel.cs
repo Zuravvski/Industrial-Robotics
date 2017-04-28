@@ -189,7 +189,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Download(object obj)
         {
-
+            await programServce.UploadProgram(SelectedRemoteProgram);
         }
 
         /// <summary>
@@ -236,6 +236,11 @@ namespace IDE.Common.ViewModels
                     }
                 }
             }
+        }
+
+        private void Stop(object obj)
+        {
+            programServce.StopProgram();
         }
 
         private void Run(object obj)
@@ -398,6 +403,7 @@ namespace IDE.Common.ViewModels
         public ICommand UploadClickCommand { get; private set; }
         public ICommand SendClickCommand { get; private set; }
         public ICommand RunClickCommand { get; private set; }
+        public ICommand StopClickCommand { get; private set; }
         public ICommand ClearHistoryCommand { get; private set; }
         public ICommand ExportHistoryCommand { get; private set; }
         public ICommand FontTNRomanCommand { get; private set; }
@@ -414,6 +420,7 @@ namespace IDE.Common.ViewModels
             UploadClickCommand = new RelayCommand(Upload, IsConnectionEstablished);
             SendClickCommand = new RelayCommand(Send, IsCommandInputNotEmpty);
             RunClickCommand = new RelayCommand(Run, IsConnectionEstablished);
+            StopClickCommand = new RelayCommand(Stop, IsConnectionEstablished);
             ClearHistoryCommand = new RelayCommand(ClearHistory, IsCommandHistoryNotEmpty);
             ExportHistoryCommand = new RelayCommand(ExportHistory, IsCommandHistoryNotEmpty);
             FontTNRomanCommand = new RelayCommand(FontTimesNewRoman, IsCurrentFontNotTNRoman);

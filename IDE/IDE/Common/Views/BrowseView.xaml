@@ -34,7 +34,7 @@
 
         <!--Buttons for list management-->
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-            <Button Command="{Binding RefreshClickCommand}" Width="40" Height="40" Margin="0,5,0,0" ToolTip="Refresches Program List">
+            <Button Command="{Binding RefreshClickCommand}" Width="40" Height="40" Margin="0,5,0,0" ToolTip="Refresh Program List">
                 <Button.Background>
                     <VisualBrush>
                         <VisualBrush.Visual>
@@ -58,7 +58,7 @@
                     </VisualBrush>
                 </Button.Background>
             </Button>
-            <Button Command="{Binding UploadClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Pusch Program To Manipulator">
+            <Button Command="{Binding UploadClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Push Program To Manipulator">
                 <Button.Background>
                     <VisualBrush>
                         <VisualBrush.Visual>
@@ -70,7 +70,7 @@
                     </VisualBrush>
                 </Button.Background>
             </Button>
-            <Button Command="{Binding PlayClickCommand}" Width="40" Height="40" Margin="165,5,0,0" ToolTip="Run Program">
+            <Button Command="{Binding RunClickCommand}" Width="40" Height="40" Margin="165,5,0,0" ToolTip="Run Program">
                 <Button.Background>
                     <VisualBrush>
                         <VisualBrush.Visual>

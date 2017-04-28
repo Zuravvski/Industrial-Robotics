@@ -24,6 +24,8 @@ namespace Driver
             var splittedInfo = info.Split(';');
             //if (splittedInfo.Length != 6)
             //    throw new ArgumentException();
+            if (!splittedInfo[0].EndsWith("RE2"))
+                return null;
             
             int startIndex = splittedInfo[0].IndexOf("QoK") + "QoK".Length;
             int endIndex = splittedInfo[0].IndexOf(".RE2", startIndex);

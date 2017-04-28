@@ -22,10 +22,11 @@ namespace IDE.Common.ViewModels
         ProgramEditor commandHistory, commandInput;
         bool lineWasNotValid;
         int messageSelectionArrows;
+        ObservableCollection<RemoteProgram> remotePrograms;
+        RemoteProgram selectedRemoteProgram;
         //this should be removed later on
         E3JManipulator manipulator;
         ProgramService programServce;
-        ObservableCollection<RemoteProgram> remotePrograms;
 
         #endregion
 
@@ -51,6 +52,19 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public RemoteProgram SelectedRemoteProgram
+        {
+            get
+            {
+                return selectedRemoteProgram;
+            }
+            set
+            {
+                selectedRemoteProgram = value;
+                NotifyPropertyChanged("SelectedRemoteProgram");
+            }
+        }
 
         public ObservableCollection<RemoteProgram> RemotePrograms
         {
@@ -183,7 +197,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
-            //TODO
+            programServce.DownloadProgram();
         }
 
         /// <summary>
@@ -223,7 +237,12 @@ namespace IDE.Common.ViewModels
                 }
             }
         }
-        
+
+        private void Run(object obj)
+        {
+            programServce.RunProgram(SelectedRemoteProgram);
+        }
+
         /// <summary>
         /// Occurs after user triggers font reduce event.
         /// </summary>
@@ -378,6 +397,7 @@ namespace IDE.Common.ViewModels
         public ICommand DownloadClickCommand { get; private set; }
         public ICommand UploadClickCommand { get; private set; }
         public ICommand SendClickCommand { get; private set; }
+        public ICommand RunClickCommand { get; private set; }
         public ICommand ClearHistoryCommand { get; private set; }
         public ICommand ExportHistoryCommand { get; private set; }
         public ICommand FontTNRomanCommand { get; private set; }
@@ -393,6 +413,7 @@ namespace IDE.Common.ViewModels
             DownloadClickCommand = new RelayCommand(Download, IsItemSelected);
             UploadClickCommand = new RelayCommand(Upload, IsConnectionEstablished);
             SendClickCommand = new RelayCommand(Send, IsCommandInputNotEmpty);
+            RunClickCommand = new RelayCommand(Run, IsConnectionEstablished);
             ClearHistoryCommand = new RelayCommand(ClearHistory, IsCommandHistoryNotEmpty);
             ExportHistoryCommand = new RelayCommand(ExportHistory, IsCommandHistoryNotEmpty);
             FontTNRomanCommand = new RelayCommand(FontTimesNewRoman, IsCurrentFontNotTNRoman);

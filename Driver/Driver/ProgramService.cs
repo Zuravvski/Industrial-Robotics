@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Driver.Exceptions;
+using Microsoft.Win32;
+using System.IO;
 
 namespace Driver
 {
@@ -14,6 +16,22 @@ namespace Driver
         public ProgramService(E3JManipulator manipulator)
         {
             this.manipulator = manipulator;
+        }
+
+        public async void RunProgram(RemoteProgram remoteProgram)
+        {
+            if (!manipulator.Connected) return;
+            try
+            {
+                manipulator.Number(remoteProgram.Name);
+                await Task.Delay(1000);
+                manipulator.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>
@@ -77,9 +95,56 @@ namespace Driver
                 for (var i = 0; i < lines.Count; i++)
                 {
                     await Task.Delay(500);
-                    var prefix = $"{Convert.ToString(i + 1)} ";
+                    //var prefix = $"{Convert.ToString(i + 1)} ";
                     manipulator.SendCustom(lines[i]);
                     Debug.WriteLine(i);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Sends program to manipulator
+        /// </summary>
+        /// <param name="program"></param>
+        public async void DownloadProgram()
+        {
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt"
+            };
+            // Default file name
+            // Default file extension
+            // Filter files by extension
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var path = dialog.FileName;
+            var name = Path.GetFileNameWithoutExtension(path);
+            var lines = File.ReadAllLines($"{dialog.FileName}");
+
+            if (!manipulator.Connected) return;
+            try
+            {
+                manipulator.Number(name);
+                await Task.Delay(1000);
+                manipulator.New();
+                await Task.Delay(1000);
+
+                for (var i = 0; i < lines.Length; i++)
+                {
+                    await Task.Delay(500);
+                    //var prefix = $"{Convert.ToString(i + 1)} ";
+                    manipulator.SendCustom(lines[i]);
+                    Debug.WriteLine($"{i}/{lines.Length}, {lines[i]}");
                 }
             }
             catch (Exception ex)

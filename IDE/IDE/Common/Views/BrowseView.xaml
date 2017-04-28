@@ -34,11 +34,43 @@
 
         <!--Buttons for list management-->
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-            <Button Content="Refresh" Command="{Binding RefreshClickCommand}" Width="75" Height="26" Margin="0,5,0,0"/>
-            <Button Content="Download" Command="{Binding DownloadClickCommand}" Width="75" Height="26" Margin="5,5,0,0"/>
-            <Button Content="Upload" Command="{Binding UploadClickCommand}" Width="75" Height="26" Margin="5,5,0,0"/>
+            <Button Command="{Binding RefreshClickCommand}" Width="40" Height="40" Margin="0,5,0,0" ToolTip="Refresches Program List">
+                <Button.Background>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Grid>
+                                <Grid Background="{Binding ThemeColor}"/>
+                                <Image Source="/Icons/Refresh.png" Stretch="Uniform"/>
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Button.Background>
+            </Button>
+            <Button Command="{Binding DownloadClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Pull Program From Manipulator">
+                <Button.Background>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Grid>
+                                <Grid Background="{Binding ThemeColor}"/>
+                                <Image Source="/Icons/Download.png" Stretch="Uniform"/>
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Button.Background>
+            </Button>
+            <Button Command="{Binding UploadClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Pusch Program To Manipulator">
+                <Button.Background>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Grid>
+                                <Grid Background="{Binding ThemeColor}"/>
+                                <Image Source="/Icons/Upload.png" Stretch="Uniform"/>
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Button.Background>
+            </Button>
         </StackPanel>
-
         <!--Command window-->
         <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1">
             <Grid.RowDefinitions>

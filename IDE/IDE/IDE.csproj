@@ -301,6 +301,15 @@
   <ItemGroup>
     <None Include="Icons\TimersCounters.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Upload.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

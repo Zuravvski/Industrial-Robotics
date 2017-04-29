@@ -38,8 +38,8 @@
     <ApplicationIcon>app_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dragablz, Version=0.0.3.186, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Dragablz.0.0.3.186\lib\net45\Dragablz.dll</HintPath>
+    <Reference Include="ChromeTabs">
+      <HintPath>..\..\..\..\..\Downloads\wpfchrometabs-mvvm-master\wpfchrometabs-mvvm-master\Demo\bin\Debug\ChromeTabs.dll</HintPath>
     </Reference>
     <Reference Include="FirstFloor.ModernUI">
       <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\FirstFloor.ModernUI.dll</HintPath>
@@ -109,6 +109,7 @@
     <Compile Include="Common\Models\Services\ListManager.cs" />
     <Compile Include="Common\Models\Services\MacroManager.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />
+    <Compile Include="Common\Models\TabItem.cs" />
     <Compile Include="Common\Models\Value Objects\Command.cs" />
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
@@ -118,12 +119,13 @@
     <Compile Include="Common\Utilities\ConfigurationService.cs" />
     <Compile Include="Common\Utilities\MissingFileCreator.cs" />
     <Compile Include="Common\Utilities\Session.cs" />
-    <Compile Include="Common\Utilities\TabItemFactory.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />
     <Compile Include="Common\ViewModels\BrowseViewModel.cs" />
     <Compile Include="Common\ViewModels\Commands\ObservableObject.cs" />
     <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
+    <Compile Include="Common\ViewModels\Converters\BitmapToBitmapImage.cs" />
+    <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />
     <Compile Include="Common\ViewModels\DelegateCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
@@ -237,7 +239,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -320,6 +322,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\Stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Settings-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Menu-32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

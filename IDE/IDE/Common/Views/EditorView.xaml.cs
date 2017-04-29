@@ -20,5 +20,9 @@ namespace IDE.Common.Views
 
         #endregion
 
+        private void Menu_ImageFailed(object sender, System.Windows.ExceptionRoutedEventArgs e)
+        {
+
+        }
     }
 }

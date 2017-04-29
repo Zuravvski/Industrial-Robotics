@@ -1,17 +1,10 @@
-﻿using Dragablz;
-using FirstFloor.ModernUI.Windows.Controls;
-using IDE.Common.Utilities;
+﻿using ChromeTabs;
+using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
-using IDE.Common.Views;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using System;
 
 namespace IDE.Common.ViewModels
 {
@@ -19,8 +12,8 @@ namespace IDE.Common.ViewModels
     {
 
         #region Fields
-        
 
+        private ObservableCollection<TabItem> tabItems;
 
         #endregion
 
@@ -28,14 +21,32 @@ namespace IDE.Common.ViewModels
         public Editor_v2ViewModel()
         {
             DeclareCommands();
+
+            TabItems = new ObservableCollection<TabItem>();
+            
         }
 
-    
+
 
         #endregion
 
         #region Properties
         
+
+        public ObservableCollection<TabItem> TabItems
+        {
+            get
+            {
+                return tabItems;
+            }
+            set
+            {
+                tabItems = value;
+                NotifyPropertyChanged("TabItems");
+            }
+        }
+
+        public TabItem SelectedTab { get; set; }
 
         #endregion
 
@@ -46,24 +57,26 @@ namespace IDE.Common.ViewModels
 
         #region Commands
 
-        public ICommand CloseClickCommand { get; private set; }
-        public ICommand NewTabFactory { get; private set; }
+        public ICommand AddTabCommand { get; private set; }
+        public ICommand CloseTabCommand { get; private set; }
 
         private void DeclareCommands()
         {
-            CloseClickCommand = new RelayCommand(Close);
-            NewTabFactory = new RelayCommand(NewTab);
+            AddTabCommand = new RelayCommand(AddTab);
+            CloseTabCommand = new RelayCommand(CloseTab);
         }
 
-        private void NewTab(object obj)
+        private void CloseTab(object obj)
         {
-            throw new NotImplementedException();
+            TabItems.Remove((TabItem)obj);
         }
 
-        private void Close(object obj)
+
+        private void AddTab(object obj)
         {
-            
+            TabItems.Add(new TabItem($"{TabItems.Count}"));
         }
+
 
         #endregion
 

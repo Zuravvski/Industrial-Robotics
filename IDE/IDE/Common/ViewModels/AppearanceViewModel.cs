@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Media;
 using FirstFloor.ModernUI.Presentation;
+using System;
 
 namespace IDE.Common.ViewModels
 {
@@ -14,8 +15,11 @@ namespace IDE.Common.ViewModels
         private const string FontSmall = "small";
         private const string FontLarge = "large";
 
+        private const string PaletteMetro = "metro";
+        private const string PaletteWP = "windows phone";
+
         // 9 accent colors from metro design principles
-        /*private Color[] accentColors = new Color[]{
+        private Color[] metroAccentColors = new Color[]{
             Color.FromRgb(0x33, 0x99, 0xff),   // blue
             Color.FromRgb(0x00, 0xab, 0xa9),   // teal
             Color.FromRgb(0x33, 0x99, 0x33),   // green
@@ -25,10 +29,10 @@ namespace IDE.Common.ViewModels
             Color.FromRgb(0xe5, 0x14, 0x00),   // red
             Color.FromRgb(0xff, 0x00, 0x97),   // magenta
             Color.FromRgb(0xa2, 0x00, 0xff),   // purple            
-        };*/
+        };
 
         // 20 accent colors from Windows Phone 8
-        private Color[] accentColors = new Color[]{
+        private Color[] wpAccentColors = new Color[]{
             Color.FromRgb(0xa4, 0xc4, 0x00),   // lime
             Color.FromRgb(0x60, 0xa9, 0x17),   // green
             Color.FromRgb(0x00, 0x8a, 0x00),   // emerald
@@ -51,6 +55,8 @@ namespace IDE.Common.ViewModels
             Color.FromRgb(0x87, 0x79, 0x4e),   // taupe
         };
 
+        private string selectedPalette = PaletteWP;
+
         private Color selectedAccentColor;
         private LinkCollection themes = new LinkCollection();
         private Link selectedTheme;
@@ -62,14 +68,16 @@ namespace IDE.Common.ViewModels
             this.themes.Add(new Link { DisplayName = "dark", Source = AppearanceManager.DarkThemeSource });
             this.themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
 
+            // add additional themes
+            this.themes.Add(new Link { DisplayName = "hello kitty", Source = new Uri("/IDE;component/Common/Views/CustomThemes/ModernUI.HelloKitty.xaml", UriKind.Relative) });
+            this.themes.Add(new Link { DisplayName = "WE ZUT", Source = new Uri("/IDE;component/Common/Views/CustomThemes/ModernUI.WE.xaml", UriKind.Relative) });
+
             this.SelectedFontSize = AppearanceManager.Current.FontSize == FontSize.Small ? FontLarge : FontSmall;
             SyncThemeAndColor();
 
             AppearanceManager.Current.PropertyChanged += OnAppearanceManagerPropertyChanged;
-
-            //this is mine
-            Instance = this;
         }
+
 
         private void SyncThemeAndColor()
         {
@@ -98,9 +106,29 @@ namespace IDE.Common.ViewModels
             get { return new string[] { FontSmall, FontLarge }; }
         }
 
+        public string[] Palettes
+        {
+            get { return new string[] { PaletteMetro, PaletteWP }; }
+        }
+
         public Color[] AccentColors
         {
-            get { return this.accentColors; }
+            get { return this.selectedPalette == PaletteMetro ? this.metroAccentColors : this.wpAccentColors; }
+        }
+
+        public string SelectedPalette
+        {
+            get { return this.selectedPalette; }
+            set
+            {
+                if (this.selectedPalette != value)
+                {
+                    this.selectedPalette = value;
+                    OnPropertyChanged("AccentColors");
+
+                    this.SelectedAccentColor = this.AccentColors.FirstOrDefault();
+                }
+            }
         }
 
         public Link SelectedTheme
@@ -134,13 +162,6 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        private static AppearanceViewModel instance;
-        public static AppearanceViewModel Instance
-        {
-            set { instance = value; }
-            get { return instance; }
-        }
-            
         public Color SelectedAccentColor
         {
             get { return this.selectedAccentColor; }
@@ -152,8 +173,6 @@ namespace IDE.Common.ViewModels
                     OnPropertyChanged("SelectedAccentColor");
 
                     AppearanceManager.Current.AccentColor = value;
-                    
-                    //EditorViewModel.Instance.ThemeColor = new SolidColorBrush(selectedAccentColor);
                 }
             }
         }

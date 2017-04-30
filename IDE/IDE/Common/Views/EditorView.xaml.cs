@@ -1,6 +1,13 @@
 ﻿using System.Windows.Controls;
 using IDE.Common.ViewModels;
 using FirstFloor.ModernUI.Windows.Controls;
+using System;
+using RadialMenu.Controls;
+using System.Collections.Generic;
+using System.Windows.Media;
+using System.Threading.Tasks;
+using System.Windows.Shapes;
+using System.Windows.Input;
 
 namespace IDE.Common.Views
 {
@@ -19,10 +26,6 @@ namespace IDE.Common.Views
         }
 
         #endregion
-
-        private void Menu_ImageFailed(object sender, System.Windows.ExceptionRoutedEventArgs e)
-        {
-
-        }
+        
     }
 }

@@ -111,6 +111,7 @@
     <Compile Include="Common\Models\Services\LineColorizer.cs" />
     <Compile Include="Common\Models\Services\ListManager.cs" />
     <Compile Include="Common\Models\Services\MacroManager.cs" />
+    <Compile Include="Common\Models\Services\TabManager.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />
     <Compile Include="Common\Models\TabItem.cs" />
     <Compile Include="Common\Models\Value Objects\Command.cs" />

@@ -41,8 +41,9 @@
     <Reference Include="ChromeTabs">
       <HintPath>..\..\..\..\..\Downloads\wpfchrometabs-mvvm-master\wpfchrometabs-mvvm-master\Demo\bin\Debug\ChromeTabs.dll</HintPath>
     </Reference>
-    <Reference Include="FirstFloor.ModernUI">
-      <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\FirstFloor.ModernUI.dll</HintPath>
+    <Reference Include="FirstFloor.ModernUI, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Visual Studio 2017\Projects\ModernUIcopypaste\ModernUIcopypaste\bin\Debug\FirstFloor.ModernUI.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Visual Studio 2015\Projects\01_color_palette\01_color_palette\bin\Debug\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -253,8 +254,8 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Page Include="Common\Views\CustomThemes\ModernUI.HelloKitty.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -351,6 +352,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Common\Views\CustomThemes\background.we.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\floppy_disk_blue.png" />
+    <Resource Include="Icons\floppy_disk_red.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

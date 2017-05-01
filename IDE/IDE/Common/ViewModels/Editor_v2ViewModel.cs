@@ -12,6 +12,7 @@ using System.Linq;
 using Driver;
 using Microsoft.Win32;
 using System.IO;
+using IDE.Common.Models.Services;
 
 namespace IDE.Common.ViewModels
 {
@@ -53,7 +54,6 @@ namespace IDE.Common.ViewModels
 
             SetupMainSubmenu();
             TabItems = new ObservableCollection<TabItem>();
-            
         }
 
         #endregion
@@ -492,7 +492,7 @@ namespace IDE.Common.ViewModels
             }
             else if (RadialMenuSubmenuSaveMode)
             {
-                //save all
+                SaveAllTabs();
             }
             else if (RadialMenuSubmenuSettingsMode)
             {
@@ -515,25 +515,11 @@ namespace IDE.Common.ViewModels
         {
             if (RadialMenuSubmenuFileMode)
             {
-                var dialog = new OpenFileDialog
-                {
-                    DefaultExt = ".txt",
-                    Filter = "txt files (.txt)|*.txt"
-                };
-
-                if (dialog.ShowDialog() == false)
-                {
-                    return;
-                }
-                
-                var name = Path.GetFileNameWithoutExtension(dialog.FileName);
-                var content = File.ReadAllText($"{dialog.FileName}");
-
-                OpenTab(new Program(name) { Content = content });
+                OpenTab();
             }
             else if (RadialMenuSubmenuSaveMode)
             {
-                //save as
+                SaveAsTab(SelectedTabItem);
             }
             else if (RadialMenuSubmenuSettingsMode)
             {
@@ -560,7 +546,7 @@ namespace IDE.Common.ViewModels
             }
             else if (RadialMenuSubmenuSaveMode)
             {
-                //save 
+                SaveTab(SelectedTabItem);
             }
             else if (RadialMenuSubmenuSettingsMode)
             {
@@ -608,7 +594,103 @@ namespace IDE.Common.ViewModels
             TabItems.Remove((TabItem)obj);
         }
 
-        int index = 0;
+
+        private void OpenTab()
+        {
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt"
+            };
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var path = Path.GetFullPath(dialog.FileName);
+            var name = Path.GetFileNameWithoutExtension(dialog.FileName);
+            var content = File.ReadAllText($"{dialog.FileName}");
+
+            var doesTabAlreadyExist = TabItems.Where(i => i.Program.Path == path).FirstOrDefault();
+
+            if (!object.Equals(doesTabAlreadyExist, null))
+            {
+                //if this file is already open reload it's content
+                SelectedTabItem = doesTabAlreadyExist;
+                SelectedTabItem.Content.Text = SelectedTabItem.Program.Content;
+                SelectedTabItem.UnsavedChanged = false;
+                return;
+            }
+            
+
+            OpenTab(new Program(name) { Path = path, Content = content });
+        }
+
+        /// <summary>
+        /// Performs saving all tabs. If it is new program Save as will be called, 
+        /// else program will be saved in path declared in ~Program.path~.
+        /// </summary>
+        private void SaveAllTabs()
+        {
+            foreach(var tab in TabItems)
+            {
+                SaveTab(tab);
+            }
+        }
+
+        /// <summary>
+        /// Performs save as operation on a new file. 
+        /// It's basically the same as ~SaveTab~ operation, except for the fact
+        /// that ~tabItem.Program~ might not be null, but we still want to create
+        /// new instance of ~Program~ for this ~tabItem.content~.
+        /// </summary>
+        /// <param name="tabItem">Tab item which content will be saved.</param>
+        private void SaveAsTab(TabItem tabItem)
+        {
+            var dialog = new SaveFileDialog
+            {
+                FileName = $"{tabItem.Header.Replace("*", string.Empty)}",
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt"
+            };
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var path = Path.GetFullPath(dialog.FileName);
+            var name = Path.GetFileNameWithoutExtension(dialog.FileName);
+
+            tabItem.Program = new Program(name) { Path = path, Content = tabItem.Content.Text };
+            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
+
+            //update gui
+            tabItem.Header = tabItem.Program.Name;
+            tabItem.UnsavedChanged = false;
+        }
+
+        /// <summary>
+        /// Performs "regular" save operation on existing or new file. 
+        /// In case of new file you will have to declare file name and location first.
+        /// </summary>
+        /// <param name="tabItem">Tab item which content will be saved.</param>
+        private void SaveTab(TabItem tabItem)
+        {
+            if (tabItem.Program == null)
+            {
+                //if it's new tab there is no program corresponding, so create one
+                SaveAsTab(tabItem);
+                return;
+            }
+            //else just save it under path declared in ~Program.path~
+            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
+            
+            //update gui
+            tabItem.UnsavedChanged = false;
+        }
+
         /// <summary>
         /// Opens new tab
         /// </summary>
@@ -639,6 +721,7 @@ namespace IDE.Common.ViewModels
             }
             TabItems.Add(tabToAdd);
             SelectedTabItem = tabToAdd;
+
         }
 
         private void AddTab(object obj)

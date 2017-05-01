@@ -83,8 +83,8 @@
             </RadialMenu:RadialMenu.CentralItem>
 
             <!-- MenuItems Around -->
-            
-            
+
+
 
             <RadialMenu:RadialMenuItem Visibility="Hidden" />
 
@@ -131,7 +131,6 @@
             <!-- Add items as you want... -->
 
         </RadialMenu:RadialMenu>
-
 
         <!--#endregion-->
 
@@ -194,6 +193,7 @@
         <!--#endregion-->
 
         <!--#region PositionList-->
+        
         <Border Grid.Row="1" Grid.Column="1" BorderThickness="2" BorderBrush="DarkGreen" Margin="0,24,0,0">
             <TextBlock Text="This is where position manager would be but we have wyjebane"
                    FontSize="18" Foreground="DarkGreen"
@@ -206,7 +206,6 @@
         </Border>
 
         <!--#endregion-->
-
 
     </Grid>
 

@@ -93,6 +93,26 @@ namespace IDE.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap floppy_disk_blue {
+            get {
+                object obj = ResourceManager.GetObject("floppy_disk_blue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap floppy_disk_red {
+            get {
+                object obj = ResourceManager.GetObject("floppy_disk_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Grip {
             get {
                 object obj = ResourceManager.GetObject("Grip", resourceCulture);

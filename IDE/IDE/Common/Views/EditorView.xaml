@@ -46,13 +46,13 @@
         
         <!--#endregion-->
         
-        <!--#region Menu DONT FORGET TO BIND MENU ITEMS BACKGROUND COLOR-->
+        <!--#region Menu-->
 
-        <!-- Button showing radial menu -->
-        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0">
+        <!-- Button enabling radial menu -->
+        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0" ToolTip="Options">
             <RadialMenu:RadialMenu.CentralItem>
-                <RadialMenu:RadialMenuCentralItem Command="{Binding OpenRadialMenuCommand}">
-                    <Rectangle Width="25" Height="25">
+                <RadialMenu:RadialMenuCentralItem Command="{Binding OpenRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}">
+                    <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuEnableButtonVisibility}">
                         <Rectangle.Fill>
                             <VisualBrush Visual="{StaticResource appbar_lines_horizontal_4}"/>
                         </Rectangle.Fill>
@@ -73,7 +73,7 @@
             <!-- CentralMenuItem -->
 
             <RadialMenu:RadialMenu.CentralItem>
-                <RadialMenu:RadialMenuCentralItem Command="{Binding CloseRadialMenuCommand}">
+                <RadialMenu:RadialMenuCentralItem Command="{Binding CloseRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}" ToolTip="Close/Back">
                     <Rectangle Width="25" Height="25">
                         <Rectangle.Fill>
                             <VisualBrush Visual="{StaticResource appbar_close}"/>
@@ -83,10 +83,12 @@
             </RadialMenu:RadialMenu.CentralItem>
 
             <!-- MenuItems Around -->
+            
+            
 
             <RadialMenu:RadialMenuItem Visibility="Hidden" />
 
-            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem3Command}" Visibility="{Binding RadialMenuItem3Visibility}" ArrowBackground="{Binding RadialMenuArrow3Background}">
+            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem3Command}" Visibility="{Binding RadialMenuItem3Visibility}" ArrowBackground="{Binding RadialMenuArrow3Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}">
                 <WrapPanel Orientation="Vertical">
                     <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuItem3IconVisibility}">
                         <Rectangle.Fill>
@@ -97,7 +99,7 @@
                 </WrapPanel>
             </RadialMenu:RadialMenuItem>
 
-            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem2Command}" Visibility="{Binding RadialMenuItem2Visibility}" ArrowBackground="{Binding RadialMenuArrow2Background}">
+            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem2Command}" Visibility="{Binding RadialMenuItem2Visibility}" ArrowBackground="{Binding RadialMenuArrow2Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}">
                 <WrapPanel Orientation="Vertical">
                     <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuItem2IconVisibility}">
                         <Rectangle.Fill>
@@ -105,11 +107,11 @@
                         </Rectangle.Fill>
                     </Rectangle>
                     <TextBlock Text="{Binding RadialMenuItem2Text}"  FontSize="14" TextAlignment="Center"/>
-                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox2IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox2Visibility}"/>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox2IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox2Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
                 </WrapPanel>
             </RadialMenu:RadialMenuItem>
 
-            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem1Command}" Visibility="{Binding RadialMenuItem1Visibility}" ArrowBackground="{Binding RadialMenuArrow1Background}">
+            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem1Command}" Visibility="{Binding RadialMenuItem1Visibility}" ArrowBackground="{Binding RadialMenuArrow1Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}">
                 <WrapPanel Orientation="Vertical">
                     <Rectangle Width="20" Height="25" Visibility="{Binding RadialMenuItem1IconVisibility}">
                         <Rectangle.Fill>
@@ -117,7 +119,7 @@
                         </Rectangle.Fill>
                     </Rectangle>
                     <TextBlock Text="{Binding RadialMenuItem1Text}"  FontSize="14" TextAlignment="Center"/>
-                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox1IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox1Visibility}"/>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox1IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox1Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
                 </WrapPanel>
             </RadialMenu:RadialMenuItem>
 
@@ -138,12 +140,14 @@
         <!--The tab control with with tab tearing support.-->
         <ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
                              ItemsSource="{Binding TabItems}"
-                             SelectedItem="{Binding SelectedTab}"
+                             SelectedItem="{Binding SelectedTabItem}"
+                             SelectedIndex="{Binding SelectedTabIndex}"
                              IsAddButtonVisible="{Binding ShowAddButton}"
                              AddTabCommand="{Binding AddTabCommand}"
                              CloseTabCommand="{Binding CloseTabCommand}"
                              Grid.Row="1" Grid.Column="0"
-                             IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}">
+                             IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
+                             SelectedContent="0">
 
             <!-- BINDING CONTENT -->
             <ct:ChromeTabControl.ItemContainerStyle>

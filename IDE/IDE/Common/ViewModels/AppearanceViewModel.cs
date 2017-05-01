@@ -61,8 +61,13 @@ namespace IDE.Common.ViewModels
         private LinkCollection themes = new LinkCollection();
         private Link selectedTheme;
         private string selectedFontSize;
+        private Brush themeColor;
 
-        public AppearanceViewModel()
+        // Sigleton
+        private static readonly Lazy<AppearanceViewModel> instance = new Lazy<AppearanceViewModel>(() => new AppearanceViewModel());
+        public static AppearanceViewModel Instance => instance.Value;
+
+        protected AppearanceViewModel()
         {
             // add the default themes
             this.themes.Add(new Link { DisplayName = "dark", Source = AppearanceManager.DarkThemeSource });
@@ -173,7 +178,21 @@ namespace IDE.Common.ViewModels
                     OnPropertyChanged("SelectedAccentColor");
 
                     AppearanceManager.Current.AccentColor = value;
+                    ThemeColor = new SolidColorBrush(value);
                 }
+            }
+        }
+
+        public Brush ThemeColor
+        {
+            get
+            {
+                return themeColor;
+            }
+            set
+            {
+                themeColor = value;
+                OnPropertyChanged("ThemeColor");
             }
         }
     }

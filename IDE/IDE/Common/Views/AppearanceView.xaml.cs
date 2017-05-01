@@ -13,7 +13,7 @@ namespace IDE.Common.Views
             InitializeComponent();
 
             // create and assign the appearance view model
-            this.DataContext = new AppearanceViewModel();
+            this.DataContext = AppearanceViewModel.Instance;
         }
     }
 }

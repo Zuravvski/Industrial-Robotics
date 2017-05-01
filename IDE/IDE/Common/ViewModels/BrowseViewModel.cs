@@ -53,6 +53,7 @@ namespace IDE.Common.ViewModels
 
         #region Properties
 
+        public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
         public RemoteProgram SelectedRemoteProgram
         {
             get

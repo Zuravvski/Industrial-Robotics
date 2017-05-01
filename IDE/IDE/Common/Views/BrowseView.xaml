@@ -39,7 +39,7 @@
                     <VisualBrush>
                         <VisualBrush.Visual>
                             <Grid>
-                                <Grid Background="{Binding ThemeColor}"/>
+                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
                                 <Image Source="/Icons/Refresh.png" Stretch="Uniform"/>
                             </Grid>
                         </VisualBrush.Visual>
@@ -51,7 +51,7 @@
                     <VisualBrush>
                         <VisualBrush.Visual>
                             <Grid>
-                                <Grid Background="{Binding ThemeColor}"/>
+                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
                                 <Image Source="/Icons/Download.png" Stretch="Uniform"/>
                             </Grid>
                         </VisualBrush.Visual>
@@ -63,7 +63,7 @@
                     <VisualBrush>
                         <VisualBrush.Visual>
                             <Grid>
-                                <Grid Background="{Binding ThemeColor}"/>
+                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
                                 <Image Source="/Icons/Upload.png" Stretch="Uniform"/>
                             </Grid>
                         </VisualBrush.Visual>
@@ -75,7 +75,7 @@
                     <VisualBrush>
                         <VisualBrush.Visual>
                             <Grid>
-                                <Grid Background="{Binding ThemeColor}"/>
+                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
                                 <Image Source="/Icons/Play.png" Stretch="Uniform"/>
                             </Grid>
                         </VisualBrush.Visual>
@@ -87,7 +87,7 @@
                     <VisualBrush>
                         <VisualBrush.Visual>
                             <Grid>
-                                <Grid Background="{Binding ThemeColor}"/>
+                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
                                 <Image Source="/Icons/Stop.png" Stretch="Uniform"/>
                             </Grid>
                         </VisualBrush.Visual>

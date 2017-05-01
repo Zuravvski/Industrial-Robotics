@@ -13,6 +13,7 @@ using Driver;
 using Microsoft.Win32;
 using System.IO;
 using IDE.Common.Models.Services;
+using System.Diagnostics;
 
 namespace IDE.Common.ViewModels
 {
@@ -26,6 +27,7 @@ namespace IDE.Common.ViewModels
         private ObservableCollection<TabItem> tabItems;
         private ObservableCollection<RadialMenuItem> radialMenuItems;
         private bool radialMenuIsOpen;
+
         private Visibility radialMenuEnableButtonVisibility;
         private Visibility radialMenuItem1Visibility;
         private Visibility radialMenuItem2Visibility;
@@ -56,12 +58,12 @@ namespace IDE.Common.ViewModels
             TabItems = new ObservableCollection<TabItem>();
         }
 
+
         #endregion
 
         #region Properties
 
         public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
-
         public ObservableCollection<RadialMenuItem> RadialMenuItems
         {
             get
@@ -74,7 +76,6 @@ namespace IDE.Common.ViewModels
                 NotifyPropertyChanged("RadialMenuItems");
             }
         }
-
         public ObservableCollection<TabItem> TabItems
         {
             get
@@ -87,7 +88,6 @@ namespace IDE.Common.ViewModels
                 NotifyPropertyChanged("TabItems");
             }
         }
-
         public TabItem SelectedTabItem
         {
             get
@@ -113,22 +113,7 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        #endregion
-
-        #region Actions
-
-
-        #endregion
-
-        #region Commands
-
-        public ICommand AddTabCommand { get; private set; }
-        public ICommand CloseTabCommand { get; private set; }
-        public ICommand OpenRadialMenuCommand { get; private set; }
-        public ICommand CloseRadialMenuCommand { get; private set; }
-        public ICommand RadialMenuItem1Command { get; private set; }
-        public ICommand RadialMenuItem2Command { get; private set; }
-        public ICommand RadialMenuItem3Command { get; private set; }
+        
         public Visibility RadialMenuEnableButtonVisibility
         {
             get
@@ -349,17 +334,258 @@ namespace IDE.Common.ViewModels
         public bool RadialMenuSubmenuSaveMode { get; private set; }
         public bool RadialMenuSubmenuSettingsMode { get; private set; }
 
+        #endregion
+
+        #region Actions
+
+
+        /// <summary>
+        /// Opens new tab or reloads content if tab already exist.
+        /// </summary>
+        private void OpenFileTab()
+        {
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt"
+            };
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var path = Path.GetFullPath(dialog.FileName);
+            var name = Path.GetFileNameWithoutExtension(dialog.FileName);
+            var content = File.ReadAllText($"{dialog.FileName}");
+
+            var doesTabAlreadyExist = TabItems.Where(i => i.Program != null && i.Program.Path == path).FirstOrDefault();
+
+            if (!object.Equals(doesTabAlreadyExist, null))
+            {
+                //if this file is already open reload it's content
+                SelectedTabItem = doesTabAlreadyExist;
+                SelectedTabItem.Content.Text = SelectedTabItem.Program.Content;
+                SelectedTabItem.UnsavedChanged = false;
+                return;
+            }
+
+            OpenTab(new Program(name) { Path = path, Content = content });
+        }
+
+        /// <summary>
+        /// Performs saving all tabs. If it is new program Save as will be called, 
+        /// else program will be saved in path declared in ~Program.path~.
+        /// </summary>
+        private void SaveAllTabs()
+        {
+            foreach (var tab in TabItems)
+            {
+                SaveTab(tab);
+            }
+        }
+
+        /// <summary>
+        /// Performs save as operation on a new file. 
+        /// It's basically the same as ~SaveTab~ operation, except for the fact
+        /// that ~tabItem.Program~ might not be null, but we still want to create
+        /// new instance of ~Program~ for this ~tabItem.content~.
+        /// </summary>
+        /// <param name="tabItem">Tab item which content will be saved.</param>
+        private void SaveAsTab(TabItem tabItem)
+        {
+            var dialog = new SaveFileDialog
+            {
+                FileName = $"{tabItem.Header.Replace("*", string.Empty)}",
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt"
+            };
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var path = Path.GetFullPath(dialog.FileName);
+            var name = Path.GetFileNameWithoutExtension(dialog.FileName);
+
+            tabItem.Program = new Program(name) { Path = path, Content = tabItem.Content.Text };
+            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
+
+            //update gui
+            tabItem.Header = tabItem.Program.Name;
+            tabItem.UnsavedChanged = false;
+        }
+
+        /// <summary>
+        /// Performs "regular" save operation on existing or new file. 
+        /// In case of new file you will have to declare file name and location first.
+        /// </summary>
+        /// <param name="tabItem">Tab item which content will be saved.</param>
+        private void SaveTab(TabItem tabItem)
+        {
+            if (tabItem.Program == null)
+            {
+                //if it's new tab there is no program corresponding, so create one
+                SaveAsTab(tabItem);
+                return;
+            }
+            //else just save it under path declared in ~Program.path~
+            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
+
+            //update gui
+            tabItem.UnsavedChanged = false;
+        }
+
+        /// <summary>
+        /// Opens new tab
+        /// </summary>
+        /// <param name="program">Pass existing program or null for new, fresh tab.</param>
+        private void OpenTab(Program program)
+        {
+            int matches = 0;
+            TabItem tabToAdd;
+
+            if (program != null)
+            {
+                tabToAdd = new TabItem(0, program);
+            }
+            else
+            {
+                matches = 1;
+                for (int i = 0; i < TabItems.Count; i++)
+                {
+                    //if there is "Untitled <nr>" tab, repeat loop to pick another number
+                    if (TabItems[i].Header.Contains($"Untitled {matches}"))
+                    {
+                        matches++;
+                        i = -1;
+                        continue;
+                    }
+                }
+                tabToAdd = new TabItem(matches, null);
+            }
+            TabItems.Add(tabToAdd);
+            SelectedTabItem = tabToAdd;
+
+        }
+
+        private void AddTab(object obj)
+        {
+            OpenTab(null);
+        }
+
+        private void CloseTab(object obj)
+        {
+            TabItems.Remove((TabItem)obj);
+        }
+
+        #endregion
+
+        #region Commands
+
+        public ICommand AddTabCommand { get; private set; }
+        public ICommand CloseTabCommand { get; private set; }
+        public ICommand OpenRadialMenuCommand { get; private set; }
+        public ICommand CloseRadialMenuCommand { get; private set; }
+        public ICommand RadialMenuItem1Command { get; private set; }
+        public ICommand RadialMenuItem2Command { get; private set; }
+        public ICommand RadialMenuItem3Command { get; private set; }
+
         private void DeclareCommands()
         {
             AddTabCommand = new RelayCommand(AddTab);
             CloseTabCommand = new RelayCommand(CloseTab);
             OpenRadialMenuCommand = new RelayCommand(OpenRadialMenu);
             CloseRadialMenuCommand = new RelayCommand(CloseRadialMenu);
-            RadialMenuItem1Command = new RelayCommand(RadialMenuItem1Execute);
-            RadialMenuItem2Command = new RelayCommand(RadialMenuItem2Execute);
-            RadialMenuItem3Command = new RelayCommand(RadialMenuItem3Execute);
+            RadialMenuItem1Command = new RelayCommand(RadialMenuItem1Execute, RadialMenuItem1CanExecute);
+            RadialMenuItem2Command = new RelayCommand(RadialMenuItem2Execute, RadialMenuItem2CanExecute);
+            RadialMenuItem3Command = new RelayCommand(RadialMenuItem3Execute, RadialMenuItem3CanExecute);
         }
 
+        private bool RadialMenuItem1CanExecute(object obj)
+        {
+            if (RadialMenuSubmenuFileMode)
+            {
+                //you can always create new file
+                return true;
+            }
+            else if (RadialMenuSubmenuSaveMode)
+            {
+                //you cannot save tab that does not exist
+                if (SelectedTabItem == null)
+                    return false;
+                else
+                    return true;
+            }
+            else if (RadialMenuSubmenuSettingsMode)
+            {
+                //you can always check this checkbox
+                return true;
+            }
+            else
+            {
+                //you can always go to file menu
+                return true;
+            }
+        }
+
+        private bool RadialMenuItem2CanExecute(object obj)
+        {
+            if (RadialMenuSubmenuFileMode)
+            {
+                //you can always open a new file
+                return true;
+            }
+            else if (RadialMenuSubmenuSaveMode)
+            {
+                //you cannot save tab that does not exist
+                if (SelectedTabItem != null)
+                    return true;
+                else
+                    return false;
+            }
+            else if (RadialMenuSubmenuSettingsMode)
+            {
+                //you can always check this checkbox
+                return true;
+            }
+            else
+            {
+                //you can't go to save submenu unless you have at least one tab open
+                if (TabItems.Count > 0)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        private bool RadialMenuItem3CanExecute(object obj)
+        {
+            if (RadialMenuSubmenuFileMode)
+            {
+                //this is disabled now
+                return false;
+            }
+            else if (RadialMenuSubmenuSaveMode)
+            {
+                //you can't save all unless you have at least one tab open
+                if (TabItems.Count > 0)
+                    return true;
+                else
+                    return false;
+            }
+            else if (RadialMenuSubmenuSettingsMode)
+            {
+                //this is disabled now
+                return false;
+            }
+            else
+            {
+                //you can always go to settings menu
+                return true;
+            }
+        }
 
         private void SetupMainSubmenu()
         {
@@ -391,6 +617,7 @@ namespace IDE.Common.ViewModels
             RadialMenuItem2Visibility = Visibility.Visible;
             RadialMenuItem3Visibility = Visibility.Visible;
         }
+
         private void SetupFileSubmenu()
         {
             RadialMenuSubmenuFileMode = true;
@@ -488,7 +715,7 @@ namespace IDE.Common.ViewModels
         {
             if (RadialMenuSubmenuFileMode)
             {
-
+                //this is disabled now
             }
             else if (RadialMenuSubmenuSaveMode)
             {
@@ -496,7 +723,7 @@ namespace IDE.Common.ViewModels
             }
             else if (RadialMenuSubmenuSettingsMode)
             {
-                //this is empty now
+                //this is disabled now
             }
             else
             {
@@ -515,7 +742,7 @@ namespace IDE.Common.ViewModels
         {
             if (RadialMenuSubmenuFileMode)
             {
-                OpenTab();
+                OpenFileTab();
             }
             else if (RadialMenuSubmenuSaveMode)
             {
@@ -589,145 +816,6 @@ namespace IDE.Common.ViewModels
             RadialMenuIsOpen = true;
         }
 
-        private void CloseTab(object obj)
-        {
-            TabItems.Remove((TabItem)obj);
-        }
-
-
-        private void OpenTab()
-        {
-            var dialog = new OpenFileDialog
-            {
-                DefaultExt = ".txt",
-                Filter = "txt files (.txt)|*.txt"
-            };
-
-            if (dialog.ShowDialog() == false)
-            {
-                return;
-            }
-
-            var path = Path.GetFullPath(dialog.FileName);
-            var name = Path.GetFileNameWithoutExtension(dialog.FileName);
-            var content = File.ReadAllText($"{dialog.FileName}");
-
-            var doesTabAlreadyExist = TabItems.Where(i => i.Program.Path == path).FirstOrDefault();
-
-            if (!object.Equals(doesTabAlreadyExist, null))
-            {
-                //if this file is already open reload it's content
-                SelectedTabItem = doesTabAlreadyExist;
-                SelectedTabItem.Content.Text = SelectedTabItem.Program.Content;
-                SelectedTabItem.UnsavedChanged = false;
-                return;
-            }
-            
-
-            OpenTab(new Program(name) { Path = path, Content = content });
-        }
-
-        /// <summary>
-        /// Performs saving all tabs. If it is new program Save as will be called, 
-        /// else program will be saved in path declared in ~Program.path~.
-        /// </summary>
-        private void SaveAllTabs()
-        {
-            foreach(var tab in TabItems)
-            {
-                SaveTab(tab);
-            }
-        }
-
-        /// <summary>
-        /// Performs save as operation on a new file. 
-        /// It's basically the same as ~SaveTab~ operation, except for the fact
-        /// that ~tabItem.Program~ might not be null, but we still want to create
-        /// new instance of ~Program~ for this ~tabItem.content~.
-        /// </summary>
-        /// <param name="tabItem">Tab item which content will be saved.</param>
-        private void SaveAsTab(TabItem tabItem)
-        {
-            var dialog = new SaveFileDialog
-            {
-                FileName = $"{tabItem.Header.Replace("*", string.Empty)}",
-                DefaultExt = ".txt",
-                Filter = "txt files (.txt)|*.txt"
-            };
-
-            if (dialog.ShowDialog() == false)
-            {
-                return;
-            }
-
-            var path = Path.GetFullPath(dialog.FileName);
-            var name = Path.GetFileNameWithoutExtension(dialog.FileName);
-
-            tabItem.Program = new Program(name) { Path = path, Content = tabItem.Content.Text };
-            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
-
-            //update gui
-            tabItem.Header = tabItem.Program.Name;
-            tabItem.UnsavedChanged = false;
-        }
-
-        /// <summary>
-        /// Performs "regular" save operation on existing or new file. 
-        /// In case of new file you will have to declare file name and location first.
-        /// </summary>
-        /// <param name="tabItem">Tab item which content will be saved.</param>
-        private void SaveTab(TabItem tabItem)
-        {
-            if (tabItem.Program == null)
-            {
-                //if it's new tab there is no program corresponding, so create one
-                SaveAsTab(tabItem);
-                return;
-            }
-            //else just save it under path declared in ~Program.path~
-            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
-            
-            //update gui
-            tabItem.UnsavedChanged = false;
-        }
-
-        /// <summary>
-        /// Opens new tab
-        /// </summary>
-        /// <param name="program">Pass existing program or null for new, fresh tab.</param>
-        private void OpenTab(Program program)
-        {
-            int matches = 0;
-            TabItem tabToAdd;
-
-            if (program != null)
-            {
-                tabToAdd = new TabItem(0, program);
-            }
-            else
-            {
-                matches = 1;
-                for (int i = 0; i < TabItems.Count; i++)
-                {
-                    //if there is "Untitled <nr>" tab, repeat loop to pick another number
-                    if (TabItems[i].Header.Contains($"Untitled {matches}"))
-                    {
-                        matches++;
-                        i = -1;
-                        continue;
-                    }
-                }
-                tabToAdd = new TabItem(matches, null);
-            }
-            TabItems.Add(tabToAdd);
-            SelectedTabItem = tabToAdd;
-
-        }
-
-        private void AddTab(object obj)
-        {
-            OpenTab(null);
-        }
 
 
         #endregion

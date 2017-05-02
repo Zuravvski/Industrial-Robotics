@@ -6,7 +6,38 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Style="{StaticResource ContentRoot}">
-        <TextBlock HorizontalAlignment="Left" Margin="60,121,0,0" TextWrapping="Wrap" Text="This is me just testing new stuff AB" VerticalAlignment="Top" Height="32" Width="180"/>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="8*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Top">
+            <TextBlock Text="Movemaster simple"  Style="{StaticResource Heading2}" FontSize="50"/>
+            <TextBlock Text="as never before"          Style="{StaticResource Heading2}" FontSize="50"/>
+            <TextBlock Text="Our software makes it easy to create complex programs." Style="{StaticResource Heading1}" FontSize="20"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="You just have to get the idea, we will handle " Style="{StaticResource Heading1}" FontSize="20"/>
+                <TextBlock Text="the rest." Style="{StaticResource Heading1}" FontSize="20" FontWeight="Bold"/>
+            </StackPanel>
+            
+            <!--overview clip-->
+            <Button Command="{Binding OpenOverviewClipCommand}" Height="50" Width="300" HorizontalAlignment="Left"  Grid.Column="0" Grid.Row="1" Margin="0,100,0,0" Focusable="False">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="▷ " Style="{StaticResource Heading2}" FontSize="30" VerticalAlignment="Center"/>
+                    <TextBlock Text="Watch a quick overview" Style="{StaticResource Heading1}" FontSize="18" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        
 
     </Grid>
 </UserControl>

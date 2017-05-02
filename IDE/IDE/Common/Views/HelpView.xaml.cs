@@ -23,6 +23,17 @@ namespace IDE.Common.Views
         public HelpView()
         {
             InitializeComponent();
+            LoadPdf();
+        }
+
+        public void LoadPdf()
+        {
+            InitializeComponent();
+
+            string dir = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDi‌​rectory, "..\\..\\"));
+            string path;
+            path = System.IO.Path.Combine(dir, @"Resources\RV Series Movemaster Command Manual.pdf");
+            webBrowser.Navigate(path);
         }
     }
 }

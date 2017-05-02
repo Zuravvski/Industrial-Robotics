@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using IDE.Common.ViewModels;
+using System.Windows.Controls;
 
 namespace IDE.Common.Views
 {
@@ -10,6 +11,7 @@ namespace IDE.Common.Views
         public Home()
         {
             InitializeComponent();
+            DataContext = new HomeViewModel();
         }
     }
 }

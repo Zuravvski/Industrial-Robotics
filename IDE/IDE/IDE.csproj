@@ -123,6 +123,7 @@
     <Compile Include="Common\Utilities\Json.cs" />
     <Compile Include="Common\Utilities\ConfigurationService.cs" />
     <Compile Include="Common\Utilities\MissingFileCreator.cs" />
+    <Compile Include="Common\Utilities\ProgramContentConverter.cs" />
     <Compile Include="Common\Utilities\Session.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
     <Compile Include="Common\ViewModels\AppearanceViewModel.cs" />

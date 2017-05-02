@@ -43,6 +43,10 @@ namespace IDE.Common.ViewModels
         private string radialMenuItem1Text;
         private string radialMenuItem2Text;
         private string radialMenuItem3Text;
+        private string radialMenuCentralItemTooltip;
+        private string radialMenuItem1Tooltip;
+        private string radialMenuItem2Tooltip;
+        private string radialMenuItem3Tooltip;
         private bool radialMenuCheckbox1IsChecked;
         private bool radialMenuCheckbox2IsChecked;
 
@@ -318,6 +322,54 @@ namespace IDE.Common.ViewModels
                 NotifyPropertyChanged("RadialMenuItem3Text");
             }
         }
+        public string RadialMenuCentralItemTooltip
+        {
+            get
+            {
+                return radialMenuCentralItemTooltip;
+            }
+            private set
+            {
+                radialMenuCentralItemTooltip = value;
+                NotifyPropertyChanged("RadialMenuCentralItemTooltip");
+            }
+        }
+        public string RadialMenuItem1Tooltip
+        {
+            get
+            {
+                return radialMenuItem1Tooltip;
+            }
+            private set
+            {
+                radialMenuItem1Tooltip = value;
+                NotifyPropertyChanged("RadialMenuItem1Tooltip");
+            }
+        }
+        public string RadialMenuItem2Tooltip
+        {
+            get
+            {
+                return radialMenuItem2Tooltip;
+            }
+            private set
+            {
+                radialMenuItem2Tooltip = value;
+                NotifyPropertyChanged("RadialMenuItem2Tooltip");
+            }
+        }
+        public string RadialMenuItem3Tooltip
+        {
+            get
+            {
+                return radialMenuItem3Tooltip;
+            }
+            private set
+            {
+                radialMenuItem3Tooltip = value;
+                NotifyPropertyChanged("RadialMenuItem3Tooltip");
+            }
+        }
         public bool RadialMenuIsOpen
         {
             get
@@ -392,7 +444,8 @@ namespace IDE.Common.ViewModels
         /// new instance of ~Program~ for this ~tabItem.content~.
         /// </summary>
         /// <param name="tabItem">Tab item which content will be saved.</param>
-        private void SaveAsTab(TabItem tabItem)
+        /// <returns>True if saving was succesfull, false if not.</returns>
+        private bool SaveAsTab(TabItem tabItem)
         {
             var dialog = new SaveFileDialog
             {
@@ -403,7 +456,7 @@ namespace IDE.Common.ViewModels
 
             if (dialog.ShowDialog() == false)
             {
-                return;
+                return false;
             }
 
             var path = Path.GetFullPath(dialog.FileName);
@@ -415,6 +468,8 @@ namespace IDE.Common.ViewModels
             //update gui
             tabItem.Header = tabItem.Program.Name;
             tabItem.UnsavedChanged = false;
+
+            return true;
         }
 
         /// <summary>
@@ -422,19 +477,20 @@ namespace IDE.Common.ViewModels
         /// In case of new file you will have to declare file name and location first.
         /// </summary>
         /// <param name="tabItem">Tab item which content will be saved.</param>
-        private void SaveTab(TabItem tabItem)
+        /// <returns>True if saving was succesfull, false if not.</returns>
+        private bool SaveTab(TabItem tabItem)
         {
             if (tabItem.Program == null)
             {
                 //if it's new tab there is no program corresponding, so create one
-                SaveAsTab(tabItem);
-                return;
+                return SaveAsTab(tabItem);
             }
             //else just save it under path declared in ~Program.path~
             File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
 
             //update gui
             tabItem.UnsavedChanged = false;
+            return true;
         }
 
         /// <summary>
@@ -477,7 +533,24 @@ namespace IDE.Common.ViewModels
 
         private void CloseTab(object obj)
         {
-            TabItems.Remove((TabItem)obj);
+            var tabItem = obj as TabItem;
+            SelectedTabItem = tabItem;  //show user what he is about to close
+
+            if (tabItem.UnsavedChanged)
+            {
+                var dialog = MessageBox.Show($"Save file {tabItem.Header.Replace("*", string.Empty)}?",
+                    "Unsaved data", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                //if tab contains unsaved changes show dialog to determine wheter user wants to save it or not. User chooses:
+                // *cancel - do nothing
+                // *yes - show saveAs dialog, if he fails to save do nothing, if he saves sucessfully close tab
+                // *no - close it without saving,
+                if (dialog == MessageBoxResult.Cancel || (dialog == MessageBoxResult.Yes && SaveTab(tabItem) == false))
+                {
+                    return;
+                }
+            }
+
+            TabItems.Remove(tabItem);   
         }
 
         #endregion
@@ -492,6 +565,10 @@ namespace IDE.Common.ViewModels
         public ICommand RadialMenuItem2Command { get; private set; }
         public ICommand RadialMenuItem3Command { get; private set; }
 
+        public ICommand CtrlSKey { get; private set; }
+        public ICommand CtrlNKey { get; private set; }
+        public ICommand EscKey { get; private set; }
+
         private void DeclareCommands()
         {
             AddTabCommand = new RelayCommand(AddTab);
@@ -501,6 +578,26 @@ namespace IDE.Common.ViewModels
             RadialMenuItem1Command = new RelayCommand(RadialMenuItem1Execute, RadialMenuItem1CanExecute);
             RadialMenuItem2Command = new RelayCommand(RadialMenuItem2Execute, RadialMenuItem2CanExecute);
             RadialMenuItem3Command = new RelayCommand(RadialMenuItem3Execute, RadialMenuItem3CanExecute);
+
+            CtrlSKey = new RelayCommand(CtrlS);
+            CtrlNKey = new RelayCommand(AddTab);
+            EscKey = new RelayCommand(Esc);
+        }
+
+        private void CtrlS(object obj)
+        {
+            //if tab exist, save it
+            if (!SelectedTabItem.Equals(null))
+            {
+                SaveTab(SelectedTabItem);
+            }
+        }
+
+        private void Esc(object obj)
+        {
+            //close radial menu
+            RadialMenuIsOpen = false;
+            SetupMainSubmenu();
         }
 
         private bool RadialMenuItem1CanExecute(object obj)
@@ -598,6 +695,12 @@ namespace IDE.Common.ViewModels
             RadialMenuItem2Text = "Save";
             RadialMenuItem3Text = "Settings";
 
+            //change tooltips of buttons
+            RadialMenuCentralItemTooltip = "Close";
+            RadialMenuItem1Tooltip = "File submenu";
+            RadialMenuItem2Tooltip = "Save submenu";
+            RadialMenuItem3Tooltip = "Settings submenu";
+
             //change visibility of icons
             RadialMenuItem1IconVisibility = Visibility.Visible;
             RadialMenuItem2IconVisibility = Visibility.Visible;
@@ -628,6 +731,12 @@ namespace IDE.Common.ViewModels
             RadialMenuItem1Text = "Create";
             RadialMenuItem2Text = "Open";
             RadialMenuItem3Text = "";
+
+            //change tooltips of buttons
+            RadialMenuCentralItemTooltip = "Back";
+            RadialMenuItem1Tooltip = "Create new file";
+            RadialMenuItem2Tooltip = "Open existing file";
+            RadialMenuItem3Tooltip = string.Empty;
 
             //change visibility of icons
             RadialMenuItem1IconVisibility = Visibility.Hidden;
@@ -660,6 +769,12 @@ namespace IDE.Common.ViewModels
             RadialMenuItem2Text = "Syntax check";
             RadialMenuItem3Text = "";
 
+            //change tooltips of buttons
+            RadialMenuCentralItemTooltip = "Back";
+            RadialMenuItem1Tooltip = "Enable/Disable intellisense";
+            RadialMenuItem2Tooltip = "Enable/Disable syntax check";
+            RadialMenuItem3Tooltip = string.Empty;
+
             //change visibility of icons
             RadialMenuItem1IconVisibility = Visibility.Hidden;
             RadialMenuItem2IconVisibility = Visibility.Hidden;
@@ -690,6 +805,12 @@ namespace IDE.Common.ViewModels
             RadialMenuItem1Text = "Save";
             RadialMenuItem2Text = "Save as";
             RadialMenuItem3Text = "Save all";
+
+            //change tooltips of buttons
+            RadialMenuCentralItemTooltip = "Back";
+            RadialMenuItem1Tooltip = "Save current tab";
+            RadialMenuItem2Tooltip = "Save as current tab";
+            RadialMenuItem3Tooltip = "Save all tabs";
 
             //change visibility of icons
             RadialMenuItem1IconVisibility = Visibility.Hidden;

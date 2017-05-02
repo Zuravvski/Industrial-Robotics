@@ -11,32 +11,32 @@
     <mui:ModernWindow.MenuLinkGroups>
     
     
-        <mui:LinkGroup DisplayName="home">                                        <!-- THIS IS NAME VISIBLE ON A TAB -->
+        <mui:LinkGroup DisplayName="home">                                              <!-- THIS IS NAME VISIBLE ON A TAB -->
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="basic info" Source="Common/Views/HomeView.xaml"/>    <!-- THIS IS PATH IT LEADS TO -->
+                <mui:Link DisplayName="basics" Source="Common/Views/HomeView.xaml"/>    <!-- THIS IS PATH IT LEADS TO -->
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="browse">                                      <!-- THIS IS NAME VISIBLE ON A TAB -->
+        <mui:LinkGroup DisplayName="remote">                                            <!-- THIS IS NAME VISIBLE ON A TAB -->
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="" Source="Common/Views/BrowseView.xaml"/>            <!-- THIS IS PATH IT LEADS TO -->
+                <mui:Link DisplayName="" Source="Common/Views/BrowseView.xaml"/>        <!-- THIS IS PATH IT LEADS TO -->
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="editor">                                      <!-- THIS IS NAME VISIBLE ON A TAB -->    
+        <mui:LinkGroup DisplayName="local">                                             <!-- THIS IS NAME VISIBLE ON A TAB -->    
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="" Source="Common/Views/EditorView.xaml"/>            <!-- THIS IS PATH IT LEADS TO -->
+                <mui:Link DisplayName="" Source="Common/Views/EditorView.xaml"/>        <!-- THIS IS PATH IT LEADS TO -->
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="settings" GroupKey="settings">              
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="software" Source="Common/Views/SettingsPageView.xaml" />
+                <mui:Link DisplayName="software" Source="Common/Views/SettingsPageView.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>
 
     <mui:ModernWindow.TitleLinks>
         <!-- TOP RIGHT CORNER (BAR) -->
-        <mui:Link DisplayName="settings" Source="Common/Views/SettingsPageView.xaml" />
-        <mui:Link DisplayName="help" Source="Common/Views/HelpView.xaml" />
+        <mui:Link DisplayName="settings" Source="Common/Views/SettingsPageView.xaml"/>
+        <mui:Link DisplayName="help" Source="Common/Views/HelpView.xaml"/>
     </mui:ModernWindow.TitleLinks>
     
     

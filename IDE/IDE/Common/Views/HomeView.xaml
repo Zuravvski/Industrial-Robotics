@@ -25,7 +25,7 @@
             </StackPanel>
             
             <!--overview clip-->
-            <Button Command="{Binding OpenOverviewClipCommand}" Height="50" Width="300" HorizontalAlignment="Left"  Grid.Column="0" Grid.Row="1" Margin="0,100,0,0" Focusable="False">
+            <Button Command="{Binding OpenOverviewClipCommand}" Height="55" Width="300" HorizontalAlignment="Left"  Grid.Column="0" Grid.Row="1" Margin="0,100,0,0" Focusable="False">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="5"/>

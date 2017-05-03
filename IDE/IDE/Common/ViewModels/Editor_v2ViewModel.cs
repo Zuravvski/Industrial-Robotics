@@ -404,6 +404,7 @@ namespace IDE.Common.ViewModels
 
             if (dialog.ShowDialog() == false)
             {
+                //if user fails to select a file
                 return;
             }
 
@@ -415,10 +416,10 @@ namespace IDE.Common.ViewModels
 
             if (!object.Equals(doesTabAlreadyExist, null))
             {
-                //if this file is already open reload it's content
+                //if this file is already open reload it's content and set is as current tab
+                doesTabAlreadyExist.Content.Text = doesTabAlreadyExist.Program.Content;
+                doesTabAlreadyExist.UnsavedChanged = false;
                 SelectedTabItem = doesTabAlreadyExist;
-                SelectedTabItem.Content.Text = SelectedTabItem.Program.Content;
-                SelectedTabItem.UnsavedChanged = false;
                 return;
             }
 
@@ -465,7 +466,7 @@ namespace IDE.Common.ViewModels
             tabItem.Program = new Program(name) { Path = path, Content = tabItem.Content.Text };
             File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
 
-            //update gui
+            //update UI
             tabItem.Header = tabItem.Program.Name;
             tabItem.UnsavedChanged = false;
 
@@ -542,7 +543,7 @@ namespace IDE.Common.ViewModels
                     "Unsaved data", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 //if tab contains unsaved changes show dialog to determine wheter user wants to save it or not. User chooses:
                 // *cancel - do nothing
-                // *yes - show saveAs dialog, if he fails to save do nothing, if he saves sucessfully close tab
+                // *yes - show saveAs dialog, if he fails to save: do nothing, if he saves sucessfully: close tab
                 // *no - close it without saving,
                 if (dialog == MessageBoxResult.Cancel || (dialog == MessageBoxResult.Yes && SaveTab(tabItem) == false))
                 {

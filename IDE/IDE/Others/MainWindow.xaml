@@ -13,7 +13,7 @@
     
         <mui:LinkGroup DisplayName="home">                                              <!-- THIS IS NAME VISIBLE ON A TAB -->
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="basics" Source="Common/Views/HomeView.xaml"/>    <!-- THIS IS PATH IT LEADS TO -->
+                <mui:Link DisplayName="" Source="Common/Views/HomeView.xaml"/>          <!-- THIS IS PATH IT LEADS TO -->
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="remote">                                            <!-- THIS IS NAME VISIBLE ON A TAB -->

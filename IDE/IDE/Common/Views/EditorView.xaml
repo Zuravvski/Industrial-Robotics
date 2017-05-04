@@ -4,16 +4,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              d:DesignHeight="300" d:DesignWidth="300"
              mc:Ignorable="d"
              
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
              xmlns:properties="clr-namespace:IDE.Properties"
              xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
              xmlns:ctConv="clr-namespace:ChromeTabs.Converters;assembly=ChromeTabs">
-
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -63,12 +63,13 @@
 
 
         <!-- Radial menu -->
-        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen}" 
+        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen}"
                                Grid.RowSpan="2" 
                                HorizontalAlignment="Left" 
                                VerticalAlignment="Top" 
                                Margin="-100,-125,0,0"
                                Panel.ZIndex="99">
+
 
             <!-- CentralMenuItem -->
 
@@ -191,18 +192,26 @@
         <!--#endregion-->
 
         <!--#region PositionList-->
-        
-        <Border Grid.Row="1" Grid.Column="1" BorderThickness="2" BorderBrush="DarkGreen" Margin="0,24,0,0">
-            <TextBlock Text="This is where position manager would be but we just dont care"
-                   FontSize="18" Foreground="DarkGreen"
-                   Margin="150, 150, 0, 0"
-                   Grid.Row="1" Grid.Column="1"
-                   TextWrapping="Wrap">
-                <TextBlock.RenderTransform>
-                    <RotateTransform Angle="45"/>
-                </TextBlock.RenderTransform>
-            </TextBlock>
-        </Border>
+
+
+        <DockPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock DockPanel.Dock="Top" Text="Position manager" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
+            <DataGrid Name="DG1" AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False">
+                <DataGrid.Columns>
+                    <mui:DataGridTextColumn Header="Pos"/>
+                    <mui:DataGridTextColumn Header="X"/>
+                    <mui:DataGridTextColumn Header="Y"/>
+                    <mui:DataGridTextColumn Header="Z"/>
+                    <mui:DataGridTextColumn Header="A"/>
+                    <mui:DataGridTextColumn Header="B"/>
+                    <mui:DataGridTextColumn Header="L1"/>
+                    <mui:DataGridTextColumn Header="L2"/>
+                    <mui:DataGridTextColumn Header="R/L"/>
+                    <mui:DataGridTextColumn Header="A/B"/>
+                    <mui:DataGridTextColumn Header="O/C"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
 
         <!--#endregion-->
 

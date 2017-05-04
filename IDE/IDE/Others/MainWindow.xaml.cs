@@ -1,4 +1,6 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
+using IDE.Common.ViewModels;
+using System.Windows;
 
 namespace IDE.Others
 {
@@ -7,9 +9,11 @@ namespace IDE.Others
     /// </summary>
     public partial class MainWindow : ModernWindow
     {
+
         public MainWindow()
         {
             InitializeComponent();
         }
+
     }
 }

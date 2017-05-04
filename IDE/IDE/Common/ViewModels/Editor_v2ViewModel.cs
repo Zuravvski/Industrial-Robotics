@@ -537,7 +537,7 @@ namespace IDE.Common.ViewModels
             var tabItem = obj as TabItem;
             SelectedTabItem = tabItem;  //show user what he is about to close
 
-            if (tabItem.UnsavedChanged)
+            if (tabItem.Program != null && tabItem.UnsavedChanged || tabItem.Program == null && tabItem.Content.Text != string.Empty)
             {
                 var dialog = MessageBox.Show($"Save file {tabItem.Header.Replace("*", string.Empty)}?",
                     "Unsaved data", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -584,6 +584,7 @@ namespace IDE.Common.ViewModels
             CtrlNKey = new RelayCommand(AddTab);
             EscKey = new RelayCommand(Esc);
         }
+
 
         private void CtrlS(object obj)
         {

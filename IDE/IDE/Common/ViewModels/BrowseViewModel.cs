@@ -48,10 +48,10 @@ namespace IDE.Common.ViewModels
             programServce = new ProgramService(manipulator);
             manipulator.Connect("COM3");
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>());
-            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
-            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
-            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
-            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
+            RemotePrograms.Add(new RemoteProgram("Pierwszy", 2567, "10-03-15 11:12:56"));
+            RemotePrograms.Add(new RemoteProgram("Wtorek", 1200, "08-06-17 09:34:43"));
+            RemotePrograms.Add(new RemoteProgram("Asd", 45, "17-11-24 04:32:23"));
+            RemotePrograms.Add(new RemoteProgram("qwerty", 52789, "29-09-32 18:14:32"));
         }
 
         #endregion
@@ -418,6 +418,7 @@ namespace IDE.Common.ViewModels
         public ICommand FontSegoeUICommand { get; private set; }
         public ICommand OnSyntaxCheckCommand { get; private set; }
         public ICommand OffSyntaxCheckCommand { get; private set; }
+        public ICommand ContextClickCommand { get; private set; }
 
         private void DeclareCommands()
         {
@@ -435,6 +436,12 @@ namespace IDE.Common.ViewModels
             FontSegoeUICommand = new RelayCommand(FontSegoeUI, IsCurrentFontNotSegoeUI);
             OnSyntaxCheckCommand = new RelayCommand(OnSyntaxCheck);
             OffSyntaxCheckCommand = new RelayCommand(OffSyntaxCheck);
+            ContextClickCommand = new RelayCommand(ContextClick);
+        }
+
+        private void ContextClick(object obj)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

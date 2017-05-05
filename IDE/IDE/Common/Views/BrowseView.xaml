@@ -25,11 +25,21 @@
         <DockPanel>
             <TextBlock DockPanel.Dock="Top" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
             <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False">
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Refresh"  Command="{Binding ContextClickCommand}" ToolTip="Refreshes list of available programs." CommandParameter="{Binding DataContext.RemoteProgram, RelativeSource={RelativeSource Mode=Self}}"/>
+                        <MenuItem Header="Pull"     Command="" ToolTip="Sends selected program from manipulator to user."/>
+                        <MenuItem Header="Execute"  Command="" ToolTip="Starts executing selected program."/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                
                 <DataGrid.Columns>
                     <mui:DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
                     <mui:DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=OneWay}"/>
                     <mui:DataGridTextColumn Header="Last edited" Binding="{Binding Timestamp, Mode=OneWay}"/>
                 </DataGrid.Columns>
+                
             </DataGrid>
         </DockPanel>
 

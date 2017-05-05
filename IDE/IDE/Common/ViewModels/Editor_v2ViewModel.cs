@@ -24,10 +24,12 @@ namespace IDE.Common.ViewModels
 
         private TabItem selectedTabItem;
         private int selectedTabIndex;
+        private Visibility positionManagerVisibility = Visibility.Hidden;
         private ObservableCollection<TabItem> tabItems;
         private ObservableCollection<RadialMenuItem> radialMenuItems;
+        private ObservableCollection<Positions> positionItemSource;
         private bool radialMenuIsOpen;
-
+        
         private Visibility radialMenuEnableButtonVisibility;
         private Visibility radialMenuItem1Visibility;
         private Visibility radialMenuItem2Visibility;
@@ -56,10 +58,106 @@ namespace IDE.Common.ViewModels
 
         public Editor_v2ViewModel()
         {
-            DeclareCommands();
-
-            SetupMainSubmenu();
             TabItems = new ObservableCollection<TabItem>();
+            PositionItemSource = new ObservableCollection<Positions>();
+
+            DeclareCommands();
+            SetupMainSubmenu();
+            GenerateDumpPositions();
+        }
+
+        private void GenerateDumpPositions()
+        {
+            Random rand = new Random();
+
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 1,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 2,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 3,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 5,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 8,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "C"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 9,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "C"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 15,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "C"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 22,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
         }
 
 
@@ -67,7 +165,34 @@ namespace IDE.Common.ViewModels
 
         #region Properties
 
+        public Visibility PositionManagerVisibility
+        {
+            get
+            {
+                return positionManagerVisibility;
+            }
+            set
+            {
+                positionManagerVisibility = value;
+                NotifyPropertyChanged("PositionManagerVisibility");
+            }
+        }
+
         public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
+
+        public ObservableCollection<Positions> PositionItemSource
+        {
+            get
+            {
+                return positionItemSource;
+            }
+            set
+            {
+                positionItemSource = value;
+                NotifyPropertyChanged("PositionItemSource");
+            }
+        }
+
         public ObservableCollection<RadialMenuItem> RadialMenuItems
         {
             get
@@ -90,6 +215,7 @@ namespace IDE.Common.ViewModels
             {
                 tabItems = value;
                 NotifyPropertyChanged("TabItems");
+
             }
         }
         public TabItem SelectedTabItem
@@ -525,6 +651,10 @@ namespace IDE.Common.ViewModels
             TabItems.Add(tabToAdd);
             SelectedTabItem = tabToAdd;
 
+            if (tabItems.Count < 1)
+                PositionManagerVisibility = Visibility.Hidden;
+            else
+                PositionManagerVisibility = Visibility.Visible;
         }
 
         private void AddTab(object obj)
@@ -551,7 +681,12 @@ namespace IDE.Common.ViewModels
                 }
             }
 
-            TabItems.Remove(tabItem);   
+            TabItems.Remove(tabItem);
+
+            if (tabItems.Count < 1)
+                PositionManagerVisibility = Visibility.Hidden;
+            else
+                PositionManagerVisibility = Visibility.Visible;
         }
 
         #endregion
@@ -938,8 +1073,6 @@ namespace IDE.Common.ViewModels
         {
             RadialMenuIsOpen = true;
         }
-
-
 
         #endregion
 

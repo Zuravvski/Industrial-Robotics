@@ -21,6 +21,7 @@
                 <ResourceDictionary  Source="/Icons/Icons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
+            <converters:RemoveStarConverter x:Key="RemoveStar"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -40,7 +41,7 @@
             <RowDefinition Height="9*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
         
@@ -143,16 +144,17 @@
                              IsAddButtonVisible="{Binding ShowAddButton}"
                              AddTabCommand="{Binding AddTabCommand}"
                              CloseTabCommand="{Binding CloseTabCommand}"
-                             Grid.Row="1" Grid.Column="0"
+                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                              IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
                              SelectedContent="0">
 
             <!-- BINDING CONTENT -->
             <ct:ChromeTabControl.ItemContainerStyle>
                 <Style TargetType="ct:ChromeTabItem">
-                    <Setter Property="Content" Value="{Binding Content}"/>
+                    <Setter Property="Content" Value="{Binding MixedContent}"/>
                 </Style>
             </ct:ChromeTabControl.ItemContainerStyle>
+            
 
             <!-- BINDING HEADER AND MAKING CONTEXT MENU-->
             <ct:ChromeTabControl.ItemTemplate>
@@ -169,7 +171,7 @@
                                        VerticalAlignment="Center" />
                         </StackPanel>
 
-                        <!--We can implement a context menu for the header here. The ChromeTabItems expose for convenience the following commands, "CloseTabCommand: close the current tab, "CloseAllTabsCommand", and "CloseOtherTabsCommand", which closes all tabs except the current.-->
+                        <!--We implement a context menu for the header here. The ChromeTabItems expose for convenience the following commands, "CloseTabCommand: close the current tab, "CloseAllTabsCommand", and "CloseOtherTabsCommand", which closes all tabs except the current.-->
                         <Grid.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Close"
@@ -194,24 +196,81 @@
         <!--#region PositionList-->
 
 
-        <DockPanel Grid.Row="1" Grid.Column="1">
-            <TextBlock DockPanel.Dock="Top" Text="Position manager" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
-            <DataGrid Name="DG1" AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False">
+        <StackPanel Grid.Row="1" Grid.Column="1" Visibility="{Binding PositionManagerVisibility}" Margin="0,25,0,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock DockPanel.Dock="Top" Text="Position manager for " Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
+                <TextBlock DockPanel.Dock="Top" Text="{Binding Path=SelectedTabItem.Header, Converter={StaticResource RemoveStar}}" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
+            </StackPanel>
+            <DataGrid CanUserResizeColumns="False" ItemsSource="{Binding PositionItemSource}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <mui:DataGridTextColumn Header="Pos"/>
-                    <mui:DataGridTextColumn Header="X"/>
-                    <mui:DataGridTextColumn Header="Y"/>
-                    <mui:DataGridTextColumn Header="Z"/>
-                    <mui:DataGridTextColumn Header="A"/>
-                    <mui:DataGridTextColumn Header="B"/>
-                    <mui:DataGridTextColumn Header="L1"/>
-                    <mui:DataGridTextColumn Header="L2"/>
-                    <mui:DataGridTextColumn Header="R/L"/>
-                    <mui:DataGridTextColumn Header="A/B"/>
-                    <mui:DataGridTextColumn Header="O/C"/>
+                    
+                    <mui:DataGridTextColumn Header="Pos" Binding="{Binding Pos}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="3"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="X" Binding="{Binding X}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="5"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="Y" Binding="{Binding Y}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="6"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="Z" Binding="{Binding Z}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="6"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="A" Binding="{Binding A}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="6"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="B" Binding="{Binding B}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="6"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="L1" Binding="{Binding L1}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="8"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
+                    <mui:DataGridTextColumn Header="O/C" Binding="{Binding OC}">
+                        <mui:DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="MaxLength" Value="1"/>
+                            </Style>
+                        </mui:DataGridTextColumn.EditingElementStyle>
+                    </mui:DataGridTextColumn>
+                    
                 </DataGrid.Columns>
             </DataGrid>
-        </DockPanel>
+        </StackPanel>
 
         <!--#endregion-->
 

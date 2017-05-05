@@ -285,52 +285,6 @@ namespace IDE.Common.Models
         }
 
         #endregion
-
-        #region OLD_INTELLISENSE
-
-        //private readonly Intellisense intellisense;
-        //intellisense = new Intellisense();
-
-        //private void OnIntellisense(object sender, TextCompositionEventArgs textCompositionEventArgs)
-        //{
-        //    //tbi
-        //}
-
-
-        //public async void RunIntellisense(bool isForced)
-        //{
-        //    var line = TextArea.Document.GetLineByNumber(TextArea.Caret.Line);
-        //    var lineText = TextArea.Document.GetText(line);
-
-        //    // Don't show intellisense if theres no text in the line unless user forces intellisense by pressing ctrl+space
-        //    if (!string.IsNullOrWhiteSpace(lineText) || isForced)
-        //    {
-        //        var tips = await intellisense.GetCompletionAsync(lineText);
-
-        //        var completionWindow = new CompletionWindow(TextArea);
-        //        completionWindow.Closed += delegate
-        //        {
-        //            completionWindow = null;
-        //        };
-        //        var data = completionWindow.CompletionList.CompletionData;
-
-        //        //await Task.Run(() =>
-        //        //{
-        //        //    foreach (var command in tips)
-        //        //    {
-        //        //        var completionData = new MyCompletionData(command.Content, command.Description, Command.TypeE.None);
-        //        //        data.Add(completionData);
-        //        //    }
-
-        //        //});
-
-        //        // Don't show empty results
-        //        if (data.Count > 0)
-        //            completionWindow.Show();
-        //    }
-        //}
-
-        #endregion
-
+        
     }
 }

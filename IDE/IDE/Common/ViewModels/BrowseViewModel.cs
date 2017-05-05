@@ -47,6 +47,11 @@ namespace IDE.Common.ViewModels
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             programServce = new ProgramService(manipulator);
             manipulator.Connect("COM3");
+            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>());
+            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
+            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
+            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
+            RemotePrograms.Add(new RemoteProgram("Wtorek", 2567, "10-11-12 15:14:32"));
         }
 
         #endregion

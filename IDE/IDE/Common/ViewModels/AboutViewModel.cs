@@ -25,12 +25,13 @@ namespace IDE.Common.ViewModels
 
                 AboutCreators = "We are students at West Pomeranian University of Technology Szczecin, " +
                 "Faculty of Electrical Engineering. Our course of studies is Automatic Control and Robotics. Developers team " +
-                "consisted of 4 people:\n\t" +
+                "consisted of 5 people:\n\t" +
                 "Adam Baniuszewicz\n\t" +
                 "Ewelina Chołodowicz\n\t" +
                 "Bartosz Flis\n\t" +
+                "Jakub Sybidło\n\t" +
                 "Michał Żurawski\n" +
-                "You can contact each of us directly through the help section in top-right corner."
+                "You can contact each of us directly through the GitHub @ https://github.com/Zuravvski/Industrial-Robotics"
             };
         }
 

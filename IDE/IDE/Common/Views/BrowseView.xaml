@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
-    
+
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="97*"/>
@@ -15,25 +16,35 @@
             <ColumnDefinition Width="11*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="108*"/>
+            <RowDefinition Height="19*"/>
             <RowDefinition Height="23*"/>
-            <RowDefinition Height="193*"/>
-            <RowDefinition Height="38*"/>
-            <RowDefinition Height="46*"/>
         </Grid.RowDefinitions>
 
 
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
+            <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <mui:DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
+                    <mui:DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=OneWay}"/>
+                    <mui:DataGridTextColumn Header="Last edited" Binding="{Binding Timestamp, Mode=OneWay}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
         <!--List-->
-        <TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <!--<TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <ListView ItemsSource="{Binding RemotePrograms}" Grid.Row="1" SelectedItem="{Binding SelectedRemoteProgram}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
-        </ListView>
+        </ListView>-->
 
         <!--Buttons for list management-->
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <Button Command="{Binding RefreshClickCommand}" Width="40" Height="40" Margin="0,5,0,0" ToolTip="Refresh Program List">
                 <Button.Background>
                     <VisualBrush>
@@ -94,10 +105,10 @@
                     </VisualBrush>
                 </Button.Background>
             </Button>
-            
+
         </StackPanel>
         <!--Command window-->
-        <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1">
+        <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="25"/>

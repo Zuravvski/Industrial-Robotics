@@ -108,6 +108,7 @@
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
+    <Compile Include="Common\Models\Positions.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
     <Compile Include="Common\Models\Services\LineColorizer.cs" />
     <Compile Include="Common\Models\Services\ListManager.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Common\ViewModels\Converters\BitmapToBitmapImage.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Common\ViewModels\Converters\RemoveStarConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />
     <Compile Include="Common\ViewModels\DelegateCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />

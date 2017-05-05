@@ -1,11 +1,10 @@
 ﻿using Driver;
 using IDE.Common.ViewModels.Commands;
-using IDE.Common.ViewModels.Converters;
-using System;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace IDE.Common.Models
@@ -46,7 +45,7 @@ namespace IDE.Common.Models
             }
             Program = program;
 
-            Content.TextChanged += Content_TextChanged;
+            ArrangeTabView();
         }
 
         #endregion
@@ -81,6 +80,8 @@ namespace IDE.Common.Models
 
         public ProgramEditor Content { get; private set; }
 
+        public Grid MixedContent { get; private set; }
+
         public Program Program { get; set; }
 
         public bool UnsavedChanged
@@ -112,11 +113,21 @@ namespace IDE.Common.Models
 
         #region Actions
 
+        private void ArrangeTabView()
+        {
+            MixedContent = new Grid();
+            MixedContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(5, System.Windows.GridUnitType.Star) });
+            MixedContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(4, System.Windows.GridUnitType.Star) });
+
+            Grid.SetColumn(Content, 0);
+            MixedContent.Children.Add(Content);
+        }
+
         private void Content_TextChanged(object sender, System.EventArgs e)
         {
             if (Program != null)
             {
-                //if the text has changed and it does not match saved content anymore, display * in the header of a tab
+                //if the text has changed and it does not match saved content anymore
                 if (!Content.Text.Equals(Program.Content))
                 {
                     UnsavedChanged = true;

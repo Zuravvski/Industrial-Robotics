@@ -12,7 +12,7 @@ namespace Driver
         public int Size { get; }
         public string Timestamp { get; }
 
-        private RemoteProgram(string name, int size, string timestamp)
+        public RemoteProgram(string name, int size, string timestamp)
         {
             Name = name;
             Size = size;

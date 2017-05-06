@@ -1,0 +1,129 @@
+<?xml version ="1.0"?>
+<SyntaxDefinition name="Custom Highlighting" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Comment" foreground="#228B22" />
+	
+	<!-- This is the main ruleset. -->
+	<RuleSet>
+		<Span color="Comment" begin="'" />
+		<!-- <Span color="Comment" multiline="true" begin="/\*" end="\*/" /> -->
+		
+		
+		<Keywords fontWeight = "bold" foreground = "#FF0000" > <!--MOVEMENT COMMANDS-->
+			<Word>DJ</Word>
+			<Word>DP</Word>
+			<Word>DS</Word>
+			<Word>DW</Word>
+			<Word>IP</Word>
+			<Word>JRC</Word>
+			<Word>MA</Word>
+			<Word>MC</Word>
+			<Word>MJ</Word>
+			<Word>MO</Word>
+			<Word>MP</Word>
+			<Word>MPB</Word>
+			<Word>MPC</Word>
+			<Word>MR</Word>
+			<Word>MRA</Word>
+			<Word>MS</Word>
+			<Word>MT</Word>
+			<Word>MTS</Word>
+			<Word>OG</Word>
+			<!-- ... -->
+		</Keywords>
+		
+		<Keywords fontWeight="bold" foreground="#008000">	<!--GRIP COMMANDS-->
+			<Word>GC</Word>
+			<Word>GF</Word>
+			<Word>GO</Word>
+			<Word>GP</Word>
+			<Word>SC</Word>
+			<Word>TL</Word>
+		</Keywords>
+		
+		<Keywords fontWeight="bold" foreground="#FF6347">	<!--TIMERS, COUNTERS-->
+			<Word>AN</Word>
+			<Word>CL</Word>
+			<Word>CP</Word>
+			<Word>CR</Word>
+			<Word>DC</Word>
+			<Word>IC</Word>
+			<Word>LG</Word>
+			<Word>NE</Word>
+			<Word>OR</Word>
+			<Word>PW</Word>
+			<Word>SM</Word>
+			<Word>TI</Word>
+			<Word>XO</Word>
+		</Keywords>
+		
+		<Keywords fontWeight="bold" foreground="#800080">	<!--PROGRAMMING COMMANDS-->
+			<Word>DA</Word>
+			<Word>DL</Word>
+			<Word>EA</Word>
+			<Word>ED</Word>
+			<Word>EQ</Word>
+			<Word>GS</Word>
+			<Word>GT</Word>
+			<Word>HLT</Word>
+			<Word>HO</Word>
+			<Word>ID</Word>
+			<Word>NT</Word>
+			<Word>NW</Word>
+			<Word>NX</Word>
+			<Word>OB</Word>
+			<Word>OPN</Word>
+			<Word>OVR</Word>
+			<Word>PA</Word>
+			<Word>PC</Word>
+			<Word>PD</Word>
+			<Word>PL</Word>
+			<Word>PMW</Word>
+			<Word>PT</Word>
+			<Word>PX</Word>
+			<Word>RC</Word>
+			<Word>RN</Word>
+			<Word>RS</Word>
+			<Word>RT</Word>
+			<Word>SD</Word>
+			<Word>SF</Word>
+			<Word>SP</Word>
+			<Word>TB</Word>
+			<Word>TBD</Word>
+		</Keywords>
+		
+		<Keywords fontWeight="bold" foreground="#FFA500">	<!--INFORMATION COMMANDS-->
+			<Word>DR</Word>
+			<Word>ER</Word>
+			<Word>HE</Word>
+			<Word>INP</Word>
+			<Word>LR</Word>
+			<Word>N</Word>
+			<Word>OC</Word>
+			<Word>OD</Word>
+			<Word>PMR</Word>
+			<Word>PR</Word>
+			<Word>PRN</Word>
+			<Word>QN</Word>
+			<Word>SRT</Word>
+			<Word>VR</Word>
+			<Word>WH</Word>
+			<Word>WT</Word>
+		</Keywords>
+		
+		<Keywords fontWeight="bold" foreground="#B22222">	<!--ADDITIONAL COMMANDS-->
+			<Word>,</Word>
+			<Word>'</Word>
+		</Keywords>
+		
+		
+		<!-- Digits -->
+		<Rule foreground="#D1D1D1">
+            \b0[xX][0-9a-fA-F]+  # hex number
+        |    \b
+            (    \d+(\.[0-9]+)?   #number with optional floating point
+            |    \.[0-9]+         #or just starting with floating point
+            )
+            ([eE][+-]?[0-9]+)? # optional exponent
+        </Rule>
+	</RuleSet>
+</SyntaxDefinition>

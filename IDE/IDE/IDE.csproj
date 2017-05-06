@@ -103,6 +103,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\Models\AboutModel.cs" />
+    <Compile Include="Common\Models\AvalonEditBehavior.cs" />
     <Compile Include="Common\Models\BrowseModel.cs" />
     <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
     <Compile Include="Common\Models\CustomHighlighting.cs" />
@@ -114,7 +115,10 @@
     <Compile Include="Common\Models\Services\ListManager.cs" />
     <Compile Include="Common\Models\Services\MacroManager.cs" />
     <Compile Include="Common\Models\Services\TabManager.cs" />
+    <Compile Include="Common\Models\Syntax Check\ITextMarker.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />
+    <Compile Include="Common\Models\Syntax Check\SyntaxCheckVisualizer.cs" />
+    <Compile Include="Common\Models\Syntax Check\TextMarkerService.cs" />
     <Compile Include="Common\Models\TabItem.cs" />
     <Compile Include="Common\Models\Value Objects\Command.cs" />
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
@@ -133,6 +137,7 @@
     <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToBitmapImage.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
+    <Compile Include="Common\ViewModels\Converters\ColorToBrush.cs" />
     <Compile Include="Common\ViewModels\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\RemoveStarConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />

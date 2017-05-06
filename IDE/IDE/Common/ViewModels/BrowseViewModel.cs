@@ -11,6 +11,9 @@ using IDE.Common.Models.Services;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Windows.Data;
+using ICSharpCode.AvalonEdit;
+using IDE.Common.Models.Syntax_Check;
 
 namespace IDE.Common.ViewModels
 {
@@ -19,7 +22,10 @@ namespace IDE.Common.ViewModels
 
         #region Fields
 
-        ProgramEditor commandHistory, commandInput;
+        string commandHistoryText;
+        string commandInputText;
+        private readonly ProgramEditor commandHistory, commandInput;
+        private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
         bool lineWasNotValid;
         int messageSelectionArrows;
         ObservableCollection<RemoteProgram> remotePrograms;
@@ -35,11 +41,17 @@ namespace IDE.Common.ViewModels
         /// <summary>
         /// Initializes a new instance of BrowseViewModel class.
         /// </summary>
-        public BrowseViewModel()
+        public BrowseViewModel(ProgramEditor commandHistory, ProgramEditor commandInput)
         {
             DeclareCommands();
-            InitializeCommandHistory();
-            InitializeCommandInput();
+            syntaxCheckVisualizer = new SyntaxCheckVisualizer(commandInput);
+
+            this.commandInput = commandInput;
+            commandInput.PreviewKeyDown += commandInput_PreviewKeyDown;
+            commandInput.TextChanged += commandInput_TextChanged;
+
+            this.commandHistory = commandHistory;
+            commandHistory.PreviewMouseWheel += commandHistory_PreviewMouseWheel;
 
             MessageList = new MessageList();
 
@@ -57,6 +69,32 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public string CommandInputText
+        {
+            get
+            {
+                return commandInputText;
+            }
+            set
+            {
+                commandInputText = value;
+                NotifyPropertyChanged("CommandInputText");
+            }
+        }
+
+        public string CommandHistoryText
+        {
+            get
+            {
+                return commandHistoryText;
+            }
+            set
+            {
+                commandHistoryText = value;
+                NotifyPropertyChanged("CommandHistoryText");
+            }
+        }
 
         public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
         public RemoteProgram SelectedRemoteProgram
@@ -91,95 +129,30 @@ namespace IDE.Common.ViewModels
         /// </summary>
         public MessageList MessageList { get; }
 
-        /// <summary>
-        /// Read only editor for displaying send and received commands.
-        /// </summary>
-        public ProgramEditor CommandHistory
-        {
-            set
-            {
-                commandHistory = value;
-                NotifyPropertyChanged("CommandHistory");
-            }
-            get
-            {
-                return commandHistory;
-            }
-        }
-
-        /// <summary>
-        /// Single line editor for user to send commands.
-        /// </summary>
-        public ProgramEditor CommandInput
-        {
-            set
-            {
-                commandInput = value;
-                NotifyPropertyChanged("UserInput");
-            }
-            get
-            {
-                return commandInput;
-            }
-        }
 
         #endregion
 
         #region Actions
-        
-        #region CommandWindow
 
-        /// <summary>
-        /// Initializes command input editor.
-        /// </summary>
-        private void InitializeCommandInput()
-        {
-            CommandInput = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.UseIntellisense.Yes)
-            {
-                ShowLineNumbers = false,
-                Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41)),
-                BorderThickness = new Thickness(0, 0, 2, 0), //right border visible = button will be separated from command input.
-                IsOneLine = true
-            };
-            CommandInput.PreviewKeyDown += CommandInput_PreviewKeyDown;
-            CommandInput.TextChanged += CommandInput_TextChanged;
-        }
         
         /// <summary>
         /// Occurs when there is any text change in Command Input editor.
         /// </summary>
-        private void CommandInput_TextChanged(object sender, EventArgs e)
+        private void commandInput_TextChanged(object sender, EventArgs e)
         {
             if (lineWasNotValid)
             {
-                var isLineValid = commandInput.CheckLineValidationManually(CommandInput.Text);
+                var isLineValid = commandInput.CheckLineValidationManually(commandInput.Text);
 
                 if (isLineValid)
                 {
                     lineWasNotValid = false;
                 }
 
-                CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1,
-                    isLineValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
+                syntaxCheckVisualizer.Visualize(isLineValid, commandInput.Document.GetLineByNumber(1));
             }
         }
 
-        /// <summary>
-        /// Initializes command history editor.
-        /// </summary>
-        private void InitializeCommandHistory()
-        {
-            CommandHistory = new ProgramEditor(ProgramEditor.Highlighting.On, ProgramEditor.UseIntellisense.No)
-            {
-                IsReadOnly = true,
-                Background = new SolidColorBrush(Color.FromRgb(61, 61, 61)),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(41, 41, 41)),
-                BorderThickness = new Thickness(0, 0, 0, 2),  //make only bottom border visible = C.History separated from C.Input.
-                ShowLineNumbers = false
-            };
-            CommandHistory.PreviewMouseWheel += CommandHistory_PreviewMouseWheel;
-        }
 
         /// <summary>
         /// Occurs after user triggers upload event.
@@ -211,33 +184,35 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Send(object obj = null)
         {
-            if (!string.IsNullOrWhiteSpace(CommandInput.Text))
+            if (!string.IsNullOrWhiteSpace(commandInputText))
             {
-                if (CommandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
+                var line = commandInput.Document.GetLineByNumber(1);
+
+                if (commandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
-                    CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
-                    MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
-                    CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
+                    syntaxCheckVisualizer.Visualize(true, line);
+                    MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text));
+                    CommandHistoryText += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                     manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
-                    CommandHistory.ScrollToEnd();
-                    CommandInput.Text = string.Empty;
+                    commandHistory.ScrollToEnd();
+                    CommandInputText = string.Empty;
                 }
                 else //if user wants to check syntax
                 {
-                    bool isLineValid = commandInput.CheckLineValidationManually(CommandInput.Text);
+                    bool isLineValid = commandInput.CheckLineValidationManually(commandInput.Text);
 
                     if (isLineValid)    //if line is valid, send it
                     {
-                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.Yes));
-                        MessageList.AddMessage(new Message(DateTime.Now, CommandInput.Text));
-                        CommandHistory.Text += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
+                        syntaxCheckVisualizer.Visualize(true, line);
+                        MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text));
+                        CommandHistoryText += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                         manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
-                        CommandHistory.ScrollToEnd();
-                        CommandInput.Text = string.Empty;
+                        commandHistory.ScrollToEnd();
+                        CommandInputText = string.Empty;
                     }
                     else //if line is not valid colorize line and don't send
                     {
-                        CommandInput.TextArea.TextView.LineTransformers.Add(new LineColorizer(1, LineColorizer.ValidityE.No));
+                        syntaxCheckVisualizer.Visualize(false, line);
                         lineWasNotValid = true;
                     }
                 }
@@ -259,10 +234,9 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void FontReduce(object obj = null)
         {
-            if (CommandHistory.FontSize > 3)
+            if (commandHistory.FontSize > 3)
             {
-                CommandHistory.FontSize--;
-                CommandInput.FontSize--;
+                commandHistory.FontReduce();
             }
         }
 
@@ -271,10 +245,9 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void FontEnlarge(object obj = null)
         {
-            if (CommandHistory.FontSize < 20)
+            if (commandHistory.FontSize < 20)
             {
-                CommandHistory.FontSize++;
-                CommandInput.FontSize++;
+                commandHistory.FontEnlarge();
             }
         }
 
@@ -284,7 +257,7 @@ namespace IDE.Common.ViewModels
         /// <param name="obj"></param>
         private void ExportHistory(object obj)
         {
-            CommandHistory.ExportContent(DateTime.Now.ToString(CultureInfo.InvariantCulture).Replace(':', '-'), "txt");
+            commandHistory.ExportContent(DateTime.Now.ToString(CultureInfo.InvariantCulture).Replace(':', '-'), "txt");
         }
 
         /// <summary>
@@ -293,75 +266,51 @@ namespace IDE.Common.ViewModels
         /// <param name="obj"></param>
         private void ClearHistory(object obj)
         {
-            CommandHistory.Text = string.Empty;
+            CommandHistoryText = string.Empty;
         }
 
         /// <summary>
-        /// Sets current font as Times New Roman.
+        /// Sets current font.
         /// </summary>
-        private void FontTimesNewRoman(object obj)
+        /// <param name="obj">Current font.</param>
+        private void ChangeFont(object obj)
         {
-            CommandHistory.TextArea.FontFamily = new FontFamily("Times New Roman");
-            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
-        }
+            var font = obj as string;
 
-        /// <summary>
-        /// Sets current font as Arial.
-        /// </summary>
-        private void FontArial(object obj)
-        {
-            CommandHistory.TextArea.FontFamily = new FontFamily("Arial");
-            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
-        }
-
-        /// <summary>
-        /// Sets current font as Calibri.
-        /// </summary>
-        private void FontCalibri(object obj)
-        {
-            CommandHistory.TextArea.FontFamily = new FontFamily("Calibri");
-            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
-        }
-
-        /// <summary>
-        /// Sets current font as Segoe UI.
-        /// </summary>
-        private void FontSegoeUI(object obj)
-        {
-            CommandHistory.TextArea.FontFamily = new FontFamily("Segoe UI");
-            CommandInput.TextArea.FontFamily = new FontFamily("Times New Roman");
+            commandInput.ChangeFont(font);
+            commandHistory.ChangeFont(font);
         }
         
         /// <summary>
         /// Occurs when there is any key down while having focus on Command Input editor.
         /// </summary>
-        private void CommandInput_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void commandInput_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && CommandInput.completionWindow == null)
+            if (e.Key == Key.Enter && commandInput.completionWindow == null)
                 Send();
 
 
-            if (CommandInput.completionWindow == null)  //if theres no completion window use arrows to show previous messages
+            if (commandInput.completionWindow == null)  //if theres no completion window use arrows to show previous messages
             {
                 if (e.Key == Key.Up)
                 {
                     if (messageSelectionArrows < MessageList.Messages.Count)
                     {
-                        CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - ++messageSelectionArrows].MyMessage;
-                        CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
+                        commandInput.Text = MessageList.Messages[MessageList.Messages.Count - ++messageSelectionArrows].MyMessage;
+                        commandInput.TextArea.Caret.Offset = commandInput.Text.Length;  //bring carret to end of text
                     }
                 }
                 else if (e.Key == Key.Down)
                 {
                     if (messageSelectionArrows > 1)
                     {
-                        CommandInput.Text = MessageList.Messages[MessageList.Messages.Count - --messageSelectionArrows].MyMessage;
-                        CommandInput.TextArea.Caret.Offset = CommandInput.Text.Length;  //bring carret to end of text
+                        commandInput.Text = MessageList.Messages[MessageList.Messages.Count - --messageSelectionArrows].MyMessage;
+                        commandInput.TextArea.Caret.Offset = commandInput.Text.Length;  //bring carret to end of text
                     }
                     else if (messageSelectionArrows > 0)
                     {
                         --messageSelectionArrows;
-                        CommandInput.Text = string.Empty;
+                        commandInput.Text = string.Empty;
                     }
                 }
             }
@@ -370,7 +319,7 @@ namespace IDE.Common.ViewModels
         /// <summary>
         /// Occurs when there is any mouse scroll press/movement while having focus on Command Input editor.
         /// </summary>
-        private void CommandHistory_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void commandHistory_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             bool handle = (Keyboard.Modifiers & ModifierKeys.Control) > 0;
             if (!handle)
@@ -381,24 +330,6 @@ namespace IDE.Common.ViewModels
             else if (e.Delta < 0)
                 FontReduce();   //scrolls toward user
         }
-
-        /// <summary>
-        /// Disables syntax check for command input.
-        /// </summary>
-        private void OffSyntaxCheck(object obj)
-        {
-            CommandInput.DoSyntaxCheck = false;
-        }
-
-        /// <summary>
-        /// Enables syntax check for command input.
-        /// </summary>
-        private void OnSyntaxCheck(object obj)
-        {
-            CommandInput.DoSyntaxCheck = true;
-        }
-
-        #endregion
 
         #endregion
 
@@ -412,12 +343,7 @@ namespace IDE.Common.ViewModels
         public ICommand StopClickCommand { get; private set; }
         public ICommand ClearHistoryCommand { get; private set; }
         public ICommand ExportHistoryCommand { get; private set; }
-        public ICommand FontTNRomanCommand { get; private set; }
-        public ICommand FontCalibriCommand { get; private set; }
-        public ICommand FontArialCommand { get; private set; }
-        public ICommand FontSegoeUICommand { get; private set; }
-        public ICommand OnSyntaxCheckCommand { get; private set; }
-        public ICommand OffSyntaxCheckCommand { get; private set; }
+        public ICommand ChangeFontCommand { get; private set; }
         public ICommand ContextClickCommand { get; private set; }
 
         private void DeclareCommands()
@@ -425,18 +351,19 @@ namespace IDE.Common.ViewModels
             RefreshClickCommand = new RelayCommand(Refresh, IsConnectionEstablished);
             DownloadClickCommand = new RelayCommand(Download, IsItemSelected);
             UploadClickCommand = new RelayCommand(Upload, IsConnectionEstablished);
-            SendClickCommand = new RelayCommand(Send, IsCommandInputNotEmpty);
+            SendClickCommand = new RelayCommand(Send, IscommandInputNotEmpty);
             RunClickCommand = new RelayCommand(Run, IsConnectionEstablished);
             StopClickCommand = new RelayCommand(Stop, IsConnectionEstablished);
-            ClearHistoryCommand = new RelayCommand(ClearHistory, IsCommandHistoryNotEmpty);
-            ExportHistoryCommand = new RelayCommand(ExportHistory, IsCommandHistoryNotEmpty);
-            FontTNRomanCommand = new RelayCommand(FontTimesNewRoman, IsCurrentFontNotTNRoman);
-            FontCalibriCommand = new RelayCommand(FontCalibri, IsCurrentFontNotCalibri);
-            FontArialCommand = new RelayCommand(FontArial, IsCurrentFontNotArial);
-            FontSegoeUICommand = new RelayCommand(FontSegoeUI, IsCurrentFontNotSegoeUI);
-            OnSyntaxCheckCommand = new RelayCommand(OnSyntaxCheck);
-            OffSyntaxCheckCommand = new RelayCommand(OffSyntaxCheck);
+            ClearHistoryCommand = new RelayCommand(ClearHistory, IscommandHistoryNotEmpty);
+            ExportHistoryCommand = new RelayCommand(ExportHistory, IscommandHistoryNotEmpty);
+            ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
             ContextClickCommand = new RelayCommand(ContextClick);
+        }
+
+        private bool CanChangeFont(object obj)
+        {
+            var text = commandHistory.FontFamily.ToString();
+            return !text.Equals(obj as string);
         }
 
         private void ContextClick(object obj)
@@ -445,55 +372,11 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        /// Return a value based upon wheter current font is Calibri or not.
-        /// </summary>
-        private bool IsCurrentFontNotCalibri(object obj)
-        {
-            if (CommandHistory.TextArea.FontFamily.ToString() == "Calibri")
-                return false;
-            else
-                return true;
-        }
-
-        /// <summary>
-        /// Return a value based upon wheter current font is Times New Roman or not.
-        /// </summary>
-        private bool IsCurrentFontNotTNRoman(object obj)
-        {
-            if (CommandHistory.TextArea.FontFamily.ToString() == "Times New Roman")
-                return false;
-            else
-                return true;
-        }
-
-        /// <summary>
-        /// Return a value based upon wheter current font is Segoe UI or not.
-        /// </summary>
-        private bool IsCurrentFontNotSegoeUI(object obj)
-        {
-            if (CommandHistory.TextArea.FontFamily.ToString() == "Segoe UI")
-                return false;
-            else
-                return true;
-        }
-
-        /// <summary>
-        /// Return a value based upon wheter current font is Arial or not.
-        /// </summary>
-        private bool IsCurrentFontNotArial(object obj)
-        {
-            if (CommandHistory.TextArea.FontFamily.ToString() == "Arial")
-                return false;
-            else
-                return true;
-        }
-
-        /// <summary>
         /// Return a value based upon wheter Command History is empty or not.
         /// </summary>
-        private bool IsCommandHistoryNotEmpty(object obj)
+        private bool IscommandHistoryNotEmpty(object obj)
         {
-            return !string.IsNullOrWhiteSpace(CommandHistory.Text);
+            return !string.IsNullOrWhiteSpace(commandHistory.Text);
         }
 
         /// <summary>
@@ -520,12 +403,10 @@ namespace IDE.Common.ViewModels
         /// <summary>
         /// Returns a value based upon wheter a Command Input is empty or not.
         /// </summary>
-        private bool IsCommandInputNotEmpty(object obj)
+        private bool IscommandInputNotEmpty(object obj)
         {
-            return !string.IsNullOrWhiteSpace(CommandInput.Text);
+            return !string.IsNullOrWhiteSpace(commandInputText);
         }
-
-
 
         #endregion
 

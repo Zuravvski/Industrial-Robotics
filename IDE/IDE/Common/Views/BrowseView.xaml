@@ -4,16 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:models="clr-namespace:IDE.Common.Models"
+             xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="900" d:DesignWidth="900">
 
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:ColorToBrush x:Key="ColorToBrush"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="97*"/>
-            <ColumnDefinition Width="192*"/>
-            <ColumnDefinition Width="11*"/>
+            <ColumnDefinition Width="220*"/>
+            <ColumnDefinition Width="71*"/>
+            <ColumnDefinition Width="576*"/>
+            <ColumnDefinition Width="33*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="108*"/>
@@ -22,8 +33,8 @@
         </Grid.RowDefinitions>
 
 
-        <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
+        <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="0,0,575.2,8" Grid.ColumnSpan="3"/>
+        <Border Margin="0,30,0.2,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
             <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False">
 
                 <DataGrid.ContextMenu>
@@ -33,15 +44,15 @@
                         <MenuItem Header="Execute"  Command="" ToolTip="Starts executing selected program."/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
-                
+
                 <DataGrid.Columns>
                     <mui:DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
                     <mui:DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=OneWay}"/>
                     <mui:DataGridTextColumn Header="Last edited" Binding="{Binding Timestamp, Mode=OneWay}"/>
                 </DataGrid.Columns>
-                
+
             </DataGrid>
-        </DockPanel>
+        </Border>
 
         <!--List-->
         <!--<TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
@@ -54,31 +65,7 @@
         </ListView>-->
 
         <!--Buttons for list management-->
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-            <Button Command="{Binding RefreshClickCommand}" Width="40" Height="40" Margin="0,5,0,0" ToolTip="Refresh Program List">
-                <Button.Background>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Grid>
-                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
-                                <Image Source="/Icons/Refresh.png" Stretch="Uniform"/>
-                            </Grid>
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </Button.Background>
-            </Button>
-            <Button Command="{Binding DownloadClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Pull Program From Manipulator">
-                <Button.Background>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Grid>
-                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
-                                <Image Source="/Icons/Download.png" Stretch="Uniform"/>
-                            </Grid>
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </Button.Background>
-            </Button>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,114,0.2,0" Grid.RowSpan="2">
             <Button Command="{Binding UploadClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Push Program To Manipulator">
                 <Button.Background>
                     <VisualBrush>
@@ -91,79 +78,133 @@
                     </VisualBrush>
                 </Button.Background>
             </Button>
-            <Button Command="{Binding RunClickCommand}" Width="40" Height="40" Margin="165,5,0,0" ToolTip="Run Program">
-                <Button.Background>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Grid>
-                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
-                                <Image Source="/Icons/Play.png" Stretch="Uniform"/>
-                            </Grid>
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </Button.Background>
-            </Button>
-            <Button Command="{Binding StopClickCommand}" Width="40" Height="40" Margin="5,5,0,0" ToolTip="Stop Program">
-                <Button.Background>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Grid>
-                                <Grid DataContext="{Binding Appearance}" Background="{Binding ThemeColor}"/>
-                                <Image Source="/Icons/Stop.png" Stretch="Uniform"/>
-                            </Grid>
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </Button.Background>
-            </Button>
-
         </StackPanel>
+
         <!--Command window-->
-        <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="25"/>
-            </Grid.RowDefinitions>
+        <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="71,0,0.2,0" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
 
-            <ContentControl Content="{Binding CommandHistory}">
-                <ContentControl.ContextMenu>
-                    <ContextMenu>
 
-                        <MenuItem Header="Font Family">
-                            <MenuItem.Icon>
-                                <Image Source="/Icons/Delete.png"/>
-                            </MenuItem.Icon>
-                            <MenuItem Header="Times New Roman" Command="{Binding FontTNRomanCommand}"/>
-                            <MenuItem Header="Arial" Command="{Binding FontArialCommand}"/>
-                            <MenuItem Header="Calibri" Command="{Binding FontCalibriCommand}"/>
-                            <MenuItem Header="Segoe UI" Command="{Binding FontSegoeUICommand}"/>
-                        </MenuItem>
+                <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,3" BorderBrush="{Binding Path=Appearance.ThemeColor}" ShowLineNumbers="False">
+                    <i:Interaction.Behaviors>
+                        <models:AvalonEditBehaviour GiveMeTheText="{Binding CommandHistoryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </i:Interaction.Behaviors>
 
-                        <Separator/>
+                    <models:ProgramEditor.ContextMenu>
+                        <ContextMenu>
 
-                        <MenuItem Header="Export" Command="{Binding ExportHistoryCommand}">
-                            <MenuItem.Icon>
-                                <Image Source="/Icons/Delete.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                            <MenuItem Header="Font Family">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Delete.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman"/>
+                                <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial"/>
+                                <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri"/>
+                                <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI"/>
+                            </MenuItem>
 
-                        <MenuItem Header="Clear" Command="{Binding ClearHistoryCommand}">
-                            <MenuItem.Icon>
-                                <Image Source="/Icons/Delete.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                            <Separator/>
 
-                    </ContextMenu>
-                </ContentControl.ContextMenu>
-            </ContentControl>
-            <DockPanel Grid.Row="1">
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Button Content="Send" Command="{Binding SendClickCommand}"  Width="75" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
-                    <Controls:ToggleSwitch CheckedCommand="{Binding OnSyntaxCheckCommand}" UnCheckedCommand="{Binding OffSyntaxCheckCommand}" OnLabel="On" OffLabel="Off" MaxWidth="75" Margin="0,-5,0,0"  ThumbIndicatorBrush="#FFC1C1C1" ToolTip="If checked, syntax will be validated." OffSwitchBrush="Red" OnSwitchBrush="Green"/>
-                </StackPanel>
-                <ContentControl x:Name="CommandInput" Content="{Binding CommandInput}" DockPanel.Dock="Left"/>
-            </DockPanel>
-        </Grid>
+                            <MenuItem Header="Export" Command="{Binding ExportHistoryCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Delete.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
 
+                            <MenuItem Header="Clear" Command="{Binding ClearHistoryCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Delete.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+
+                        </ContextMenu>
+                    </models:ProgramEditor.ContextMenu>
+
+                </models:ProgramEditor>
+
+                <DockPanel Grid.Row="1">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                        <Button Content="Send" Command="{Binding SendClickCommand}"  Width="75" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                        <Controls:ToggleSwitch x:Name="SyntaxCheckToggle" MaxWidth="75" Margin="0,-5,0,0"  ThumbIndicatorBrush="#FFC1C1C1" ToolTip="If checked, syntax will be validated." OffSwitchBrush="Red" OnSwitchBrush="Green" OffLabel="" OnLabel=""/>
+                    </StackPanel>
+                    <models:ProgramEditor x:Name="CommandInput" Padding="3" IsOneLine="True" DoSyntaxCheck="{Binding ElementName=SyntaxCheckToggle, Path=IsChecked}" IsHighlightingEnabled="True" IsIntellisenseEnabled="True" Background="Transparent" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0,0,3,0" BorderBrush="{Binding Path=Appearance.ThemeColor}" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}" ShowLineNumbers="False">
+                        <i:Interaction.Behaviors>
+                            <models:AvalonEditBehaviour GiveMeTheText="{Binding CommandInputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </i:Interaction.Behaviors>
+
+                        <models:ProgramEditor.ContextMenu>
+                            <ContextMenu>
+
+                                <MenuItem Header="Font Family">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Delete.png"/>
+                                    </MenuItem.Icon>
+                                    <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman"/>
+                                    <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial"/>
+                                    <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri"/>
+                                    <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI"/>
+                                </MenuItem>
+
+                            </ContextMenu>
+                        </models:ProgramEditor.ContextMenu>
+
+                    </models:ProgramEditor>
+                    
+                </DockPanel>
+            </Grid>
+        </Border>
+        
+        
+        
+        <!--<Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+
+                <ContentControl Content="{Binding CommandHistory}">
+                    <ContentControl.ContextMenu>
+                        <ContextMenu>
+
+                            <MenuItem Header="Font Family">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Delete.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Times New Roman" Command="{Binding FontTNRomanCommand}"/>
+                                <MenuItem Header="Arial" Command="{Binding FontArialCommand}"/>
+                                <MenuItem Header="Calibri" Command="{Binding FontCalibriCommand}"/>
+                                <MenuItem Header="Segoe UI" Command="{Binding FontSegoeUICommand}"/>
+                            </MenuItem>
+
+                            <Separator/>
+
+                            <MenuItem Header="Export" Command="{Binding ExportHistoryCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Delete.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+
+                            <MenuItem Header="Clear" Command="{Binding ClearHistoryCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Delete.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+
+                        </ContextMenu>
+                    </ContentControl.ContextMenu>
+                </ContentControl>
+                <DockPanel Grid.Row="1">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                        <Button Content="Send" Command="{Binding SendClickCommand}"  Width="75" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                        <Controls:ToggleSwitch CheckedCommand="{Binding OnSyntaxCheckCommand}" UnCheckedCommand="{Binding OffSyntaxCheckCommand}" MaxWidth="75" Margin="0,-5,0,0"  ThumbIndicatorBrush="#FFC1C1C1" ToolTip="If checked, syntax will be validated." OffSwitchBrush="Red" OnSwitchBrush="Green" OffLabel="" OnLabel=""/>
+                    </StackPanel>
+                    <ContentControl x:Name="CommandInput" Content="{Binding CommandInput}" DockPanel.Dock="Left"/>
+                </DockPanel>
+            </Grid>-->
 
     </Grid>
 </UserControl>

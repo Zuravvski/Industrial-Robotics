@@ -18,6 +18,7 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using System.Collections.Generic;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Utilities.Extensions;
+using IDE.Common.ViewModels;
 
 namespace IDE.Common.Models
 {
@@ -25,8 +26,10 @@ namespace IDE.Common.Models
     {
 
         #region Fields
-        private readonly Highlighting highlighting;
-        private readonly UseIntellisense useIntellisense;
+        private Highlighting highlighting;
+        private bool isHighlightingEnabled;
+        private UseIntellisense useIntellisense;
+        private bool isIntellisenseEnabled;
         private Program currentProgram;
         private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
@@ -57,17 +60,46 @@ namespace IDE.Common.Models
 
         public ProgramEditor(Highlighting highlighting, UseIntellisense useIntellisense)
         {
-            MissingFileCreator.CheckForRequiredFiles();
             this.highlighting = highlighting;
             this.useIntellisense = useIntellisense;
-            InitializeAvalon();
+        }
 
+        public ProgramEditor()
+        {
+            MissingFileCreator.CheckForRequiredFiles();
             syntaxChecker = new SyntaxChecker();
         }
+        
         
         #endregion
 
         #region Properties
+
+        public bool IsHighlightingEnabled
+        {
+            get
+            {
+                return isHighlightingEnabled;
+            }
+            set
+            {
+                isHighlightingEnabled = value;
+                InitializeHighlighting();
+            }
+        }
+
+        public bool IsIntellisenseEnabled
+        {
+            get
+            {
+                return isIntellisenseEnabled;
+            }
+            set
+            {
+                isIntellisenseEnabled = value;
+                InitializeIntellisense();
+            }
+        }
 
         public Macro CurrentMacro
         {
@@ -95,26 +127,57 @@ namespace IDE.Common.Models
             }
         }
 
-        public bool DoSyntaxCheck { get; set; }
+
+        public static readonly DependencyProperty DoSyntaxCheckProperty =
+             DependencyProperty.Register("DoSyntaxCheck", typeof(bool),
+             typeof(ProgramEditor), new FrameworkPropertyMetadata(true));
+
+        public bool DoSyntaxCheck
+        {
+            get { return (bool)GetValue(DoSyntaxCheckProperty); }
+            set { SetValue(DoSyntaxCheckProperty, value); }
+        }
         public bool IsOneLine { get; set; }
         
         #endregion
 
         #region Actions
 
-        private void InitializeAvalon()
-        {
-            ShowLineNumbers = true;
-            Foreground = new SolidColorBrush(Color.FromRgb(193, 193, 193));
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            Padding = new Thickness(5);
 
-            if (highlighting == Highlighting.On)
+        public void FontEnlarge()
+        {
+            FontSize++;
+        }
+
+        public void FontReduce()
+        {
+            FontSize--;
+        }
+
+        /// <summary>
+        /// Sets current font.
+        /// </summary>
+        public void ChangeFont(string fontName)
+        {
+            var fontFamily = FontFamily;
+
+            try
+            {
+                FontFamily = new FontFamily(fontName);
+            }
+            catch
+            {
+                FontFamily = fontFamily;
+            }
+        }
+
+        private void InitializeHighlighting()
+        {
+            if (IsHighlightingEnabled)
             {
                 try
                 {
-                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"), 
+                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"),
                         HighlightingManager.Instance);
                     HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
                     SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
@@ -124,8 +187,11 @@ namespace IDE.Common.Models
                     Console.Error.WriteLine("Error loading HighlightingDefinition file");
                 }
             }
+        }
 
-            if (useIntellisense == UseIntellisense.Yes)
+        private void InitializeIntellisense()
+        {
+            if (isIntellisenseEnabled)
             {
                 intellisense = new Intellisense();
                 TextArea.TextEntering += TextArea_TextEntering;

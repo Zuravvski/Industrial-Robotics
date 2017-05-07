@@ -66,7 +66,6 @@
 
 
         <Border Grid.Column="2" Margin="0,0,0,10" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
-            <k:KinectSensorChooserUI HorizontalAlignment="Center" Grid.Column="2"/>
         </Border>
 
         <!--List-->

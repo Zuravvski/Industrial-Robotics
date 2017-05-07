@@ -1,13 +1,5 @@
 ﻿using System.Windows.Controls;
 using IDE.Common.ViewModels;
-using FirstFloor.ModernUI.Windows.Controls;
-using System;
-using RadialMenu.Controls;
-using System.Collections.Generic;
-using System.Windows.Media;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
-using System.Windows.Input;
 
 namespace IDE.Common.Views
 {
@@ -22,7 +14,7 @@ namespace IDE.Common.Views
         public Editor()
         {
             InitializeComponent();
-            DataContext = new Editor_v2ViewModel();
+            DataContext = new EditorViewModel();
         }
 
         #endregion

@@ -161,7 +161,6 @@
     <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />
     <Compile Include="Common\ViewModels\DelegateCommand.cs" />
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
-    <Compile Include="Common\ViewModels\Editor_v2ViewModel.cs" />
     <Compile Include="Common\ViewModels\HighlightingViewModel.cs" />
     <Compile Include="Common\ViewModels\HomeViewModel.cs" />
     <Compile Include="Common\ViewModels\MacroManagerViewModel.cs" />

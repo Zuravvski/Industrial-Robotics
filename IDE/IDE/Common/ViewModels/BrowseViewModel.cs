@@ -93,6 +93,7 @@ namespace IDE.Common.ViewModels
         }
 
         public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
+
         public RemoteProgram SelectedRemoteProgram
         {
             get

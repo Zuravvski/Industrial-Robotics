@@ -9,6 +9,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:models="clr-namespace:IDE.Common.Models"
              xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
+             xmlns:k="http://schemas.microsoft.com/kinect/2013"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="900">
 
@@ -27,35 +28,59 @@
             <ColumnDefinition Width="33*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="108*"/>
-            <RowDefinition Height="19*"/>
-            <RowDefinition Height="23*"/>
+            <RowDefinition Height="18*"/>
+            <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
 
 
-        <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="0,0,575.2,8" Grid.ColumnSpan="3"/>
-        <Border Margin="0,30,0.2,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
-            <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False">
+        <Border Margin="0,0,10,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <StackPanel>
+                <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="20,3,0,0"/>
+                <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False">
 
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Refresh"  Command="{Binding ContextClickCommand}" ToolTip="Refreshes list of available programs." CommandParameter="{Binding DataContext.RemoteProgram, RelativeSource={RelativeSource Mode=Self}}"/>
-                        <MenuItem Header="Pull"     Command="{Binding}" ToolTip="Sends selected program from manipulator to user."/>
-                        <MenuItem Header="Execute"  Command="{Binding}" ToolTip="Starts executing selected program."/>
-                    </ContextMenu>
-                </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                        <mui:DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
+                        <mui:DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=OneWay}"/>
+                        <mui:DataGridTextColumn Header="Last edited" Binding="{Binding Timestamp, Mode=OneWay}"/>
+                    </DataGrid.Columns>
 
-                <DataGrid.Columns>
-                    <mui:DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
-                    <mui:DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=OneWay}"/>
-                    <mui:DataGridTextColumn Header="Last edited" Binding="{Binding Timestamp, Mode=OneWay}"/>
-                </DataGrid.Columns>
+                    <DataGrid.Resources>
+                        <ContextMenu x:Key="RemoteContextMenu">
+                            <ContextMenu.Items>
+                                <MenuItem Header="Refresh"  Command="{Binding DataContext.RefreshClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Refreshes list of available programs." CommandParameter="Refresh"/>
+                                <MenuItem Header="Pull"     Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends selected program from manipulator to user." CommandParameter="Pull"/>
+                                <MenuItem Header="Execute"  Command="{Binding DataContext.RunClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Starts executing selected program." CommandParameter="Execute"/>
+                            </ContextMenu.Items>
+                        </ContextMenu>
+                    </DataGrid.Resources>
 
-            </DataGrid>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                            <Setter Property="ContextMenu" Value="{StaticResource RemoteContextMenu}"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                </DataGrid>
+            </StackPanel>
         </Border>
 
+
+        <Border Grid.Column="2" Margin="0,0,0,10" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
+            <k:KinectSensorChooserUI HorizontalAlignment="Center" Grid.Column="2"/>
+        </Border>
+
+        <!--List-->
+        <!--<TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <ListView ItemsSource="{Binding RemotePrograms}" Grid.Row="1" SelectedItem="{Binding SelectedRemoteProgram}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>-->
+
         <!--Command window-->
-        <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="71,0,0.2,0" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
+        <Border Grid.Row="1" Grid.Column="2" Margin="0,0,0,0" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*"/>
@@ -63,7 +88,7 @@
                 </Grid.RowDefinitions>
 
 
-                <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,3" BorderBrush="{Binding Path=Appearance.ThemeColor}" ShowLineNumbers="False" IsIntellisenseEnabled="False">
+                <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,3" BorderBrush="{Binding Path=Appearance.ThemeColor}" ShowLineNumbers="False">
                     <i:Interaction.Behaviors>
                         <models:AvalonEditBehaviour GiveMeTheText="{Binding CommandHistoryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </i:Interaction.Behaviors>

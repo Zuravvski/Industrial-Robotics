@@ -145,7 +145,6 @@ namespace IDE.Common.Models
 
         #region Actions
 
-
         public void FontEnlarge()
         {
             FontSize++;

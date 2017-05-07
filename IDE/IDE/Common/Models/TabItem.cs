@@ -32,7 +32,7 @@ namespace IDE.Common.Models
             if (program == null)
             {
                 Header = $"Untitled {untitledsCount}";
-                Content = new ProgramEditor { Text = string.Empty };
+                Content = new ProgramEditor { Text = string.Empty, DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
                 //we are setting this twice to trigger rising edge event. Dont change it, just accept fact that it is working this way.
                 UnsavedChanged = false;
                 UnsavedChanged = true;
@@ -40,7 +40,7 @@ namespace IDE.Common.Models
             else
             {
                 Header = program.Name;
-                Content = new ProgramEditor { Text = program.Content };
+                Content = new ProgramEditor { Text = program.Content, DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
                 UnsavedChanged = false;
             }
             Program = program;

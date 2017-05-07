@@ -33,7 +33,7 @@ namespace IDE.Common.Utilities
         /// </summary>
         /// <param name="fileName">Name of a file containing json.</param>
         /// <param name="fileExtension">Extension of a file containing json.</param>
-        public static T DeserializeObject<T>(string fileName, string fileExtension = "txt")
+        public static T DeserializeObject<T>(string fileName, string fileExtension = "FLAJS")
         {
             var fs = File.Open($@"{fileName}.{fileExtension}", FileMode.Open);
             var sr = new StreamReader(fs);

@@ -52,6 +52,7 @@ namespace IDE.Common.Models
             IsIntellisenseEnabled = true;
             IsHighlightingEnabled = true;
             Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
+            SyntaxCheckerMode = SyntaxCheckerModeE.OnDemand;
             LoadHighligtingDefinition();
         }
         
@@ -214,9 +215,9 @@ namespace IDE.Common.Models
             intellisense.Show();
         }
 
-        private void OnSyntaxCheck(object sender, EventArgs e)
+        private async void OnSyntaxCheck(object sender, EventArgs e)
         {
-            ValidateLine(TextArea.Caret.Line);
+            await ValidateLine(TextArea.Caret.Line);
         }
 
         private void OnPaste(object sender, DataObjectPastingEventArgs e)

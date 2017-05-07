@@ -25,9 +25,8 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.SharpDevelop.Editor;
 
-namespace ICSharpCode.AvalonEdit.AddIn
+namespace IDE.Common.Models.Syntax_Check
 {
 	/// <summary>
 	/// Handles the text markers for a code editor.

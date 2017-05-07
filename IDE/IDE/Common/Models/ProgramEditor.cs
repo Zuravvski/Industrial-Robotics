@@ -29,6 +29,7 @@ namespace IDE.Common.Models
         private readonly Intellisense intellisense;
         private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
         private bool isIntellisenseEnabled;
+        private bool isHighlightingEnabled;
 
         #endregion
 
@@ -53,14 +54,21 @@ namespace IDE.Common.Models
             IsHighlightingEnabled = true;
             Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
             SyntaxCheckerMode = SyntaxCheckerModeE.OnDemand;
-            LoadHighligtingDefinition();
         }
         
         #endregion
 
         #region Properties
 
-        public bool IsHighlightingEnabled { get; set; }
+        public bool IsHighlightingEnabled
+        {
+            get { return isHighlightingEnabled; }
+            set
+            {
+                isHighlightingEnabled = value;
+                LoadHighligtingDefinition();
+            }
+        }
 
         public bool IsIntellisenseEnabled
         {
@@ -183,6 +191,10 @@ namespace IDE.Common.Models
                     var definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
                     SyntaxHighlighting = definition;
                 }
+            }
+            else
+            {
+                SyntaxHighlighting = null;
             }
 
         }

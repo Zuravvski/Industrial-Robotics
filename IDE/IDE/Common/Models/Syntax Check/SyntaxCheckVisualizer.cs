@@ -1,6 +1,4 @@
 ﻿using System;
-using ICSharpCode.AvalonEdit.AddIn;
-using ICSharpCode.SharpDevelop.Editor;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Windows.Media;

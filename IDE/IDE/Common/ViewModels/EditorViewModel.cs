@@ -11,6 +11,7 @@ using System.Linq;
 using Driver;
 using Microsoft.Win32;
 using System.IO;
+using IDE.Common.Models.Value_Objects;
 
 namespace IDE.Common.ViewModels
 {
@@ -156,7 +157,6 @@ namespace IDE.Common.ViewModels
                 OC = "O"
             });
         }
-
 
         #endregion
 
@@ -526,7 +526,7 @@ namespace IDE.Common.ViewModels
                 Filter = "txt files (.txt)|*.txt"
             };
 
-            if (dialog.ShowDialog() == false)
+            if (!dialog.ShowDialog().GetValueOrDefault(false))
             {
                 //if user fails to select a file
                 return;
@@ -538,7 +538,7 @@ namespace IDE.Common.ViewModels
 
             var doesTabAlreadyExist = TabItems.FirstOrDefault(i => i.Program != null && i.Program.Path == path);
 
-            if (!object.Equals(doesTabAlreadyExist, null))
+            if (!Equals(doesTabAlreadyExist, null))
             {
                 //if this file is already open reload it's content and set is as current tab
                 doesTabAlreadyExist.Content.Text = doesTabAlreadyExist.Program.Content;
@@ -579,7 +579,7 @@ namespace IDE.Common.ViewModels
                 Filter = "txt files (.txt)|*.txt"
             };
 
-            if (dialog.ShowDialog() == false)
+            if (!dialog.ShowDialog().GetValueOrDefault(false))
             {
                 return false;
             }
@@ -647,10 +647,7 @@ namespace IDE.Common.ViewModels
             TabItems.Add(tabToAdd);
             SelectedTabItem = tabToAdd;
 
-            if (tabItems.Count < 1)
-                PositionManagerVisibility = Visibility.Hidden;
-            else
-                PositionManagerVisibility = Visibility.Visible;
+            PositionManagerVisibility = tabItems.Count < 1 ? Visibility.Hidden : Visibility.Visible;
         }
 
         private void AddTab(object obj)

@@ -125,7 +125,7 @@
     <Compile Include="Common\Models\CustomHighlighting.cs" />
     <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
-    <Compile Include="Common\Models\Positions.cs" />
+    <Compile Include="Common\Models\Value Objects\Positions.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
     <Compile Include="Common\Models\Services\LineColorizer.cs" />
     <Compile Include="Common\Models\Services\ListManager.cs" />

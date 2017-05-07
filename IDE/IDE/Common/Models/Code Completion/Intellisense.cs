@@ -11,8 +11,8 @@ namespace IDE.Common.Models.Code_Completion
     public class Intellisense
     {
         private readonly ISet<Command> commands;
-        private CompletionWindow completionWindow;
         private readonly TextArea textArea;
+        private CompletionWindow completionWindow;
 
         public bool IsShowing => completionWindow != null && completionWindow.IsVisible;
 

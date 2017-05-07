@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
-namespace ICSharpCode.SharpDevelop.Editor
+namespace IDE.Common.Models.Syntax_Check
 {
 	/// <summary>
 	/// Represents a text marker.

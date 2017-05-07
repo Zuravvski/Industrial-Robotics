@@ -12,17 +12,7 @@ namespace IDE.Common.Models.Syntax_Check
 
         public SyntaxChecker()
         {
-            Commands = ConfigurationService.Instance.LoadCommands();
-        }
-
-        public void AddCommand(Command command)
-        {
-            Commands.Add(command);
-        }
-
-        public void RemoveCommand(Command command)
-        {
-            Commands.Remove(command);
+            Commands = Session.Instance.Commands.CommandsMap;
         }
 
         public bool Validate(string line)

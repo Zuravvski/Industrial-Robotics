@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Input;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
-using System.Windows.Media;
 using Driver;
 using IDE.Common.Models.Value_Objects;
-using IDE.Common.Models.Services;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Windows.Data;
-using ICSharpCode.AvalonEdit;
 using IDE.Common.Models.Syntax_Check;
 
 namespace IDE.Common.ViewModels
@@ -22,17 +17,17 @@ namespace IDE.Common.ViewModels
 
         #region Fields
 
-        string commandHistoryText;
-        string commandInputText;
+        private string commandHistoryText;
+        private string commandInputText;
         private readonly ProgramEditor commandHistory, commandInput;
         private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
-        bool lineWasNotValid;
-        int messageSelectionArrows;
-        ObservableCollection<RemoteProgram> remotePrograms;
-        RemoteProgram selectedRemoteProgram;
+        private bool lineWasNotValid;
+        private int messageSelectionArrows;
+        private ObservableCollection<RemoteProgram> remotePrograms;
+        private RemoteProgram selectedRemoteProgram;
         //this should be removed later on
-        E3JManipulator manipulator;
-        ProgramService programServce;
+        readonly E3JManipulator manipulator;
+        readonly ProgramService programServce;
 
         #endregion
 
@@ -44,7 +39,6 @@ namespace IDE.Common.ViewModels
         public BrowseViewModel(ProgramEditor commandHistory, ProgramEditor commandInput)
         {
             DeclareCommands();
-            syntaxCheckVisualizer = new SyntaxCheckVisualizer(commandInput);
 
             this.commandInput = commandInput;
             commandInput.PreviewKeyDown += commandInput_PreviewKeyDown;
@@ -58,12 +52,14 @@ namespace IDE.Common.ViewModels
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             programServce = new ProgramService(manipulator);
-            manipulator.Connect("COM3");
-            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>());
-            RemotePrograms.Add(new RemoteProgram("Pierwszy", 2567, "10-03-15 11:12:56"));
-            RemotePrograms.Add(new RemoteProgram("Wtorek", 1200, "08-06-17 09:34:43"));
-            RemotePrograms.Add(new RemoteProgram("Asd", 45, "17-11-24 04:32:23"));
-            RemotePrograms.Add(new RemoteProgram("qwerty", 52789, "29-09-32 18:14:32"));
+
+            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>())
+            {
+                new RemoteProgram("Pierwszy", 2567, "10-03-15 11:12:56"),
+                new RemoteProgram("Wtorek", 1200, "08-06-17 09:34:43"),
+                new RemoteProgram("Asd", 45, "17-11-24 04:32:23"),
+                new RemoteProgram("qwerty", 52789, "29-09-32 18:14:32")
+            };
         }
 
         #endregion
@@ -138,18 +134,16 @@ namespace IDE.Common.ViewModels
         /// <summary>
         /// Occurs when there is any text change in Command Input editor.
         /// </summary>
-        private void commandInput_TextChanged(object sender, EventArgs e)
+        private async void commandInput_TextChanged(object sender, EventArgs e)
         {
             if (lineWasNotValid)
             {
-                var isLineValid = commandInput.CheckLineValidationManually(commandInput.Text);
+                var isLineValid = await commandInput.ValidateLine(1);
 
                 if (isLineValid)
                 {
                     lineWasNotValid = false;
                 }
-
-                syntaxCheckVisualizer.Visualize(isLineValid, commandInput.Document.GetLineByNumber(1));
             }
         }
 
@@ -182,7 +176,7 @@ namespace IDE.Common.ViewModels
         /// <summary>
         /// Occurs after user triggers send event.
         /// </summary>
-        private void Send(object obj = null)
+        private async void Send(object obj = null)
         {
             if (!string.IsNullOrWhiteSpace(commandInputText))
             {
@@ -190,7 +184,7 @@ namespace IDE.Common.ViewModels
 
                 if (commandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
-                    syntaxCheckVisualizer.Visualize(true, line);
+                    //syntaxCheckVisualizer.Visualize(true, line);
                     MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text));
                     CommandHistoryText += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                     manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
@@ -199,11 +193,10 @@ namespace IDE.Common.ViewModels
                 }
                 else //if user wants to check syntax
                 {
-                    bool isLineValid = commandInput.CheckLineValidationManually(commandInput.Text);
+                    var isLineValid = await commandInput.ValidateLine(1);
 
                     if (isLineValid)    //if line is valid, send it
                     {
-                        syntaxCheckVisualizer.Visualize(true, line);
                         MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text));
                         CommandHistoryText += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                         manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
@@ -212,7 +205,6 @@ namespace IDE.Common.ViewModels
                     }
                     else //if line is not valid colorize line and don't send
                     {
-                        syntaxCheckVisualizer.Visualize(false, line);
                         lineWasNotValid = true;
                     }
                 }
@@ -286,11 +278,11 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void commandInput_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && commandInput.completionWindow == null)
+            if (e.Key == Key.Enter && !commandInput.IsIntellisenseShowing)
                 Send();
 
 
-            if (commandInput.completionWindow == null)  //if theres no completion window use arrows to show previous messages
+            if (!commandInput.IsIntellisenseShowing)  //if theres no completion window use arrows to show previous messages
             {
                 if (e.Key == Key.Up)
                 {

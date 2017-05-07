@@ -28,7 +28,7 @@
     <UserControl.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding CtrlSKey}"/>
         <KeyBinding Modifiers="Ctrl" Key="N" Command="{Binding CtrlNKey}"/>
-        <KeyBinding Key="Esc" Command="{Binding EscKey}"/>
+        <KeyBinding Key="Escape" Command="{Binding EscKey}"/>
     </UserControl.InputBindings>
 
 

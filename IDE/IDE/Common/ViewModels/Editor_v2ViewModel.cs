@@ -1,5 +1,4 @@
-﻿using ChromeTabs;
-using IDE.Common.Models;
+﻿using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -12,8 +11,6 @@ using System.Linq;
 using Driver;
 using Microsoft.Win32;
 using System.IO;
-using IDE.Common.Models.Services;
-using System.Diagnostics;
 
 namespace IDE.Common.ViewModels
 {

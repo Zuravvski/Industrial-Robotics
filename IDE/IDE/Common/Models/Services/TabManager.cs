@@ -2,12 +2,9 @@
 using IDE.Common.Utilities;
 using IDE.Common.ViewModels.Commands;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace IDE.Common.Models.Services
@@ -19,7 +16,7 @@ namespace IDE.Common.Models.Services
 
         public TabManager()
         {
-            Programs = Session.LoadPrograms();
+            Programs = Session.Instance.LoadPrograms();
         }
 
         #endregion
@@ -50,7 +47,7 @@ namespace IDE.Common.Models.Services
                 };
                 program.Content = File.ReadAllText(program.Path, Encoding.ASCII);
                 Programs.Add(program);
-                Session.SaveSession(Programs);
+                Session.Instance.SavePrograms(Programs);
             }
             catch (Exception)
             {
@@ -66,7 +63,7 @@ namespace IDE.Common.Models.Services
             {
                 var path = program.Path;
                 File.WriteAllText(path, program.Content, Encoding.ASCII);
-                Session.SaveSession(Programs);
+                Session.Instance.SavePrograms(Programs);
             }
             catch (Exception)
             {
@@ -93,7 +90,7 @@ namespace IDE.Common.Models.Services
                 File.Delete(program.Path);
             }
             RemoveProgram(program);
-            Session.SaveSession(Programs);
+            Session.Instance.SavePrograms(Programs);
         }
 
         #endregion

@@ -66,20 +66,11 @@ namespace IDE.Common.Models.Code_Completion
         public string Text { get; private set; }
 
         // Use this property if you want to show a fancy UIElement in the list.
-        public object Content
-        {
-            get { return this.Text; }
-        }
+        public object Content => this.Text;
 
-        public object Description { set; get; }
+        public object Description { private set; get; }
 
-        public double Priority
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        public double Priority => 0;
 
         public void Complete(TextArea textArea, ISegment completionSegment,
             EventArgs insertionRequestEventArgs)

@@ -1,24 +1,19 @@
 ﻿using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
-using Driver;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using Microsoft.Win32;
 using System;
-using IDE.Common.Models.Services;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Driver;
+using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Models.Value_Objects;
 using IDE.Common.Utilities;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using System.Collections.Generic;
-using IDE.Common.Models.Code_Completion;
-using IDE.Common.Utilities.Extensions;
-using IDE.Common.ViewModels;
+using Microsoft.Win32;
 
 namespace IDE.Common.Models
 {
@@ -26,80 +21,68 @@ namespace IDE.Common.Models
     {
 
         #region Fields
-        private Highlighting highlighting;
-        private bool isHighlightingEnabled;
-        private UseIntellisense useIntellisense;
-        private bool isIntellisenseEnabled;
+
+        private SyntaxCheckerModeE syntaxCheckerMode;
         private Program currentProgram;
         private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
-        public CompletionWindow completionWindow;
-        private IList<ICompletionData> data;
-        private Intellisense intellisense;
-        private IEnumerable<Command> commands;
+        private readonly Intellisense intellisense;
+        private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
+        private bool isIntellisenseEnabled;
 
         #endregion
 
         #region enums
-
-        public enum Highlighting
+        
+        public enum SyntaxCheckerModeE
         {
-            On,
-            Off
-        }
-
-        public enum UseIntellisense
-        {
-            Yes,
-            No
+            RealTime,
+            OnDemand
         }
 
         #endregion
 
         #region Constructor
 
-        public ProgramEditor(Highlighting highlighting, UseIntellisense useIntellisense)
-        {
-            this.highlighting = highlighting;
-            this.useIntellisense = useIntellisense;
-        }
-
         public ProgramEditor()
         {
-            MissingFileCreator.CheckForRequiredFiles();
             syntaxChecker = new SyntaxChecker();
+            intellisense = new Intellisense(TextArea);
+            syntaxCheckVisualizer = new SyntaxCheckVisualizer(this);
+            IsIntellisenseEnabled = true;
+            IsHighlightingEnabled = true;
+            Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
+            LoadHighligtingDefinition();
         }
-        
         
         #endregion
 
         #region Properties
 
-        public bool IsHighlightingEnabled
-        {
-            get
-            {
-                return isHighlightingEnabled;
-            }
-            set
-            {
-                isHighlightingEnabled = value;
-                InitializeHighlighting();
-            }
-        }
+        public bool IsHighlightingEnabled { get; set; }
 
         public bool IsIntellisenseEnabled
         {
-            get
-            {
-                return isIntellisenseEnabled;
-            }
+            get { return isIntellisenseEnabled; }
             set
             {
                 isIntellisenseEnabled = value;
-                InitializeIntellisense();
+                if (isIntellisenseEnabled)
+                {
+                    TextArea.TextEntering += OnIntellisensePreparation;
+                    TextArea.TextEntered += OnIntellisenseShow;
+                    TextArea.PreviewKeyDown += OnIntellisenseSubmition;
+                }
+                else
+                {
+                    TextArea.TextEntering -= OnIntellisensePreparation;
+                    TextArea.TextEntered -= OnIntellisenseShow;
+                    TextArea.PreviewKeyDown -= OnIntellisenseSubmition;
+                }
             }
         }
+
+        public bool IsIntellisenseShowing => intellisense.IsShowing;
 
         public Macro CurrentMacro
         {
@@ -127,7 +110,6 @@ namespace IDE.Common.Models
             }
         }
 
-
         public static readonly DependencyProperty DoSyntaxCheckProperty =
              DependencyProperty.Register("DoSyntaxCheck", typeof(bool),
              typeof(ProgramEditor), new FrameworkPropertyMetadata(true));
@@ -137,8 +119,28 @@ namespace IDE.Common.Models
             get { return (bool)GetValue(DoSyntaxCheckProperty); }
             set { SetValue(DoSyntaxCheckProperty, value); }
         }
+
         public bool IsOneLine { get; set; }
-        
+
+        public SyntaxCheckerModeE SyntaxCheckerMode
+        {
+            get { return syntaxCheckerMode; }
+            set
+            {
+                if (value == SyntaxCheckerModeE.RealTime)
+                {
+                    TextChanged += OnSyntaxCheck;
+                    DataObject.AddPastingHandler(this, OnPaste);
+                }
+                else
+                {
+                    TextChanged -= OnSyntaxCheck;
+                    DataObject.RemovePastingHandler(this, OnPaste);
+                }
+                syntaxCheckerMode = value;
+            }
+        }
+
         #endregion
 
         #region Actions
@@ -171,33 +173,18 @@ namespace IDE.Common.Models
             }
         }
 
-        private void InitializeHighlighting()
+        private void LoadHighligtingDefinition()
         {
             if (IsHighlightingEnabled)
             {
-                try
+                var filePath = Session.Instance.Highlighting.FilePath;
+                using (var reader = new XmlTextReader(filePath))
                 {
-                    var definition = HighlightingLoader.Load(XmlReader.Create("CustomHighlighting.xshd"),
-                        HighlightingManager.Instance);
-                    HighlightingManager.Instance.RegisterHighlighting("CustomHighlighting", new[] { ".txt" }, definition);
-                    SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CustomHighlighting");
-                }
-                catch (FileNotFoundException)
-                {
-                    Console.Error.WriteLine("Error loading HighlightingDefinition file");
+                    var definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                    SyntaxHighlighting = definition;
                 }
             }
-        }
 
-        private void InitializeIntellisense()
-        {
-            if (isIntellisenseEnabled)
-            {
-                intellisense = new Intellisense();
-                TextArea.TextEntering += TextArea_TextEntering;
-                TextArea.TextEntered += TextArea_TextEntered;
-                TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
-            }
         }
 
         public bool CheckLineValidationManually(string line)
@@ -213,61 +200,19 @@ namespace IDE.Common.Models
 
         #region Event Handlers
 
-        private void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void OnIntellisenseSubmition(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                if (completionWindow != null)
-                {
-                    completionWindow?.Focus();
-                    e.Handled = true;
-                }
-
-                if (IsOneLine)
-                {
-                    e.Handled = true;
-                }
-            }
+            intellisense.Submit(e, IsOneLine);
         }
 
-        private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        private void OnIntellisensePreparation(object sender, TextCompositionEventArgs e)
         {
-            if (completionWindow == null)
-            {
-                completionWindow = new CompletionWindow(TextArea);
-                data = completionWindow.CompletionList.CompletionData;
-
-                commands = intellisense.Commands;
-                foreach (var command in commands)
-                {
-                    data.Add(new MyCompletionData(command.Content, command.Description, command.Type.Description()));
-                }
-            }
-
-            completionWindow.Closed += delegate
-            {
-                completionWindow = null;
-                data = null;
-            };
-
-
-            if (e.Text.Length > 0 && completionWindow != null)
-            {
-                if (!char.IsLetterOrDigit(e.Text[0]))
-                {
-                    // Whenever a non-letter is typed while the completion window is open, insert the currently selected element.
-                    completionWindow.CompletionList.RequestInsertion(e);
-                }
-            }
-            // Do not set e.Handled=true, we still want to insert the character that was typed.
+            intellisense.Prepare(e);
         }
 
-        private void TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        private void OnIntellisenseShow(object sender, TextCompositionEventArgs e)
         {
-            if (completionWindow != null)
-            {
-                completionWindow.Show();
-            }
+            intellisense.Show();
         }
 
         private void OnSyntaxCheck(object sender, EventArgs e)
@@ -285,38 +230,27 @@ namespace IDE.Common.Models
             ValidateAllLines();
         }
 
-        private async void ValidateAllLines()
+        public async void ValidateAllLines()
         {
             if (!string.IsNullOrEmpty(CurrentProgram?.Content) && DoSyntaxCheck)
             {
-                for(var i = 0; i < TextArea.Document.Lines.Count; i++)
+                foreach (var line in TextArea.Document.Lines)
                 {
-                    var lineText = TextArea.Document.GetText(TextArea.Document.Lines[i]);
+                    var lineText = TextArea.Document.GetText(line);
                     var isValid = await syntaxChecker.ValidateAsync(lineText);
-                    TextArea.TextView.LineTransformers.Add(new LineColorizer(i+1, 
-                        isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
+                    syntaxCheckVisualizer.Visualize(isValid, line);
                 }
             }
         }
 
-        private async void ValidateLine(int lineNum)
+        public async Task<bool> ValidateLine(int lineNum)
         {
-            if (DoSyntaxCheck)
-            {
-                var line = TextArea.Document.GetLineByNumber(lineNum);
-                var lineText = TextArea.Document.GetText(line);
-                var isValid = await syntaxChecker.ValidateAsync(lineText);
-
-                TextArea.TextView.LineTransformers.Add(new LineColorizer(lineNum,
-                    isValid ? LineColorizer.ValidityE.Yes : LineColorizer.ValidityE.No));
-            }
-            else
-            {
-                TextArea.TextView.LineTransformers.Add(
-                    new LineColorizer(lineNum, LineColorizer.ValidityE.Yes));
-            }
+            var line = TextArea.Document.GetLineByNumber(lineNum);
+            var lineText = TextArea.Document.GetText(line);
+            var isValid = await syntaxChecker.ValidateAsync(lineText);
+            syntaxCheckVisualizer.Visualize(!DoSyntaxCheck || isValid, line);
+            return isValid;
         }
-
         
         public void ExportContent(string defaultFileName, string extension)
         {

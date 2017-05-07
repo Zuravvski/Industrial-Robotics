@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using Driver;
@@ -16,7 +17,7 @@ namespace IDE.Common.Models.Services
 
         public ListManager()
         {
-            Programs = Session.LoadPrograms();
+            Programs = Session.Instance.LoadPrograms();
         }
 
         #endregion
@@ -40,14 +41,23 @@ namespace IDE.Common.Models.Services
             try
             {
                 var name = Path.GetFileNameWithoutExtension(path);
-                if (string.IsNullOrEmpty(name)) return;
+                if (string.IsNullOrEmpty(name))
+                {
+                    return;
+                }
                 var program = new Program(name)
                 {
                     Path = path
                 };
                 program.Content = File.ReadAllText(program.Path, Encoding.ASCII);
-                Programs.Add(program);
-                Session.SaveSession(Programs);
+                
+                // Allow only one program loaded from the same path
+                if (Programs.All(p => p.Path != path))
+                {
+                    Programs.Add(program);
+                }
+                
+                Session.Instance.SavePrograms(Programs);
             }
             catch (Exception)
             {
@@ -58,12 +68,15 @@ namespace IDE.Common.Models.Services
 
         public void SaveProgram(Program program)
         {
-            if (string.IsNullOrEmpty(program.Name) && string.IsNullOrEmpty(program.Path)) return;
+            if (string.IsNullOrEmpty(program.Name) && string.IsNullOrEmpty(program.Path))
+            {
+                return;
+            }
             try
             {
                 var path = program.Path;
                 File.WriteAllText(path, program.Content, Encoding.ASCII);
-                Session.SaveSession(Programs);
+                Session.Instance.SavePrograms(Programs);
             }
             catch (Exception)
             {
@@ -90,7 +103,7 @@ namespace IDE.Common.Models.Services
                 File.Delete(program.Path);
             }
             RemoveProgram(program);
-            Session.SaveSession(Programs);
+            Session.Instance.SavePrograms(Programs);
         }
         #endregion
 

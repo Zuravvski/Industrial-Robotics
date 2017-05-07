@@ -18,12 +18,12 @@ namespace IDE.Common.Utilities
         {
             File.WriteAllText($@"{fileName}.{fileExtension}", "aaaa");    //to clear desired file before writing
 
-            FileStream fs = File.Open($@"{fileName}.{fileExtension}", FileMode.OpenOrCreate);
-            StreamWriter sw = new StreamWriter(fs);
+            var fs = File.Open($@"{fileName}.{fileExtension}", FileMode.OpenOrCreate);
+            var sw = new StreamWriter(fs);
             using (JsonWriter jw = new JsonTextWriter(sw))
             {
                 jw.Formatting = formatingStyle;
-                JsonSerializer serializer = new JsonSerializer();
+                var serializer = new JsonSerializer();
                 serializer.Serialize(jw, obj);
             }
         }
@@ -35,10 +35,10 @@ namespace IDE.Common.Utilities
         /// <param name="fileExtension">Extension of a file containing json.</param>
         public static T DeserializeObject<T>(string fileName, string fileExtension = "txt")
         {
-            FileStream fs = File.Open($@"{fileName}.{fileExtension}", FileMode.Open);
-            StreamReader sr = new StreamReader(fs);
-            string json = sr.ReadToEnd();
-            T myObject =  JsonConvert.DeserializeObject<T>(json);
+            var fs = File.Open($@"{fileName}.{fileExtension}", FileMode.Open);
+            var sr = new StreamReader(fs);
+            var json = sr.ReadToEnd();
+            var myObject =  JsonConvert.DeserializeObject<T>(json);
 
             return myObject;
         }

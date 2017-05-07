@@ -23,8 +23,8 @@ namespace IDE.Common.Models.Value_Objects
 
         public enum TypeE
         {
-            [Description("None")]
-            None,
+            [Description("Other")]
+            Other,
             [Description("Comment")]
             Comment,
             [Description("Movement")]
@@ -32,7 +32,7 @@ namespace IDE.Common.Models.Value_Objects
             [Description("Grip")]
             Grip,
             [Description("TimersCounters")]
-            TimersCounter,
+            TimersCounters,
             [Description("Programming")]
             Programming,
             [Description("Information")]

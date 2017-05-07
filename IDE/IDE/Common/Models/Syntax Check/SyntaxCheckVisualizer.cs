@@ -1,33 +1,25 @@
-﻿using ICSharpCode.AvalonEdit.AddIn;
-using ICSharpCode.AvalonEdit.Document;
+﻿using System;
+using ICSharpCode.AvalonEdit.AddIn;
 using ICSharpCode.SharpDevelop.Editor;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Diagnostics;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace IDE.Common.Models.Syntax_Check
 {
     public class SyntaxCheckVisualizer
     {
-        private readonly ProgramEditor textEditor;
-        private readonly ITextMarkerService textMarkerService;
+        private readonly TextMarkerService textMarkerService;
 
         public SyntaxCheckVisualizer(ProgramEditor textEditor)
-        {
-            this.textEditor = textEditor;
-
-            var textMarkerService = new TextMarkerService(textEditor.Document);
+        { 
+            textMarkerService = new TextMarkerService(textEditor.Document);
             textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
             textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
-            IServiceContainer services = (IServiceContainer)textEditor.Document.ServiceProvider.GetService(typeof(IServiceContainer));
-            if (services != null)
-                services.AddService(typeof(ITextMarkerService), textMarkerService);
-            this.textMarkerService = textMarkerService;
+            var services =
+                (IServiceContainer) textEditor.Document.ServiceProvider.GetService(typeof(IServiceContainer));
+            services?.AddService(typeof(TextMarkerService), textMarkerService);
         }
 
         public void Visualize(bool isValid, DocumentLine line)
@@ -49,7 +41,7 @@ namespace IDE.Common.Models.Syntax_Check
 
         private void AddMarker(DocumentLine line)
         {
-            ITextMarker marker = textMarkerService.Create(line.Offset, line.Length);
+            var marker = textMarkerService.Create(line.Offset, line.Length);
             marker.MarkerTypes = TextMarkerTypes.SquigglyUnderline;
             marker.MarkerColor = Colors.Red;
         }

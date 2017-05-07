@@ -7,7 +7,7 @@ namespace IDE.Common.Views
     /// <summary>
     /// Interaction logic for Browse.xaml
     /// </summary>
-    public partial class Browse : UserControl//, Observer
+    public partial class Browse : UserControl 
     {
 
         #region Constructor

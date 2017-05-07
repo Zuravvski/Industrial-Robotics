@@ -1,265 +1,44 @@
-﻿using IDE.Common.Models;
+﻿using System.Collections.Generic;
 using IDE.Common.ViewModels.Commands;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Xceed.Wpf.Toolkit;
+using IDE.Common.Models.Value_Objects;
+using IDE.Common.Utilities;
+using Microsoft.Win32;
 
 namespace IDE.Common.ViewModels
 {
-    class HighlightingViewModel : INotifyPropertyChanged
+    public class HighlightingViewModel : ObservableObject
     {
-
-        #region Fields
-
-        private Color colorMovement, colorGrip, colorCounters, colorProgramming, colorInformations, colorNumbers, colorComments;
-        private Brush foregroundMovement, foregroundGrip, foregroundCounters, foregroundProgramming, foregroundInformations, foregroundNumbers, foregroundComments;
-        CustomHighlighting highlighting;
-
-        #endregion
+        private readonly Highlighting highlighting;
+        private Dictionary<Command.TypeE, Color> colorMap;
 
         #region Constructor
 
         public HighlightingViewModel()
         {
-            highlighting = new CustomHighlighting();
+            highlighting = Session.Instance.Highlighting;
+            RefreshColors();
 
-            //default colors
-            var currentDefinitions = highlighting.HighlightingDefinitionColors;
-            ColorMovement = currentDefinitions[0];
-            ColorGrip = currentDefinitions[1];
-            ColorCounters = currentDefinitions[2];
-            ColorProgramming = currentDefinitions[3];
-            ColorInformations = currentDefinitions[4];
-            ColorNumbers = currentDefinitions[5];
-            ColorComments = currentDefinitions[6];
-
-
-            ExportClickCommand = new RelayCommand(Export, IsFileAvailable);
-            ImportClickCommand = new RelayCommand(Import, IsFileAvailable);
-            ApplyClickCommand = new RelayCommand(Apply, IsFileAvailable);
+            ExportClickCommand = new RelayCommand(Export);
+            ImportClickCommand = new RelayCommand(Import);
+            ApplyClickCommand = new RelayCommand(Apply);
         }
-
-        private bool IsFileAvailable(object obj)
-        {
-            string[] files = Directory.GetFiles(".", "*xshd");
-
-            foreach (string file in files)
-            {
-                if (file == ".\\CustomHighlighting.xshd")
-                    return true;
-            }
-
-            return false;
-        }
-
 
         #endregion
 
         #region Properties
 
-        public Color ColorMovement
+        public Dictionary<Command.TypeE, Color> Colors
         {
-            set
+            private set
             {
-                colorMovement = value;
-                SolidColorBrush brush = new SolidColorBrush(ColorMovement);
-                ForegroundMovement = brush;
-                OnPropertyChanged("ColorMovement");
+                colorMap = value;
+                NotifyPropertyChanged("Colors");
             }
             get
             {
-                return colorMovement;
-            }
-        }
-
-        public Color ColorGrip
-        {
-            set
-            {
-                colorGrip = value;
-                SolidColorBrush brush = new SolidColorBrush(ColorGrip);
-                ForegroundGrip = brush;
-                OnPropertyChanged("ColorGrip");
-            }
-            get
-            {
-                return colorGrip;
-            }
-        }
-
-        public Color ColorCounters
-        {
-            set
-            {
-                colorCounters = value;
-                SolidColorBrush brush = new SolidColorBrush(ColorCounters);
-                ForegroundCounters = brush;
-                OnPropertyChanged("ColorCounters");
-            }
-            get
-            {
-                return colorCounters;
-            }
-        }
-
-        public Color ColorProgramming
-        {
-            set
-            {
-                colorProgramming = value;
-                SolidColorBrush brush = new SolidColorBrush(ColorProgramming);
-                ForegroundProgramming = brush;
-                OnPropertyChanged("ColorProgramming");
-            }
-            get
-            {
-                return colorProgramming;
-            }
-        }
-
-        public Color ColorInformations
-        {
-            set
-            {
-                colorInformations = value;
-                SolidColorBrush brush = new SolidColorBrush(ColorInformations);
-                ForegroundInformations = brush;
-                OnPropertyChanged("ColorInformations");
-            }
-            get
-            {
-                return colorInformations;
-            }
-        }
-
-        public Color ColorNumbers
-        {
-            set
-            {
-                colorNumbers = value;
-                SolidColorBrush brush = new SolidColorBrush(ColorNumbers);
-                ForegroundNumbers = brush;
-                OnPropertyChanged("ColorNumbers");
-            }
-            get
-            {
-                return colorNumbers;
-            }
-        }
-
-        public Color ColorComments
-        {
-            set
-            {
-                colorComments = value;
-                SolidColorBrush brush = new SolidColorBrush(ColorComments);
-                ForegroundComments = brush;
-                OnPropertyChanged("ColorComments");
-            }
-            get
-            {
-                return colorComments;
-            }
-        }
-
-
-        public Brush ForegroundMovement
-        {
-            set
-            {
-                foregroundMovement = value;
-                OnPropertyChanged("ForegroundMovement");
-            }
-            get
-            {
-                return foregroundMovement;
-            }
-        }
-
-        public Brush ForegroundGrip
-        {
-            set
-            {
-                foregroundGrip = value;
-                OnPropertyChanged("ForegroundGrip");
-            }
-            get
-            {
-                return foregroundGrip;
-            }
-        }
-
-        public Brush ForegroundCounters
-        {
-            set
-            {
-                foregroundCounters = value;
-                OnPropertyChanged("ForegroundCounters");
-            }
-            get
-            {
-                return foregroundCounters;
-            }
-        }
-
-        public Brush ForegroundProgramming
-        {
-            set
-            {
-                foregroundProgramming = value;
-                OnPropertyChanged("ForegroundProgramming");
-            }
-            get
-            {
-                return foregroundProgramming;
-            }
-        }
-
-        public Brush ForegroundInformations
-        {
-            set
-            {
-                foregroundInformations = value;
-                OnPropertyChanged("ForegroundInformations");
-            }
-            get
-            {
-                return foregroundInformations;
-            }
-        }
-
-        public Brush ForegroundNumbers
-        {
-            set
-            {
-                foregroundNumbers = value;
-                OnPropertyChanged("ForegroundNumbers");
-            }
-            get
-            {
-                return foregroundNumbers;
-            }
-        }
-
-        public Brush ForegroundComments
-        {
-            set
-            {
-                foregroundComments = value;
-                OnPropertyChanged("ForegroundComments");
-            }
-            get
-            {
-                return foregroundComments;
+                return colorMap;
             }
         }
 
@@ -275,30 +54,45 @@ namespace IDE.Common.ViewModels
         private void Import(object obj)
         {
             //read highlight definition and write it into "main" HighlightingDefinition file
-            highlighting.HighlightingDefinitionColors = highlighting.ImportDefinitionsColors;
+            var dialog = new OpenFileDialog
+            {
+                FileName = "CustomHighlighting",
+                DefaultExt = ".xshd",
+                Filter = "xshd files (.xshd)|*.xshd",
+                ValidateNames = true,
+                CheckFileExists = true
+            };
+            if (dialog.ShowDialog().GetValueOrDefault(false))
+            {
+                highlighting.Import(dialog.FileName);
+                RefreshColors();
+            }
         }
 
         private void Export(object obj)
         {
-            Color[] colorList = new Color[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
-            highlighting.ExportDefinitionsColors = colorList;   //send current colors into export method
+            var dialog = new SaveFileDialog
+            {
+                FileName = "CustomHighlighting",
+                DefaultExt = ".xshd",
+                Filter = "xshd files (.xshd)|*.xshd",
+                ValidateNames = true
+            };
+
+            if (dialog.ShowDialog().GetValueOrDefault(false))
+            {
+                highlighting.Export(dialog.FileName);
+            }
         }
 
         private void Apply(object obj)
         {
-            Color[] colorList = new Color[] { ColorMovement, ColorGrip, ColorCounters, ColorProgramming, ColorInformations, ColorNumbers, ColorComments };
-            highlighting.HighlightingDefinitionColors = colorList;  //
+            highlighting.Apply(Colors);
         }
 
-        #endregion
-
-        #region PropertyChangedEvents
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        private void RefreshColors()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Colors = highlighting.Colors;
         }
 
         #endregion

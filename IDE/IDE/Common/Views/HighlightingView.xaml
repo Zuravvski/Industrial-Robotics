@@ -5,8 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:IDE.Common.Views"
+             xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    
+    <UserControl.Resources>
+        <converters:ColorToBrush x:Key="ColorConverter"/>
+    </UserControl.Resources>
 
     <Grid>
         <GroupBox Header="" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="0">
@@ -20,8 +25,8 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Movement" Grid.Column="0"/>
-                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundMovement}" Grid.Column="1"/>
-                    <xctk:ColorPicker SelectedColor="{Binding ColorMovement}" Grid.Column="2"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ElementName=movementPicker, Path=SelectedColor, Converter={StaticResource ColorConverter}}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding Colors[Movement]}" Grid.Column="2" Name="movementPicker"/>
                 </Grid>
 
                 <Grid>
@@ -32,8 +37,8 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Grip" Grid.Column="0"/>
-                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundGrip}" Grid.Column="1"/>
-                    <xctk:ColorPicker SelectedColor="{Binding ColorGrip}" Grid.Column="2"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ElementName=gripPicker, Path=SelectedColor, Converter={StaticResource ColorConverter}}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding Colors[Grip]}" Grid.Column="2" Name="gripPicker"/>
                 </Grid>
 
                 <Grid>
@@ -44,8 +49,8 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Counters" Grid.Column="0"/>
-                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundCounters}" Grid.Column="1"/>
-                    <xctk:ColorPicker SelectedColor="{Binding ColorCounters}" Grid.Column="2"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ElementName=timersCountersPicker, Path=SelectedColor, Converter={StaticResource ColorConverter}}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding Colors[TimersCounters]}" Grid.Column="2" Name="timersCountersPicker"/>
                 </Grid>
 
                 <Grid>
@@ -56,8 +61,8 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Programming" Grid.Column="0"/>
-                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundProgramming}" Grid.Column="1"/>
-                    <xctk:ColorPicker SelectedColor="{Binding ColorProgramming}" Grid.Column="2"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ElementName=programmingPicker, Path=SelectedColor, Converter={StaticResource ColorConverter}}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding Colors[Programming]}" Grid.Column="2" Name="programmingPicker"/>
                 </Grid>
 
                 <Grid>
@@ -67,9 +72,9 @@
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Informations" Grid.Column="0"/>
-                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundInformations}" Grid.Column="1"/>
-                    <xctk:ColorPicker SelectedColor="{Binding ColorInformations}" Grid.Column="2"/>
+                    <TextBlock Text="Information" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ElementName=informationPicker, Path=SelectedColor, Converter={StaticResource ColorConverter}}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding Colors[Information]}" Grid.Column="2" Name="informationPicker"/>
                 </Grid>
 
                 <Grid>
@@ -79,9 +84,9 @@
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Numbers" Grid.Column="0"/>
-                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundNumbers}" Grid.Column="1"/>
-                    <xctk:ColorPicker SelectedColor="{Binding ColorNumbers}" Grid.Column="2"/>
+                    <TextBlock Text="Other" Grid.Column="0"/>
+                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ElementName=otherPicker, Path=SelectedColor, Converter={StaticResource ColorConverter}}" Grid.Column="1"/>
+                    <xctk:ColorPicker SelectedColor="{Binding Colors[Other]}" Grid.Column="2" Name="otherPicker"/>
                 </Grid>
 
                 <Grid>
@@ -90,10 +95,6 @@
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
-
-                    <TextBlock Text="Comments" Grid.Column="0"/>
-                    <TextBlock Text="This is a sample text 123" Foreground="{Binding ForegroundComments}" Grid.Column="1"/>
-                    <xctk:ColorPicker SelectedColor="{Binding ColorComments}" Grid.Column="2"/>
                 </Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Command="{Binding ImportClickCommand}" Content="Import"  Margin="0,5,5,0"  HorizontalAlignment="Right" Width="75"/>

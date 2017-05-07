@@ -1,52 +1,73 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
+using System.Windows.Input;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Editing;
 using IDE.Common.Models.Value_Objects;
+using IDE.Common.Utilities;
 using IDE.Common.Utilities.Extensions;
-using System.Diagnostics;
 
 namespace IDE.Common.Models.Code_Completion
 {
     public class Intellisense
     {
-        private static readonly string DEFAULT_COMMANDS_PATH = "Commands.xml";
-        public ISet<Command> Commands { get; }
+        private readonly ISet<Command> commands;
+        private CompletionWindow completionWindow;
+        private readonly TextArea textArea;
 
-        public Intellisense()
+        public bool IsShowing => completionWindow != null && completionWindow.IsVisible;
+
+        public Intellisense(TextArea textArea)
         {
-            Commands = new HashSet<Command>();
+            commands = Session.Instance.Commands.CommandsMap;
+            this.textArea = textArea;
+        }
 
-            try
+        public void Prepare(TextCompositionEventArgs e)
+        {
+            if (completionWindow == null)
             {
-                var document = new XmlDocument();
-                document.Load(DEFAULT_COMMANDS_PATH);
+                completionWindow = new CompletionWindow(textArea);
 
-                var root = document.SelectSingleNode("/Commands");
-                var commandNodes = root.ChildNodes;
-
-                foreach (XmlNode commandNode in commandNodes)
+                foreach (var command in commands)
                 {
-                    var type = commandNode.Attributes[3].Value;
-                    var name = commandNode.Attributes[0].Value;
-                    var content = commandNode.Attributes[1].Value;
-                    var regex = new Regex(commandNode.Attributes[2].Value);
-                    var description = commandNode.FirstChild.InnerText;
-
-                    Commands.Add(Command.CreateCommand(name, content, description, regex, 
-                        EnumExtensions.GetValueFromDescription<Command.TypeE>(type)));
+                    completionWindow.CompletionList.CompletionData.Add(new CompletionData(command.Content, command.Description, command.Type.Description()));
                 }
+                completionWindow.Closed += delegate
+                {
+                    completionWindow = null;
+                };
             }
-            catch
+            
+            if (e.Text.Length > 0 && completionWindow != null)
             {
-                Debug.WriteLine("Command definitions not found");
+                if (!char.IsLetterOrDigit(e.Text[0]))
+                {
+                    // Whenever a non-letter is typed while the completion window is open, insert the currently selected element.
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
             }
         }
 
-        public async Task<IEnumerable<Command>> GetCompletionAsync(string context)
+        public void Submit(KeyEventArgs e, bool isOneLine)
         {
-            return await Task.Run(() => Commands.Where(command => command.Content.StartsWith(context)));
+            if (e.Key == Key.Enter)
+            {
+                if (completionWindow != null)
+                {
+                    completionWindow?.Focus();
+                    e.Handled = true;
+                }
+
+                if (isOneLine)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        public void Show()
+        {
+            completionWindow?.Show();
         }
     }
 }

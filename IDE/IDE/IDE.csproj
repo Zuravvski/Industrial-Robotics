@@ -123,11 +123,13 @@
     <Compile Include="Common\Models\Value Objects\Command.cs" />
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
+    <Compile Include="Common\Utilities\Commands.cs" />
     <Compile Include="Common\Utilities\Extensions\EnumExtensions.cs" />
+    <Compile Include="Common\Utilities\Highlighting.cs" />
     <Compile Include="Common\Utilities\IXMLObject.cs" />
     <Compile Include="Common\Utilities\Json.cs" />
     <Compile Include="Common\Utilities\ConfigurationService.cs" />
-    <Compile Include="Common\Utilities\MissingFileCreator.cs" />
+    <Compile Include="Common\Utilities\MissingFileManager.cs" />
     <Compile Include="Common\Utilities\ProgramContentConverter.cs" />
     <Compile Include="Common\Utilities\Session.cs" />
     <Compile Include="Common\ViewModels\AboutViewModel.cs" />
@@ -270,6 +272,7 @@
       <SubType>Designer</SubType>
     </Page>
     <None Include="Others\packages.config" />
+    <EmbeddedResource Include="Others\Resources\Highlighting.xshd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -364,6 +367,9 @@
   <ItemGroup>
     <Resource Include="Icons\floppy_disk_blue.png" />
     <Resource Include="Icons\floppy_disk_red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Others\Resources\Commands.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,5 +1,7 @@
 ﻿using Driver;
 using IDE.Common.ViewModels.Commands;
+using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -15,8 +17,10 @@ namespace IDE.Common.Models
         #region Fields
 
         private BitmapImage image;
+        private string tabText;
         private bool unsavedChanges = true;
         private string header;
+        private ObservableCollection<Positions> positionItemSource;
 
         #endregion
 
@@ -32,7 +36,8 @@ namespace IDE.Common.Models
             if (program == null)
             {
                 Header = $"Untitled {untitledsCount}";
-                Content = new ProgramEditor { Text = string.Empty, DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
+                Content = new ProgramEditor { DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
+                TabText = string.Empty;
                 //we are setting this twice to trigger rising edge event. Dont change it, just accept fact that it is working this way.
                 UnsavedChanged = false;
                 UnsavedChanged = true;
@@ -40,12 +45,13 @@ namespace IDE.Common.Models
             else
             {
                 Header = program.Name;
-                Content = new ProgramEditor { Text = program.Content, DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
+                Content = new ProgramEditor { DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
+                TabText = program.Content;
                 UnsavedChanged = false;
             }
             Program = program;
-
-            ArrangeTabView();
+            PositionItemSource = new ObservableCollection<Positions>();
+            GenerateDumpPositions();
         }
 
         #endregion
@@ -78,9 +84,20 @@ namespace IDE.Common.Models
             }
         }
 
-        public ProgramEditor Content { get; private set; }
+        public string TabText
+        {
+            get
+            {
+                return tabText;
+            }
+            set
+            {
+                tabText = value;
+                NotifyPropertyChanged("TabText");
+            }
+        }
 
-        public Grid MixedContent { get; private set; }
+        public ProgramEditor Content { get; private set; }
 
         public Program Program { get; set; }
 
@@ -108,20 +125,117 @@ namespace IDE.Common.Models
                 unsavedChanges = value;
             }
         }
+        public ObservableCollection<Positions> PositionItemSource
+        {
+            get
+            {
+                return positionItemSource;
+            }
+            set
+            {
+                positionItemSource = value;
+                NotifyPropertyChanged("PositionItemSource");
+            }
+        }
 
         #endregion
 
         #region Actions
 
-        private void ArrangeTabView()
+        private void GenerateDumpPositions()
         {
-            MixedContent = new Grid();
-            MixedContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(5, System.Windows.GridUnitType.Star) });
-            MixedContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(4, System.Windows.GridUnitType.Star) });
+            var rand = new Random();
 
-            Grid.SetColumn(Content, 0);
-            MixedContent.Children.Add(Content);
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 1,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 2,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 3,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 5,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 8,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "C"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 9,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "C"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 15,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "C"
+            });
+            PositionItemSource.Add(new Positions()
+            {
+                Pos = 22,
+                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
+                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
+                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
+                OC = "O"
+            });
         }
+
 
         private void Content_TextChanged(object sender, System.EventArgs e)
         {

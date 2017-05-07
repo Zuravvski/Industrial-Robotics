@@ -13,7 +13,8 @@
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
              xmlns:properties="clr-namespace:IDE.Properties"
              xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
-             xmlns:ctConv="clr-namespace:ChromeTabs.Converters;assembly=ChromeTabs">
+             xmlns:ctConv="clr-namespace:ChromeTabs.Converters;assembly=ChromeTabs"
+             xmlns:models="clr-namespace:IDE.Common.Models">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -148,10 +149,101 @@
                              IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
                              SelectedContent="0">
 
+            <ct:ChromeTabControl.Resources>
+                <Grid x:Key="TabContent">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <models:ProgramEditor Background="Transparent" IsHighlightingEnabled="True" IsIntellisenseEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ShowLineNumbers="True" Grid.Column="0">
+                        <i:Interaction.Behaviors>
+                            <models:AvalonEditBehaviour GiveMeTheText="{Binding TabText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </i:Interaction.Behaviors>
+                    </models:ProgramEditor>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,25,0,0">
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                            <TextBlock DockPanel.Dock="Top" Text="Position manager for " Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding Header, Converter={StaticResource RemoveStar}}" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
+                        </StackPanel>
+                        <DataGrid CanUserResizeColumns="False" ItemsSource="{Binding PositionItemSource}" AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+
+                                <mui:DataGridTextColumn Header="Pos" Binding="{Binding Pos}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="3"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                                <mui:DataGridTextColumn Header="X" Binding="{Binding X}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="5"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                                <mui:DataGridTextColumn Header="Y" Binding="{Binding Y}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="6"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                                <mui:DataGridTextColumn Header="Z" Binding="{Binding Z}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="6"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                                <mui:DataGridTextColumn Header="A" Binding="{Binding A}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="6"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                                <mui:DataGridTextColumn Header="B" Binding="{Binding B}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="6"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                                <mui:DataGridTextColumn Header="L1" Binding="{Binding L1}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="8"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                                <mui:DataGridTextColumn Header="O/C" Binding="{Binding OC}">
+                                    <mui:DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="MaxLength" Value="1"/>
+                                        </Style>
+                                    </mui:DataGridTextColumn.EditingElementStyle>
+                                </mui:DataGridTextColumn>
+
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Grid>
+            </ct:ChromeTabControl.Resources>
+
             <!-- BINDING CONTENT -->
             <ct:ChromeTabControl.ItemContainerStyle>
                 <Style TargetType="ct:ChromeTabItem">
-                    <Setter Property="Content" Value="{Binding MixedContent}"/>
+                    <Setter Property="Content" Value="{StaticResource TabContent}"/>
                 </Style>
             </ct:ChromeTabControl.ItemContainerStyle>
             
@@ -196,7 +288,7 @@
         <!--#region PositionList-->
 
 
-        <StackPanel Grid.Row="1" Grid.Column="1" Visibility="{Binding PositionManagerVisibility}" Margin="0,25,0,0">
+        <!--<StackPanel Grid.Row="1" Grid.Column="1" Visibility="{Binding PositionManagerVisibility}" Margin="0,25,0,0">
             <StackPanel Orientation="Horizontal">
                 <TextBlock DockPanel.Dock="Top" Text="Position manager for " Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
                 <TextBlock DockPanel.Dock="Top" Text="{Binding Path=SelectedTabItem.Header, Converter={StaticResource RemoveStar}}" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
@@ -270,7 +362,7 @@
                     
                 </DataGrid.Columns>
             </DataGrid>
-        </StackPanel>
+        </StackPanel>-->
 
         <!--#endregion-->
 

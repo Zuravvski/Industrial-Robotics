@@ -24,7 +24,6 @@ namespace IDE.Common.ViewModels
         private Visibility positionManagerVisibility = Visibility.Hidden;
         private ObservableCollection<TabItem> tabItems;
         private ObservableCollection<RadialMenuItem> radialMenuItems;
-        private ObservableCollection<Positions> positionItemSource;
         private bool radialMenuIsOpen;
         
         private Visibility radialMenuEnableButtonVisibility;
@@ -56,107 +55,10 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {
             TabItems = new ObservableCollection<TabItem>();
-            PositionItemSource = new ObservableCollection<Positions>();
 
             DeclareCommands();
             SetupMainSubmenu();
-            GenerateDumpPositions();
         }
-
-        private void GenerateDumpPositions()
-        {
-            var rand = new Random();
-
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 1,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 2,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 3,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 5,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 8,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "C"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 9,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "C"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 15,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "C"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 22,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-        }
-
 
         #endregion
 
@@ -177,18 +79,6 @@ namespace IDE.Common.ViewModels
 
         public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
 
-        public ObservableCollection<Positions> PositionItemSource
-        {
-            get
-            {
-                return positionItemSource;
-            }
-            set
-            {
-                positionItemSource = value;
-                NotifyPropertyChanged("PositionItemSource");
-            }
-        }
 
         public ObservableCollection<RadialMenuItem> RadialMenuItems
         {
@@ -587,8 +477,8 @@ namespace IDE.Common.ViewModels
             var path = Path.GetFullPath(dialog.FileName);
             var name = Path.GetFileNameWithoutExtension(dialog.FileName);
 
-            tabItem.Program = new Program(name) { Path = path, Content = tabItem.Content.Text };
-            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
+            tabItem.Program = new Program(name) { Path = path, Content = tabItem.TabText };
+            File.WriteAllText(tabItem.Program.Path, tabItem.TabText);
 
             //update UI
             tabItem.Header = tabItem.Program.Name;
@@ -611,7 +501,7 @@ namespace IDE.Common.ViewModels
                 return SaveAsTab(tabItem);
             }
             //else just save it under path declared in ~Program.path~
-            File.WriteAllText(tabItem.Program.Path, tabItem.Content.Text);
+            File.WriteAllText(tabItem.Program.Path, tabItem.TabText);
 
             //update gui
             tabItem.UnsavedChanged = false;

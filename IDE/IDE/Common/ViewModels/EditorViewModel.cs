@@ -431,7 +431,7 @@ namespace IDE.Common.ViewModels
             if (!Equals(doesTabAlreadyExist, null))
             {
                 //if this file is already open reload it's content and set is as current tab
-                doesTabAlreadyExist.Content.Text = doesTabAlreadyExist.Program.Content;
+                doesTabAlreadyExist.TabText = doesTabAlreadyExist.Program.Content;
                 doesTabAlreadyExist.UnsavedChanged = false;
                 SelectedTabItem = doesTabAlreadyExist;
                 return;
@@ -550,7 +550,7 @@ namespace IDE.Common.ViewModels
             var tabItem = obj as TabItem;
             SelectedTabItem = tabItem;  //show user what he is about to close
 
-            if (tabItem.Program != null && tabItem.UnsavedChanged || tabItem.Program == null && tabItem.Content.Text != string.Empty)
+            if (tabItem.Program != null && tabItem.UnsavedChanged || tabItem.Program == null && tabItem.TabText != string.Empty)
             {
                 var dialog = MessageBox.Show($"Save file {tabItem.Header.Replace("*", string.Empty)}?",
                     "Unsaved data", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);

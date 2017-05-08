@@ -1,4 +1,5 @@
 ﻿using Driver;
+using IDE.Common.Models.Value_Objects;
 using IDE.Common.ViewModels.Commands;
 using System;
 using System.Collections.ObjectModel;
@@ -36,7 +37,6 @@ namespace IDE.Common.Models
             if (program == null)
             {
                 Header = $"Untitled {untitledsCount}";
-                Content = new ProgramEditor { DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
                 TabText = string.Empty;
                 //we are setting this twice to trigger rising edge event. Dont change it, just accept fact that it is working this way.
                 UnsavedChanged = false;
@@ -45,7 +45,6 @@ namespace IDE.Common.Models
             else
             {
                 Header = program.Name;
-                Content = new ProgramEditor { DoSyntaxCheck = true, SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime };
                 TabText = program.Content;
                 UnsavedChanged = false;
             }
@@ -96,8 +95,6 @@ namespace IDE.Common.Models
                 NotifyPropertyChanged("TabText");
             }
         }
-
-        public ProgramEditor Content { get; private set; }
 
         public Program Program { get; set; }
 
@@ -242,7 +239,7 @@ namespace IDE.Common.Models
             if (Program != null)
             {
                 //if the text has changed and it does not match saved content anymore
-                if (!Content.Text.Equals(Program.Content))
+                if (!TabText.Equals(Program.Content))
                 {
                     UnsavedChanged = true;
                 }

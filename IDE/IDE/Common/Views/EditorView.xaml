@@ -11,9 +11,7 @@
              
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
-             xmlns:properties="clr-namespace:IDE.Properties"
              xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
-             xmlns:ctConv="clr-namespace:ChromeTabs.Converters;assembly=ChromeTabs"
              xmlns:models="clr-namespace:IDE.Common.Models">
 
     <UserControl.Resources>
@@ -21,147 +19,25 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary  Source="/Icons/Icons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
             <converters:RemoveStarConverter x:Key="RemoveStar"/>
-        </ResourceDictionary>
-    </UserControl.Resources>
 
-    <UserControl.InputBindings>
-        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding CtrlSKey}"/>
-        <KeyBinding Modifiers="Ctrl" Key="N" Command="{Binding CtrlNKey}"/>
-        <KeyBinding Key="Escape" Command="{Binding EscKey}"/>
-    </UserControl.InputBindings>
-
-
-    <Grid>
-
-        <!--#region RowDefinitions-->
-        
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="9*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="4*"/>
-        </Grid.ColumnDefinitions>
-        
-        <!--#endregion-->
-        
-        <!--#region Menu-->
-
-        <!-- Button enabling radial menu -->
-        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0" ToolTip="Options">
-            <RadialMenu:RadialMenu.CentralItem>
-                <RadialMenu:RadialMenuCentralItem Command="{Binding OpenRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}">
-                    <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuEnableButtonVisibility}">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{StaticResource appbar_lines_horizontal_4}"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                </RadialMenu:RadialMenuCentralItem>
-            </RadialMenu:RadialMenu.CentralItem>
-        </RadialMenu:RadialMenu>
-
-
-        <!-- Radial menu -->
-        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen}"
-                               Grid.RowSpan="2" 
-                               HorizontalAlignment="Left" 
-                               VerticalAlignment="Top" 
-                               Margin="-100,-125,0,0"
-                               Panel.ZIndex="99">
-
-
-            <!-- CentralMenuItem -->
-
-            <RadialMenu:RadialMenu.CentralItem>
-                <RadialMenu:RadialMenuCentralItem Command="{Binding CloseRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuCentralItemTooltip}">
-                    <Rectangle Width="25" Height="25">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{StaticResource appbar_close}"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                </RadialMenu:RadialMenuCentralItem>
-            </RadialMenu:RadialMenu.CentralItem>
-
-            <!-- MenuItems Around -->
-
-
-
-            <RadialMenu:RadialMenuItem Visibility="Hidden" />
-
-            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem3Command}" Visibility="{Binding RadialMenuItem3Visibility}" ArrowBackground="{Binding RadialMenuArrow3Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuItem3Tooltip}">
-                <WrapPanel Orientation="Vertical">
-                    <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuItem3IconVisibility}">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{StaticResource appbar_settings}"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <TextBlock Text="{Binding RadialMenuItem3Text}"  FontSize="14" TextAlignment="Center"/>
-                </WrapPanel>
-            </RadialMenu:RadialMenuItem>
-
-            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem2Command}" Visibility="{Binding RadialMenuItem2Visibility}" ArrowBackground="{Binding RadialMenuArrow2Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuItem2Tooltip}">
-                <WrapPanel Orientation="Vertical">
-                    <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuItem2IconVisibility}">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{StaticResource appbar_save}"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <TextBlock Text="{Binding RadialMenuItem2Text}"  FontSize="14" TextAlignment="Center"/>
-                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox2IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox2Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
-                </WrapPanel>
-            </RadialMenu:RadialMenuItem>
-
-            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem1Command}" Visibility="{Binding RadialMenuItem1Visibility}" ArrowBackground="{Binding RadialMenuArrow1Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuItem1Tooltip}">
-                <WrapPanel Orientation="Vertical">
-                    <Rectangle Width="20" Height="25" Visibility="{Binding RadialMenuItem1IconVisibility}">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{StaticResource appbar_page}"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <TextBlock Text="{Binding RadialMenuItem1Text}"  FontSize="14" TextAlignment="Center"/>
-                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox1IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox1Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
-                </WrapPanel>
-            </RadialMenu:RadialMenuItem>
-
-
-            <RadialMenu:RadialMenuItem Visibility="Hidden"/>
-            <RadialMenu:RadialMenuItem Visibility="Hidden"/>
-            <RadialMenu:RadialMenuItem Visibility="Hidden"/>
-
-        </RadialMenu:RadialMenu>
-
-        <!--#endregion-->
-
-        <!--#region TabControl-->
-
-        <!--The tab control with with tab tearing support.-->
-        <ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
-                             ItemsSource="{Binding TabItems}"
-                             SelectedItem="{Binding SelectedTabItem}"
-                             SelectedIndex="{Binding SelectedTabIndex}"
-                             IsAddButtonVisible="{Binding ShowAddButton}"
-                             AddTabCommand="{Binding AddTabCommand}"
-                             CloseTabCommand="{Binding CloseTabCommand}"
-                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                             IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
-                             SelectedContent="0">
-
-            <ct:ChromeTabControl.Resources>
-                <Grid x:Key="TabContent">
-
+            
+            <!--CONTENT TEMPLATE-->
+            <DataTemplate x:Key="ContentTemplate">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="6*"/>
                         <ColumnDefinition Width="4*"/>
                     </Grid.ColumnDefinitions>
 
-                    <models:ProgramEditor Background="Transparent" IsHighlightingEnabled="True" IsIntellisenseEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ShowLineNumbers="True" Grid.Column="0">
+                    <models:ProgramEditor Background="Transparent" IsHighlightingEnabled="True" DoSyntaxCheck="True" IsIntellisenseEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ShowLineNumbers="True" Grid.Column="0">
                         <i:Interaction.Behaviors>
                             <models:AvalonEditBehaviour GiveMeTheText="{Binding TabText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </i:Interaction.Behaviors>
                     </models:ProgramEditor>
+                    
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,25,0,0">
                         <StackPanel Orientation="Horizontal" Grid.Column="1">
                             <TextBlock DockPanel.Dock="Top" Text="Position manager for " Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
@@ -237,135 +113,173 @@
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
+                    
                 </Grid>
-            </ct:ChromeTabControl.Resources>
+            </DataTemplate>
 
-            <!-- BINDING CONTENT -->
-            <ct:ChromeTabControl.ItemContainerStyle>
-                <Style TargetType="ct:ChromeTabItem">
-                    <Setter Property="Content" Value="{StaticResource TabContent}"/>
-                </Style>
-            </ct:ChromeTabControl.ItemContainerStyle>
-            
-
-            <!-- BINDING HEADER AND MAKING CONTEXT MENU-->
-            <ct:ChromeTabControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type ct:ChromeTabItem}}}">
-                        <StackPanel Orientation="Horizontal"
+            <!--HEADER TEMPLATE-->
+            <DataTemplate x:Key="HeaderTemplate">
+                <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type ct:ChromeTabItem}}}">
+                    <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
-                            <Image Source="{Binding Image}"
+                        <Image Source="{Binding Image}"
                                    Stretch="Fill"
                                        Margin="5,5,5,5" />
-                            <TextBlock Text="{Binding Header}"
+                        <TextBlock Text="{Binding Header}"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        VerticalAlignment="Center" />
-                        </StackPanel>
+                    </StackPanel>
 
-                        <!--We implement a context menu for the header here. The ChromeTabItems expose for convenience the following commands, "CloseTabCommand: close the current tab, "CloseAllTabsCommand", and "CloseOtherTabsCommand", which closes all tabs except the current.-->
-                        <Grid.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Close"
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Close"
                                           Command="{Binding Path=PlacementTarget.Tag.CloseTabCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                           CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
-                                <MenuItem Header="Close all"
+                            <MenuItem Header="Close all"
                                           Command="{Binding Path=PlacementTarget.Tag.CloseAllTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                           CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
-                                <MenuItem Header="Close other tabs"
+                            <MenuItem Header="Close other tabs"
                                           Command="{Binding Path=PlacementTarget.Tag.CloseOtherTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                           CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                           CommandParameter="{Binding}" />
-                            </ContextMenu>
-                        </Grid.ContextMenu>
-                    </Grid>
-                </DataTemplate>
-            </ct:ChromeTabControl.ItemTemplate>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
+                </Grid>
+            </DataTemplate>
+            
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <UserControl.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding CtrlSKey}"/>
+        <KeyBinding Modifiers="Ctrl" Key="N" Command="{Binding CtrlNKey}"/>
+        <KeyBinding Key="Escape" Command="{Binding EscKey}"/>
+    </UserControl.InputBindings>
+
+    
+    
+    
+    <Grid>
+
+        <!--#region RowDefinitions-->
+        
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!--#endregion-->
+        
+        <!--#region Menu-->
+
+        <!-- Button enabling radial menu -->
+        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0" ToolTip="Options">
+            <RadialMenu:RadialMenu.CentralItem>
+                <RadialMenu:RadialMenuCentralItem Command="{Binding OpenRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}">
+                    <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuEnableButtonVisibility}">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_lines_horizontal_4}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </RadialMenu:RadialMenuCentralItem>
+            </RadialMenu:RadialMenu.CentralItem>
+        </RadialMenu:RadialMenu>
+
+
+        <!-- Radial menu -->
+        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen}"
+                               Grid.RowSpan="2" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top" 
+                               Margin="-100,-125,0,0"
+                               Panel.ZIndex="99">
+
+
+            <!-- CentralMenuItem -->
+            <RadialMenu:RadialMenu.CentralItem>
+                <RadialMenu:RadialMenuCentralItem Command="{Binding CloseRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuCentralItemTooltip}">
+                    <Rectangle Width="25" Height="25">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_close}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </RadialMenu:RadialMenuCentralItem>
+            </RadialMenu:RadialMenu.CentralItem>
+
+            <!-- MenuItems Around -->
+            <RadialMenu:RadialMenuItem Visibility="Hidden" />
+
+            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem3Command}" Visibility="{Binding RadialMenuItem3Visibility}" ArrowBackground="{Binding RadialMenuArrow3Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuItem3Tooltip}">
+                <WrapPanel Orientation="Vertical">
+                    <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuItem3IconVisibility}">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_settings}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Text="{Binding RadialMenuItem3Text}"  FontSize="14" TextAlignment="Center"/>
+                </WrapPanel>
+            </RadialMenu:RadialMenuItem>
+
+            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem2Command}" Visibility="{Binding RadialMenuItem2Visibility}" ArrowBackground="{Binding RadialMenuArrow2Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuItem2Tooltip}">
+                <WrapPanel Orientation="Vertical">
+                    <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuItem2IconVisibility}">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_save}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Text="{Binding RadialMenuItem2Text}"  FontSize="14" TextAlignment="Center"/>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox2IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox2Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
+                </WrapPanel>
+            </RadialMenu:RadialMenuItem>
+
+            <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem1Command}" Visibility="{Binding RadialMenuItem1Visibility}" ArrowBackground="{Binding RadialMenuArrow1Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuItem1Tooltip}">
+                <WrapPanel Orientation="Vertical">
+                    <Rectangle Width="20" Height="25" Visibility="{Binding RadialMenuItem1IconVisibility}">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_page}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Text="{Binding RadialMenuItem1Text}"  FontSize="14" TextAlignment="Center"/>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox1IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox1Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
+                </WrapPanel>
+            </RadialMenu:RadialMenuItem>
+
+            <RadialMenu:RadialMenuItem Visibility="Hidden"/>
+            <RadialMenu:RadialMenuItem Visibility="Hidden"/>
+            <RadialMenu:RadialMenuItem Visibility="Hidden"/>
+
+        </RadialMenu:RadialMenu>
+
+        <!--#endregion-->
+        
+        <!--#region TabControl-->
+        
+        <!--~~~~~~~~~~~~~~~~~~TO DZIAŁA DLA NORMALNYCH, WPF-OWYCH TABÓW (tam jest Property ContentTemplate)~~~~~~~~~~~~~~~~~~-->
+        <!--<TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TabItems}" ItemTemplate="{StaticResource HeaderTemplate}" ContentTemplate="{StaticResource ContentTemplate}"/>-->
+
+        
+        <!--The tab control with with tab tearing support.-->
+        <ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
+                             ItemsSource="{Binding TabItems}"
+                             SelectedItem="{Binding SelectedTabItem}"
+                             SelectedIndex="{Binding SelectedTabIndex}"
+                             IsAddButtonVisible="{Binding ShowAddButton}"
+                             AddTabCommand="{Binding AddTabCommand}"
+                             CloseTabCommand="{Binding CloseTabCommand}"
+                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                             IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
+                             ItemTemplate="{StaticResource HeaderTemplate}">
+
+
         </ct:ChromeTabControl>
 
         <!--#endregion-->
-
-        <!--#region PositionList-->
-
-
-        <!--<StackPanel Grid.Row="1" Grid.Column="1" Visibility="{Binding PositionManagerVisibility}" Margin="0,25,0,0">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock DockPanel.Dock="Top" Text="Position manager for " Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
-                <TextBlock DockPanel.Dock="Top" Text="{Binding Path=SelectedTabItem.Header, Converter={StaticResource RemoveStar}}" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
-            </StackPanel>
-            <DataGrid CanUserResizeColumns="False" ItemsSource="{Binding PositionItemSource}" AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    
-                    <mui:DataGridTextColumn Header="Pos" Binding="{Binding Pos}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="3"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                    <mui:DataGridTextColumn Header="X" Binding="{Binding X}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="5"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                    <mui:DataGridTextColumn Header="Y" Binding="{Binding Y}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="6"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                    <mui:DataGridTextColumn Header="Z" Binding="{Binding Z}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="6"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                    <mui:DataGridTextColumn Header="A" Binding="{Binding A}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="6"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                    <mui:DataGridTextColumn Header="B" Binding="{Binding B}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="6"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                    <mui:DataGridTextColumn Header="L1" Binding="{Binding L1}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="8"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                    <mui:DataGridTextColumn Header="O/C" Binding="{Binding OC}">
-                        <mui:DataGridTextColumn.EditingElementStyle>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Setter Property="MaxLength" Value="1"/>
-                            </Style>
-                        </mui:DataGridTextColumn.EditingElementStyle>
-                    </mui:DataGridTextColumn>
-                    
-                </DataGrid.Columns>
-            </DataGrid>
-        </StackPanel>-->
-
-        <!--#endregion-->
-
+        
     </Grid>
 
 

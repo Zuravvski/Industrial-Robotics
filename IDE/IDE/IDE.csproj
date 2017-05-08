@@ -124,8 +124,11 @@
     <Compile Include="Common\Models\Value Objects\Command.cs" />
     <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
+    <Compile Include="Common\Utilities\AsynchronousQueryExecutor.cs" />
     <Compile Include="Common\Utilities\Commands.cs" />
     <Compile Include="Common\Utilities\Extensions\EnumExtensions.cs" />
+    <Compile Include="Common\Utilities\Extensions\LinqExtensions.cs" />
+    <Compile Include="Common\Utilities\Extensions\RandomExtensions.cs" />
     <Compile Include="Common\Utilities\Highlighting.cs" />
     <Compile Include="Common\Utilities\IXMLObject.cs" />
     <Compile Include="Common\Utilities\Json.cs" />

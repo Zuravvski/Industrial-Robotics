@@ -19,6 +19,8 @@ namespace IDE.Common.ViewModels
 
         #region Fields
 
+        private ObservableCollection<Program> programList;
+
         private TabItem selectedTabItem;
         private int selectedTabIndex;
         private Visibility positionManagerVisibility = Visibility.Hidden;
@@ -55,6 +57,7 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {
             TabItems = new ObservableCollection<TabItem>();
+            ProgramList = new ObservableCollection<Program>() { new Program("name") };
 
             DeclareCommands();
             SetupMainSubmenu();
@@ -63,6 +66,19 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public ObservableCollection<Program> ProgramList
+        {
+            get
+            {
+                return programList;
+            }
+            set
+            {
+                programList = value;
+                NotifyPropertyChanged("ProgramList");
+            }
+        }
 
         public Visibility PositionManagerVisibility
         {
@@ -431,7 +447,7 @@ namespace IDE.Common.ViewModels
             if (!Equals(doesTabAlreadyExist, null))
             {
                 //if this file is already open reload it's content and set is as current tab
-                doesTabAlreadyExist.TabText = doesTabAlreadyExist.Program.Content;
+                doesTabAlreadyExist.ProgramEditor.Text = doesTabAlreadyExist.Program.Content;
                 doesTabAlreadyExist.UnsavedChanged = false;
                 SelectedTabItem = doesTabAlreadyExist;
                 return;
@@ -477,8 +493,8 @@ namespace IDE.Common.ViewModels
             var path = Path.GetFullPath(dialog.FileName);
             var name = Path.GetFileNameWithoutExtension(dialog.FileName);
 
-            tabItem.Program = new Program(name) { Path = path, Content = tabItem.TabText };
-            File.WriteAllText(tabItem.Program.Path, tabItem.TabText);
+            tabItem.Program = new Program(name) { Path = path, Content = tabItem.ProgramEditor.Text };
+            File.WriteAllText(tabItem.Program.Path, tabItem.ProgramEditor.Text);
 
             //update UI
             tabItem.Header = tabItem.Program.Name;
@@ -501,7 +517,7 @@ namespace IDE.Common.ViewModels
                 return SaveAsTab(tabItem);
             }
             //else just save it under path declared in ~Program.path~
-            File.WriteAllText(tabItem.Program.Path, tabItem.TabText);
+            File.WriteAllText(tabItem.Program.Path, tabItem.ProgramEditor.Text);
 
             //update gui
             tabItem.UnsavedChanged = false;
@@ -550,7 +566,7 @@ namespace IDE.Common.ViewModels
             var tabItem = obj as TabItem;
             SelectedTabItem = tabItem;  //show user what he is about to close
 
-            if (tabItem.Program != null && tabItem.UnsavedChanged || tabItem.Program == null && tabItem.TabText != string.Empty)
+            if (tabItem.Program != null && tabItem.UnsavedChanged || tabItem.Program == null && tabItem.ProgramEditor.Text != string.Empty)
             {
                 var dialog = MessageBox.Show($"Save file {tabItem.Header.Replace("*", string.Empty)}?",
                     "Unsaved data", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);

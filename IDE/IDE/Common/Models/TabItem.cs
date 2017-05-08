@@ -1,13 +1,16 @@
 ﻿using Driver;
 using IDE.Common.Models.Value_Objects;
+using IDE.Common.Utilities;
+using IDE.Common.Utilities.Extensions;
 using IDE.Common.ViewModels.Commands;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Media;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace IDE.Common.Models
@@ -18,10 +21,8 @@ namespace IDE.Common.Models
         #region Fields
 
         private BitmapImage image;
-        private string tabText;
         private bool unsavedChanges = true;
         private string header;
-        private ObservableCollection<Positions> positionItemSource;
 
         #endregion
 
@@ -37,7 +38,14 @@ namespace IDE.Common.Models
             if (program == null)
             {
                 Header = $"Untitled {untitledsCount}";
-                TabText = string.Empty;
+                ProgramEditor = new ProgramEditor()
+                {
+                    Text = string.Empty,
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    ShowLineNumbers = true
+                };
                 //we are setting this twice to trigger rising edge event. Dont change it, just accept fact that it is working this way.
                 UnsavedChanged = false;
                 UnsavedChanged = true;
@@ -45,17 +53,32 @@ namespace IDE.Common.Models
             else
             {
                 Header = program.Name;
-                TabText = program.Content;
+                ProgramEditor = new ProgramEditor()
+                {
+                    Text = program.Content,
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    ShowLineNumbers = true
+                };
+
                 UnsavedChanged = false;
             }
             Program = program;
-            PositionItemSource = new ObservableCollection<Positions>();
-            GenerateDumpPositions();
+
+            ProgramEditor.TextChanged += ProgramEditor_TextChanged;
+            OrganizeTabContent();
         }
 
         #endregion
 
         #region Properties
+
+        public Grid TabContent { get; set; }
+
+        public ProgramEditor ProgramEditor { get; set; }
+
+        public DataGrid DataGrid { get; set; }
 
         public string Header
         {
@@ -80,19 +103,6 @@ namespace IDE.Common.Models
             {
                 image = value;
                 NotifyPropertyChanged("Image");
-            }
-        }
-
-        public string TabText
-        {
-            get
-            {
-                return tabText;
-            }
-            set
-            {
-                tabText = value;
-                NotifyPropertyChanged("TabText");
             }
         }
 
@@ -122,124 +132,73 @@ namespace IDE.Common.Models
                 unsavedChanges = value;
             }
         }
-        public ObservableCollection<Positions> PositionItemSource
-        {
-            get
-            {
-                return positionItemSource;
-            }
-            set
-            {
-                positionItemSource = value;
-                NotifyPropertyChanged("PositionItemSource");
-            }
-        }
+        public List<Positions> PositionItemSource { get; set; }
 
         #endregion
 
         #region Actions
 
-        private void GenerateDumpPositions()
+        private void OrganizeTabContent()
         {
-            var rand = new Random();
+            PositionItemSource = new List<Positions>();
+            Random rand = new Random();
+            var imax = rand.Next(8, 10);
+            for (int i = 0; i < imax; i++)
+            {
+                GenerateDumpPositions(rand);
+            }
+            var qry = new List<Positions>(PositionItemSource.DistinctBy(i => i.Pos).OrderBy(i => i.Pos));
+            AsynchronousQueryExecutor.Call(qry, l => PositionItemSource = new List<Positions>(l), null);
+
+            TabContent = new Grid();
+            TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(5, System.Windows.GridUnitType.Star) });
+            TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(4, System.Windows.GridUnitType.Star) });
+
+            DataGrid = new DataGrid();
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "Pos", Binding = new Binding("Pos") });
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "X", Binding = new Binding("X") });
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "Y", Binding = new Binding("Y") });
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "Z", Binding = new Binding("Z") });
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "A", Binding = new Binding("A") });
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "B", Binding = new Binding("B") });
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "L1", Binding = new Binding("L1") });
+            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "O/C", Binding = new Binding("OC") });
+            foreach (var position in PositionItemSource)
+            {
+                DataGrid.Items.Add(position);
+            }
+
+
+            ProgramEditor.SetValue(Grid.ColumnProperty, 0);
+            DataGrid.SetValue(Grid.ColumnProperty, 1);
+
+            TabContent.Children.Add(ProgramEditor);
+            TabContent.Children.Add(DataGrid);
+        }
+
+        private void GenerateDumpPositions(Random rand)
+        {
+            var OC = rand.Next(1, 3) % 2 == 0 ? "O" : "C";
 
             PositionItemSource.Add(new Positions()
             {
-                Pos = 1,
+                Pos = rand.Next(1, 100),
                 X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
                 Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
                 Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
                 A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
                 B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
                 L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 2,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 3,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 5,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 8,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "C"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 9,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "C"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 15,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "C"
-            });
-            PositionItemSource.Add(new Positions()
-            {
-                Pos = 22,
-                X = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Y = Math.Round(rand.NextDouble() * (500 - 100) + 100, 2),
-                Z = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                A = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                B = Math.Round(rand.NextDouble() * (200 - 100) + 100, 2),
-                L1 = Math.Round(rand.NextDouble() * (2000 - 1000) + 1000, 2),
-                OC = "O"
+                OC = OC
             });
         }
 
-
-        private void Content_TextChanged(object sender, System.EventArgs e)
+        private void ProgramEditor_TextChanged(object sender, EventArgs e)
         {
             if (Program != null)
             {
                 //if the text has changed and it does not match saved content anymore
-                if (!TabText.Equals(Program.Content))
+                if (!ProgramEditor.Text.Equals(Program.Content))
                 {
                     UnsavedChanged = true;
                 }

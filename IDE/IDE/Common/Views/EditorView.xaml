@@ -12,7 +12,8 @@
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
              xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
-             xmlns:models="clr-namespace:IDE.Common.Models">
+             xmlns:models="clr-namespace:IDE.Common.Models"
+             xmlns:ct1="clr-namespace:IDE.Common.Views">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -23,8 +24,12 @@
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
             <converters:RemoveStarConverter x:Key="RemoveStar"/>
 
-            
-            <!--CONTENT TEMPLATE-->
+
+            <DataTemplate x:Key="try">
+                <TextBlock Text="lol"/>
+            </DataTemplate>
+
+                <!--CONTENT TEMPLATE-->
             <DataTemplate x:Key="ContentTemplate">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -37,7 +42,7 @@
                             <models:AvalonEditBehaviour GiveMeTheText="{Binding TabText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </i:Interaction.Behaviors>
                     </models:ProgramEditor>
-                    
+
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,25,0,0">
                         <StackPanel Orientation="Horizontal" Grid.Column="1">
                             <TextBlock DockPanel.Dock="Top" Text="Position manager for " Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
@@ -113,7 +118,7 @@
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
-                    
+
                 </Grid>
             </DataTemplate>
 
@@ -262,8 +267,23 @@
         <!--~~~~~~~~~~~~~~~~~~TO DZIAŁA DLA NORMALNYCH, WPF-OWYCH TABÓW (tam jest Property ContentTemplate)~~~~~~~~~~~~~~~~~~-->
         <!--<TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TabItems}" ItemTemplate="{StaticResource HeaderTemplate}" ContentTemplate="{StaticResource ContentTemplate}"/>-->
 
-        
-        <!--The tab control with with tab tearing support.-->
+
+        <!--<ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
+                             IsAddButtonVisible="True"
+                             AddTabCommand="{Binding AddTabCommand}"
+                             CloseTabCommand="{Binding CloseTabCommand}"
+                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                             ItemTemplate="{StaticResource HeaderTemplate}">
+
+            <ct:ChromeTabItem Header="lol2">
+                <ct:ChromeTabItem.Content>
+                    <Button Content="ciekaweczyflisupatrzy"/>
+                </ct:ChromeTabItem.Content>
+            </ct:ChromeTabItem>
+
+        </ct:ChromeTabControl>-->
+
+
         <ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
                              ItemsSource="{Binding TabItems}"
                              SelectedItem="{Binding SelectedTabItem}"
@@ -276,7 +296,31 @@
                              ItemTemplate="{StaticResource HeaderTemplate}">
 
 
+            <ct:ChromeTabControl.Resources>
+                <Style TargetType="ct:ChromeTabItem">
+                    <Setter Property="Content" Value="{Binding TabContent}"/>
+                </Style>
+            </ct:ChromeTabControl.Resources>
+
+
         </ct:ChromeTabControl>
+
+        <!--The tab control with with tab tearing support.-->
+        <!--<ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
+                             ItemsSource="{Binding TabItems}"
+                             SelectedItem="{Binding SelectedTabItem}"
+                             SelectedIndex="{Binding SelectedTabIndex}"
+                             IsAddButtonVisible="{Binding ShowAddButton}"
+                             AddTabCommand="{Binding AddTabCommand}"
+                             CloseTabCommand="{Binding CloseTabCommand}"
+                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                             IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
+                             ItemTemplate="{StaticResource HeaderTemplate}">
+
+
+            
+
+        </ct:ChromeTabControl>-->
 
         <!--#endregion-->
         

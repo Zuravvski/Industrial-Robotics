@@ -374,6 +374,27 @@
   <ItemGroup>
     <EmbeddedResource Include="Others\Resources\Commands.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Export_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\clear_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Font_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Refresh-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Download-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Play-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Upload-16.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

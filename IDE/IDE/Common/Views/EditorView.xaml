@@ -4,16 +4,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="600" d:DesignWidth="800"
              mc:Ignorable="d"
              
-             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
-             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
-             xmlns:models="clr-namespace:IDE.Common.Models"
-             xmlns:ct1="clr-namespace:IDE.Common.Views">
+             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -24,103 +20,6 @@
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
             <converters:RemoveStarConverter x:Key="RemoveStar"/>
 
-
-            <DataTemplate x:Key="try">
-                <TextBlock Text="lol"/>
-            </DataTemplate>
-
-                <!--CONTENT TEMPLATE-->
-            <DataTemplate x:Key="ContentTemplate">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*"/>
-                        <ColumnDefinition Width="4*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <models:ProgramEditor Background="Transparent" IsHighlightingEnabled="True" DoSyntaxCheck="True" IsIntellisenseEnabled="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ShowLineNumbers="True" Grid.Column="0">
-                        <i:Interaction.Behaviors>
-                            <models:AvalonEditBehaviour GiveMeTheText="{Binding TabText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </i:Interaction.Behaviors>
-                    </models:ProgramEditor>
-
-                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,25,0,0">
-                        <StackPanel Orientation="Horizontal" Grid.Column="1">
-                            <TextBlock DockPanel.Dock="Top" Text="Position manager for " Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
-                            <TextBlock DockPanel.Dock="Top" Text="{Binding Header, Converter={StaticResource RemoveStar}}" Style="{StaticResource Heading2}" Margin="0,0,0,8"/>
-                        </StackPanel>
-                        <DataGrid CanUserResizeColumns="False" ItemsSource="{Binding PositionItemSource}" AutoGenerateColumns="False">
-                            <DataGrid.Columns>
-
-                                <mui:DataGridTextColumn Header="Pos" Binding="{Binding Pos}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="3"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                                <mui:DataGridTextColumn Header="X" Binding="{Binding X}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="5"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                                <mui:DataGridTextColumn Header="Y" Binding="{Binding Y}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="6"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                                <mui:DataGridTextColumn Header="Z" Binding="{Binding Z}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="6"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                                <mui:DataGridTextColumn Header="A" Binding="{Binding A}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="6"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                                <mui:DataGridTextColumn Header="B" Binding="{Binding B}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="6"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                                <mui:DataGridTextColumn Header="L1" Binding="{Binding L1}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="8"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                                <mui:DataGridTextColumn Header="O/C" Binding="{Binding OC}">
-                                    <mui:DataGridTextColumn.EditingElementStyle>
-                                        <Style TargetType="{x:Type TextBox}">
-                                            <Setter Property="MaxLength" Value="1"/>
-                                        </Style>
-                                    </mui:DataGridTextColumn.EditingElementStyle>
-                                </mui:DataGridTextColumn>
-
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-
-                </Grid>
-            </DataTemplate>
 
             <!--HEADER TEMPLATE-->
             <DataTemplate x:Key="HeaderTemplate">
@@ -150,9 +49,19 @@
                                           CommandParameter="{Binding}" />
                         </ContextMenu>
                     </Grid.ContextMenu>
+                    <Grid.ToolTip>
+                        <ToolTip Content="{Binding Header, Converter={StaticResource RemoveStar}}"/>
+                    </Grid.ToolTip>
                 </Grid>
             </DataTemplate>
-            
+
+            <Style x:Key="FocusRadialMenu" TargetType="Grid">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ElementName=MyRadial, Path=IsVisible}" Value="True">
+                        <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=MyRadial}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -162,10 +71,8 @@
         <KeyBinding Key="Escape" Command="{Binding EscKey}"/>
     </UserControl.InputBindings>
 
-    
-    
-    
-    <Grid>
+
+    <Grid Style="{StaticResource FocusRadialMenu}">
 
         <!--#region RowDefinitions-->
         
@@ -197,7 +104,8 @@
 
 
         <!-- Radial menu -->
-        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen}"
+        <RadialMenu:RadialMenu x:Name="MyRadial"
+                               IsOpen="{Binding RadialMenuIsOpen}"
                                Grid.RowSpan="2" 
                                HorizontalAlignment="Left" 
                                VerticalAlignment="Top" 
@@ -250,7 +158,7 @@
                         </Rectangle.Fill>
                     </Rectangle>
                     <TextBlock Text="{Binding RadialMenuItem1Text}"  FontSize="14" TextAlignment="Center"/>
-                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox1IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox1Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding RadialMenuCheckbox1IsChecked}" Visibility="{Binding RadialMenuCheckbox1Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
                 </WrapPanel>
             </RadialMenu:RadialMenuItem>
 
@@ -263,32 +171,11 @@
         <!--#endregion-->
         
         <!--#region TabControl-->
-        
-        <!--~~~~~~~~~~~~~~~~~~TO DZIAŁA DLA NORMALNYCH, WPF-OWYCH TABÓW (tam jest Property ContentTemplate)~~~~~~~~~~~~~~~~~~-->
-        <!--<TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TabItems}" ItemTemplate="{StaticResource HeaderTemplate}" ContentTemplate="{StaticResource ContentTemplate}"/>-->
-
-
-        <!--<ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
-                             IsAddButtonVisible="True"
-                             AddTabCommand="{Binding AddTabCommand}"
-                             CloseTabCommand="{Binding CloseTabCommand}"
-                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                             ItemTemplate="{StaticResource HeaderTemplate}">
-
-            <ct:ChromeTabItem Header="lol2">
-                <ct:ChromeTabItem.Content>
-                    <Button Content="ciekaweczyflisupatrzy"/>
-                </ct:ChromeTabItem.Content>
-            </ct:ChromeTabItem>
-
-        </ct:ChromeTabControl>-->
-
 
         <ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
                              ItemsSource="{Binding TabItems}"
                              SelectedItem="{Binding SelectedTabItem}"
                              SelectedIndex="{Binding SelectedTabIndex}"
-                             IsAddButtonVisible="{Binding ShowAddButton}"
                              AddTabCommand="{Binding AddTabCommand}"
                              CloseTabCommand="{Binding CloseTabCommand}"
                              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
@@ -302,25 +189,38 @@
                 </Style>
             </ct:ChromeTabControl.Resources>
 
+            <ct:ChromeTabControl.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Font Family">
+                        <MenuItem.Icon>
+                            <Image Source="/Icons/Font_16.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman">
+                            <MenuItem.Icon>
+                                <Image Source="/Icons/Font_16.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial">
+                            <MenuItem.Icon>
+                                <Image Source="/Icons/Font_16.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri">
+                            <MenuItem.Icon>
+                                <Image Source="/Icons/Font_16.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI">
+                            <MenuItem.Icon>
+                                <Image Source="/Icons/Font_16.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                </ContextMenu>
+            </ct:ChromeTabControl.ContextMenu>
+
 
         </ct:ChromeTabControl>
-
-        <!--The tab control with with tab tearing support.-->
-        <!--<ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
-                             ItemsSource="{Binding TabItems}"
-                             SelectedItem="{Binding SelectedTabItem}"
-                             SelectedIndex="{Binding SelectedTabIndex}"
-                             IsAddButtonVisible="{Binding ShowAddButton}"
-                             AddTabCommand="{Binding AddTabCommand}"
-                             CloseTabCommand="{Binding CloseTabCommand}"
-                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                             IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
-                             ItemTemplate="{StaticResource HeaderTemplate}">
-
-
-            
-
-        </ct:ChromeTabControl>-->
 
         <!--#endregion-->
         

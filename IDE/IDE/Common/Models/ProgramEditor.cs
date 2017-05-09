@@ -50,8 +50,6 @@ namespace IDE.Common.Models
             syntaxChecker = new SyntaxChecker();
             intellisense = new Intellisense(TextArea);
             syntaxCheckVisualizer = new SyntaxCheckVisualizer(this);
-            IsIntellisenseEnabled = true;
-            IsHighlightingEnabled = true;
             Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
             SyntaxCheckerMode = SyntaxCheckerModeE.OnDemand;
         }

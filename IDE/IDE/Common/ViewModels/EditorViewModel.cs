@@ -47,8 +47,8 @@ namespace IDE.Common.ViewModels
         private string radialMenuItem1Tooltip;
         private string radialMenuItem2Tooltip;
         private string radialMenuItem3Tooltip;
-        private bool radialMenuCheckbox1IsChecked;
-        private bool radialMenuCheckbox2IsChecked;
+        private bool radialMenuCheckbox1IsChecked = true;
+        private bool radialMenuCheckbox2IsChecked = true;
 
         #endregion
 
@@ -286,7 +286,7 @@ namespace IDE.Common.ViewModels
             {
                 return radialMenuArrow3Background;
             }
-            private set
+            set
             {
                 radialMenuArrow3Background = value;
                 NotifyPropertyChanged("RadialMenuArrow3Background");
@@ -298,10 +298,14 @@ namespace IDE.Common.ViewModels
             {
                 return radialMenuCheckbox1IsChecked;
             }
-            private set
+            set
             {
                 radialMenuCheckbox1IsChecked = value;
                 NotifyPropertyChanged("RadialMenuCheckbox1IsChecked");
+                foreach (var tab in TabItems)
+                {
+                    tab.ProgramEditor.IsIntellisenseEnabled = radialMenuCheckbox1IsChecked;
+                }
             }
         }
         public bool RadialMenuCheckbox2IsChecked
@@ -314,6 +318,10 @@ namespace IDE.Common.ViewModels
             {
                 radialMenuCheckbox2IsChecked = value;
                 NotifyPropertyChanged("RadialMenuCheckbox2IsChecked");
+                foreach (var tab in TabItems)
+                {
+                    tab.ProgramEditor.DoSyntaxCheck = value;
+                }
             }
         }
         public string RadialMenuItem1Text
@@ -530,6 +538,9 @@ namespace IDE.Common.ViewModels
         /// <param name="program">Pass existing program or null for new, fresh tab.</param>
         private void OpenTab(Program program)
         {
+            if (TabItems.Count >= 15)
+                return;
+
             TabItem tabToAdd;
 
             if (program != null)
@@ -596,6 +607,7 @@ namespace IDE.Common.ViewModels
         public ICommand RadialMenuItem1Command { get; private set; }
         public ICommand RadialMenuItem2Command { get; private set; }
         public ICommand RadialMenuItem3Command { get; private set; }
+        public ICommand ChangeFontCommand { get; private set; }
 
         public ICommand CtrlSKey { get; private set; }
         public ICommand CtrlNKey { get; private set; }
@@ -610,12 +622,44 @@ namespace IDE.Common.ViewModels
             RadialMenuItem1Command = new RelayCommand(RadialMenuItem1Execute, RadialMenuItem1CanExecute);
             RadialMenuItem2Command = new RelayCommand(RadialMenuItem2Execute, RadialMenuItem2CanExecute);
             RadialMenuItem3Command = new RelayCommand(RadialMenuItem3Execute, RadialMenuItem3CanExecute);
+            ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
 
             CtrlSKey = new RelayCommand(CtrlS);
             CtrlNKey = new RelayCommand(AddTab);
             EscKey = new RelayCommand(Esc);
         }
+        
+        private bool CanChangeFont(object obj)
+        {
+            if (TabItems.Count == 0)
+                return false;
 
+            var text = TabItems[0].ProgramEditor.FontFamily.ToString();
+            return !text.Equals(obj as string);
+        }
+
+        private void ChangeFont(object obj)
+        {
+            var fontName = obj as string;
+            var fontFamily = TabItems[0]?.ProgramEditor.FontFamily;
+
+            try
+            {
+                foreach (var tab in TabItems)
+                {
+                    tab.ProgramEditor.FontFamily = new FontFamily(fontName);
+                    tab.DataGrid.FontFamily = new FontFamily(fontName);
+                }
+            }
+            catch
+            {
+                foreach (var tab in TabItems)
+                {
+                    tab.ProgramEditor.FontFamily = fontFamily;
+                    tab.DataGrid.FontFamily = fontFamily;
+                }
+            }
+        }
 
         private void CtrlS(object obj)
         {

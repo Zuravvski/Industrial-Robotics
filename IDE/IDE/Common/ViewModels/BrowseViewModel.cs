@@ -337,7 +337,6 @@ namespace IDE.Common.ViewModels
         public ICommand ClearHistoryCommand { get; private set; }
         public ICommand ExportHistoryCommand { get; private set; }
         public ICommand ChangeFontCommand { get; private set; }
-        public ICommand ContextClickCommand { get; private set; }
 
         private void DeclareCommands()
         {
@@ -350,7 +349,6 @@ namespace IDE.Common.ViewModels
             ClearHistoryCommand = new RelayCommand(ClearHistory, IscommandHistoryNotEmpty);
             ExportHistoryCommand = new RelayCommand(ExportHistory, IscommandHistoryNotEmpty);
             ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
-            ContextClickCommand = new RelayCommand(ContextClick);
         }
 
         private bool CanChangeFont(object obj)
@@ -358,18 +356,13 @@ namespace IDE.Common.ViewModels
             var text = commandHistory.FontFamily.ToString();
             return !text.Equals(obj as string);
         }
-
-        private void ContextClick(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         /// <summary>
         /// Return a value based upon wheter Command History is empty or not.
         /// </summary>
         private bool IscommandHistoryNotEmpty(object obj)
         {
-            return !string.IsNullOrWhiteSpace(commandHistory.Text);
+            return !string.IsNullOrWhiteSpace(CommandHistoryText);
         }
 
         /// <summary>
@@ -398,7 +391,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private bool IscommandInputNotEmpty(object obj)
         {
-            return !string.IsNullOrWhiteSpace(commandInputText);
+            return !string.IsNullOrWhiteSpace(CommandInputText);
         }
 
         #endregion

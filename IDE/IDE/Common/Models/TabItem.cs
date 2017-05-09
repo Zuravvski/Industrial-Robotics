@@ -154,20 +154,12 @@ namespace IDE.Common.Models
             TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(5, System.Windows.GridUnitType.Star) });
             TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(4, System.Windows.GridUnitType.Star) });
 
-            DataGrid = new DataGrid();
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "Pos", Binding = new Binding("Pos") });
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "X", Binding = new Binding("X") });
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "Y", Binding = new Binding("Y") });
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "Z", Binding = new Binding("Z") });
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "A", Binding = new Binding("A") });
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "B", Binding = new Binding("B") });
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "L1", Binding = new Binding("L1") });
-            DataGrid.Columns.Add(new DataGridTextColumn() { Header = "O/C", Binding = new Binding("OC") });
-            foreach (var position in PositionItemSource)
+            DataGrid = new DataGrid()
             {
-                DataGrid.Items.Add(position);
-            }
+                CanUserAddRows = true
+            };
 
+            DataGrid.ItemsSource = PositionItemSource;
 
             ProgramEditor.SetValue(Grid.ColumnProperty, 0);
             DataGrid.SetValue(Grid.ColumnProperty, 1);

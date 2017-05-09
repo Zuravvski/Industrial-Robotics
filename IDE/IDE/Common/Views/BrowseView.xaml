@@ -8,10 +8,8 @@
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:models="clr-namespace:IDE.Common.Models"
-             xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
-             xmlns:k="http://schemas.microsoft.com/kinect/2013"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="900">
+             d:DesignHeight="600" d:DesignWidth="800">
 
 
     <UserControl.Resources>
@@ -32,11 +30,12 @@
             <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
 
+        <!--#region RemoteProgram List-->
 
         <Border Margin="0,0,10,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.RowSpan="2" Grid.ColumnSpan="2">
-            <StackPanel>
-                <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="20,3,0,0"/>
-                <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False">
+            <DockPanel Height="Auto">
+                <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="20,3,0,0" DockPanel.Dock="Top"/>
+                <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False" DockPanel.Dock="Bottom">
 
                     <DataGrid.Columns>
                         <mui:DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
@@ -47,12 +46,43 @@
                     <DataGrid.Resources>
                         <ContextMenu x:Key="RemoteContextMenu">
                             <ContextMenu.Items>
-                                <MenuItem Header="Refresh"  Command="{Binding DataContext.RefreshClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Refreshes list of available programs." CommandParameter="Refresh"/>
-                                <MenuItem Header="Pull"     Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends selected program from manipulator to user." CommandParameter="Pull"/>
-                                <MenuItem Header="Execute"  Command="{Binding DataContext.RunClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Starts executing selected program." CommandParameter="Execute"/>
+                                <MenuItem Header="Refresh" Command="{Binding DataContext.RefreshClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Refreshes list of programs stored on manipulator." CommandParameter="Refresh">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Refresh-16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Acquire" Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Acquiring program from manipulator to be stored on local drive." CommandParameter="Pull">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Download-16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Execute" Command="{Binding DataContext.RunClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Starts executing selected program." CommandParameter="Execute">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Play-16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Send new" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Upload-16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu.Items>
                         </ContextMenu>
                     </DataGrid.Resources>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Refresh" Command="{Binding DataContext.RefreshClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Refreshes list of programs stored on manipulator." CommandParameter="Refresh">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Refresh-16.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Send new" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull">
+                                <MenuItem.Icon>
+                                    <Image Source="/Icons/Upload-16.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
 
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
@@ -61,31 +91,27 @@
                     </DataGrid.RowStyle>
 
                 </DataGrid>
-            </StackPanel>
+            </DockPanel>
         </Border>
+        
+        <!--#endregion-->
 
-
+        <!--#region KINECT STUFF-->
+        
         <Border Grid.Column="2" Margin="0,0,0,10" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
+            
         </Border>
+        
+        <!--#endregion-->
 
-        <!--List-->
-        <!--<TextBlock Text="RV-E3J files:" Margin="10,7,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <ListView ItemsSource="{Binding RemotePrograms}" Grid.Row="1" SelectedItem="{Binding SelectedRemoteProgram}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
-
-        <!--Command window-->
-        <Border Grid.Row="1" Grid.Column="2" Margin="0,0,0,0" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
+        <!--#region Command window-->
+        
+        <Border Grid.Row="1" Grid.Column="2" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*"/>
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
-
 
                 <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,3" BorderBrush="{Binding Path=Appearance.ThemeColor}" ShowLineNumbers="False">
                     <i:Interaction.Behaviors>
@@ -97,31 +123,47 @@
 
                             <MenuItem Header="Font Family">
                                 <MenuItem.Icon>
-                                    <Image Source="/Icons/Delete.png"/>
+                                    <Image Source="/Icons/Font_16.png"/>
                                 </MenuItem.Icon>
-                                <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman"/>
-                                <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial"/>
-                                <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri"/>
-                                <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI"/>
+                                <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Font_16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Font_16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Font_16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Icons/Font_16.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </MenuItem>
 
                             <Separator/>
 
                             <MenuItem Header="Export" Command="{Binding ExportHistoryCommand}">
                                 <MenuItem.Icon>
-                                    <Image Source="/Icons/Delete.png"/>
+                                    <Image Source="/Icons/Export_16.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-
                             <MenuItem Header="Clear" Command="{Binding ClearHistoryCommand}">
                                 <MenuItem.Icon>
-                                    <Image Source="/Icons/Delete.png"/>
+                                    <Image Source="/Icons/clear_16.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
 
                         </ContextMenu>
+                        
                     </models:ProgramEditor.ContextMenu>
-
+                    
                 </models:ProgramEditor>
 
                 <DockPanel Grid.Row="1">
@@ -139,12 +181,28 @@
 
                                 <MenuItem Header="Font Family">
                                     <MenuItem.Icon>
-                                        <Image Source="/Icons/Delete.png"/>
+                                        <Image Source="/Icons/Font_16.png"/>
                                     </MenuItem.Icon>
-                                    <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman"/>
-                                    <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial"/>
-                                    <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri"/>
-                                    <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI"/>
+                                    <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Font_16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Font_16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Font_16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Font_16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </MenuItem>
 
                             </ContextMenu>
@@ -155,5 +213,8 @@
                 </DockPanel>
             </Grid>
         </Border>
+        
+        <!--#endregion-->
+        
     </Grid>
 </UserControl>

@@ -113,18 +113,15 @@ namespace Driver
 
                 var lines = program.GetLines();
 
-                for (var i = 0; i < lines.Count; i++)
+                foreach (var line in lines)
                 {
                     await Task.Delay(500);
-                    //var prefix = $"{Convert.ToString(i + 1)} ";
-                    manipulator.SendCustom(lines[i]);
-                    Debug.WriteLine(i);
+                    manipulator.SendCustom(line);
                 }
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
-                Debug.WriteLine(ex.Message);
             }
         }
 

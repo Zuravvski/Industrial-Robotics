@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Driver;
+using IDE.Common.Models;
 
 namespace IDE.Common.Utilities
 {
@@ -93,7 +94,7 @@ namespace IDE.Common.Utilities
             }
         }
 
-        public void SavePrograms(IEnumerable<Program> programsList)
+        public void SavePrograms(IEnumerable<TabItem> tabItems)
         {
             // Remove program nodes to override them
             document.Load(MissingFileManager.SESSION_PATH);
@@ -108,8 +109,12 @@ namespace IDE.Common.Utilities
             }
             
             // Add refreshed programs
-            foreach (var program in programsList)
+            foreach (var tabItem in tabItems)
             {
+                var program = tabItem.Program;
+                if(program == null)
+                    continue;
+
                 var element = document.CreateElement("Program");
                 element.InnerText = program.Path;
                 root.AppendChild(element);

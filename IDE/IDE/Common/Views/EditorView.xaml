@@ -146,7 +146,7 @@
                         </Rectangle.Fill>
                     </Rectangle>
                     <TextBlock Text="{Binding RadialMenuItem2Text}"  FontSize="14" TextAlignment="Center"/>
-                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox2IsChecked, Mode=OneWay}" Visibility="{Binding RadialMenuCheckbox2Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Path=RadialMenuCheckbox2IsChecked}" Visibility="{Binding RadialMenuCheckbox2Visibility}" BorderBrush="{Binding Path=Appearance.ThemeColor}"/>
                 </WrapPanel>
             </RadialMenu:RadialMenuItem>
 

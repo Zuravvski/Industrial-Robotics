@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IDE.Common.Utilities
 {
@@ -11,12 +8,11 @@ namespace IDE.Common.Utilities
     {
         public static void Call<T>(IEnumerable<T> query, Action<IEnumerable<T>> callback, Action<Exception> errorCallback)
         {
-            Func<IEnumerable<T>, IEnumerable<T>> func =
-                new Func<IEnumerable<T>, IEnumerable<T>>(InnerEnumerate<T>);
-            IEnumerable<T> result = null;
-            IAsyncResult ar = func.BeginInvoke(
+            Func<IEnumerable<T>, IEnumerable<T>> func = InnerEnumerate<T>;
+            IEnumerable<T> result;
+            var ar = func.BeginInvoke(
                                 query,
-                                new AsyncCallback(delegate (IAsyncResult arr)
+                                delegate (IAsyncResult arr)
                                 {
                                     try
                                     {
@@ -24,24 +20,18 @@ namespace IDE.Common.Utilities
                                     }
                                     catch (Exception ex)
                                     {
-                                        if (errorCallback != null)
-                                        {
-                                            errorCallback(ex);
-                                        }
+                                        errorCallback?.Invoke(ex);
                                         return;
                                     }
-                                //errors from inside here are the callbacks problem
-                                //I think it would be confusing to report them
-                                callback(result);
-                                }),
+                                    //errors from inside here are the callbacks problem
+                                    //I think it would be confusing to report them
+                                    callback(result);
+                                },
                                 null);
         }
         private static IEnumerable<T> InnerEnumerate<T>(IEnumerable<T> query)
         {
-            foreach (var item in query) //the method hangs here while the query executes
-            {
-                yield return item;
-            }
+            return query;
         }
     }
 }

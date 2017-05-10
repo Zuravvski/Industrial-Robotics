@@ -17,8 +17,8 @@ namespace IDE.Common.Models.Value_Objects
 
         #region Properties
 
-        public DateTime MyTime { private set; get; }
-        public string MyMessage { private set; get; }
+        public DateTime MyTime { get; }
+        public string MyMessage { get; }
 
         #endregion
 
@@ -26,10 +26,9 @@ namespace IDE.Common.Models.Value_Objects
 
         public string DisplayMessage()
         {
-            if (MyTime != null && MyMessage != null)
-                return MyTime + " " + MyMessage + "\n";
-            else
-                return null;
+            if (MyMessage != null)
+                return $"{MyTime:dd-MM-yyyy HH:mm:ss}" + ": " + MyMessage + Environment.NewLine;
+            return null;
         }
 
         #endregion

@@ -10,7 +10,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace IDE.Common.Models
@@ -36,14 +35,18 @@ namespace IDE.Common.Models
         public TabItem(int untitledsCount, Program program)
         {
             if (program == null)
-            {
+            { 
                 Header = $"Untitled {untitledsCount}";
-                ProgramEditor = new ProgramEditor()
+                ProgramEditor = new ProgramEditor
                 {
                     Text = string.Empty,
                     Background = System.Windows.Media.Brushes.Transparent,
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    IsHighlightingEnabled = true,
+                    IsIntellisenseEnabled = true,
+                    DoSyntaxCheck = true,
+                    SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime,
                     ShowLineNumbers = true
                 };
                 //we are setting this twice to trigger rising edge event. Dont change it, just accept fact that it is working this way.
@@ -59,6 +62,10 @@ namespace IDE.Common.Models
                     Background = System.Windows.Media.Brushes.Transparent,
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    IsHighlightingEnabled = true,
+                    IsIntellisenseEnabled = true,
+                    DoSyntaxCheck = true,
+                    SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime,
                     ShowLineNumbers = true
                 };
 

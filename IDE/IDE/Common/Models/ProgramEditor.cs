@@ -23,8 +23,6 @@ namespace IDE.Common.Models
         #region Fields
 
         private SyntaxCheckerModeE syntaxCheckerMode;
-        private Program currentProgram;
-        private Macro currentMacro;
         private readonly SyntaxChecker syntaxChecker;
         private readonly Intellisense intellisense;
         private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
@@ -50,8 +48,11 @@ namespace IDE.Common.Models
             syntaxChecker = new SyntaxChecker();
             intellisense = new Intellisense(TextArea);
             syntaxCheckVisualizer = new SyntaxCheckVisualizer(this);
-            Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
             SyntaxCheckerMode = SyntaxCheckerModeE.OnDemand;
+
+            // Events
+            Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
+            DataObject.AddPastingHandler(this, OnPaste);
         }
         
         #endregion
@@ -91,32 +92,6 @@ namespace IDE.Common.Models
 
         public bool IsIntellisenseShowing => intellisense.IsShowing;
 
-        public Macro CurrentMacro
-        {
-            set
-            {
-                currentMacro = value;
-                Text = value == null ? string.Empty : CurrentMacro.Content;
-            }
-            get
-            {
-                return currentMacro;
-            }
-        }
-
-        public Program CurrentProgram
-        {
-            set
-            {
-                currentProgram = value;
-                Text = value == null ? string.Empty : CurrentProgram.Content;
-            }
-            get
-            {
-                return currentProgram;
-            }
-        }
-
         public static readonly DependencyProperty DoSyntaxCheckProperty =
              DependencyProperty.Register("DoSyntaxCheck", typeof(bool),
              typeof(ProgramEditor), new FrameworkPropertyMetadata(true));
@@ -124,7 +99,21 @@ namespace IDE.Common.Models
         public bool DoSyntaxCheck
         {
             get { return (bool)GetValue(DoSyntaxCheckProperty); }
-            set { SetValue(DoSyntaxCheckProperty, value); }
+            set
+            {
+                SetValue(DoSyntaxCheckProperty, value);
+                if (!value)
+                {
+                    foreach (var line in Document.Lines)
+                    {
+                        syntaxCheckVisualizer.Visualize(true, line);
+                    }
+                }
+                else
+                {
+                    ValidateAllLines();
+                }
+            }
         }
 
         public bool IsOneLine { get; set; }
@@ -137,12 +126,10 @@ namespace IDE.Common.Models
                 if (value == SyntaxCheckerModeE.RealTime)
                 {
                     TextChanged += OnSyntaxCheck;
-                    DataObject.AddPastingHandler(this, OnPaste);
                 }
                 else
                 {
                     TextChanged -= OnSyntaxCheck;
-                    DataObject.RemovePastingHandler(this, OnPaste);
                 }
                 syntaxCheckerMode = value;
             }
@@ -227,22 +214,27 @@ namespace IDE.Common.Models
 
         private async void OnSyntaxCheck(object sender, EventArgs e)
         {
-            await ValidateLine(TextArea.Caret.Line);
+            if (DoSyntaxCheck)
+            {
+                await ValidateLine(TextArea.Caret.Line);
+            }    
         }
 
         private void OnPaste(object sender, DataObjectPastingEventArgs e)
         {
             var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
-            if (!isText) return;
+            if (!isText)
+                return;
 
             var text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
-            currentProgram.Content = text;
+
+            Text = text;
             ValidateAllLines();
         }
 
         public async void ValidateAllLines()
         {
-            if (!string.IsNullOrEmpty(CurrentProgram?.Content) && DoSyntaxCheck)
+            if (DoSyntaxCheck)
             {
                 foreach (var line in TextArea.Document.Lines)
                 {

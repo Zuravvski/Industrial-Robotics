@@ -113,7 +113,7 @@
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
-                <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,3" BorderBrush="{Binding Path=Appearance.ThemeColor}" ShowLineNumbers="False">
+                <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,3" BorderBrush="{Binding Path=Appearance.ThemeColor}" ShowLineNumbers="False" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}">
                     <i:Interaction.Behaviors>
                         <models:AvalonEditBehaviour GiveMeTheText="{Binding CommandHistoryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </i:Interaction.Behaviors>

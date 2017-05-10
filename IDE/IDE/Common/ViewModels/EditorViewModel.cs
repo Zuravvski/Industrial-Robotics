@@ -3,7 +3,6 @@ using IDE.Common.ViewModels.Commands;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using System;
 using RadialMenu.Controls;
 using System.Windows.Media;
 using System.Threading.Tasks;
@@ -11,6 +10,7 @@ using System.Linq;
 using Driver;
 using Microsoft.Win32;
 using System.IO;
+using IDE.Common.Utilities;
 
 namespace IDE.Common.ViewModels
 {
@@ -18,12 +18,10 @@ namespace IDE.Common.ViewModels
     {
 
         #region Fields
-
         private ObservableCollection<Program> programList;
 
         private TabItem selectedTabItem;
         private int selectedTabIndex;
-        private Visibility positionManagerVisibility = Visibility.Hidden;
         private ObservableCollection<TabItem> tabItems;
         private ObservableCollection<RadialMenuItem> radialMenuItems;
         private bool radialMenuIsOpen;
@@ -57,7 +55,8 @@ namespace IDE.Common.ViewModels
         public EditorViewModel()
         {
             TabItems = new ObservableCollection<TabItem>();
-            ProgramList = new ObservableCollection<Program>() { new Program("name") };
+            ProgramList = new ObservableCollection<Program>();
+            LoadPreviousSessionTabs();
 
             DeclareCommands();
             SetupMainSubmenu();
@@ -77,19 +76,6 @@ namespace IDE.Common.ViewModels
             {
                 programList = value;
                 NotifyPropertyChanged("ProgramList");
-            }
-        }
-
-        public Visibility PositionManagerVisibility
-        {
-            get
-            {
-                return positionManagerVisibility;
-            }
-            set
-            {
-                positionManagerVisibility = value;
-                NotifyPropertyChanged("PositionManagerVisibility");
             }
         }
 
@@ -314,7 +300,7 @@ namespace IDE.Common.ViewModels
             {
                 return radialMenuCheckbox2IsChecked;
             }
-            private set
+            set
             {
                 radialMenuCheckbox2IsChecked = value;
                 NotifyPropertyChanged("RadialMenuCheckbox2IsChecked");
@@ -428,6 +414,13 @@ namespace IDE.Common.ViewModels
 
         #region Actions
 
+        private void LoadPreviousSessionTabs()
+        {
+            foreach (var program in Session.Instance.LoadPrograms())
+            {
+                TabItems.Add(new TabItem(0, program));
+            }
+        }
 
         /// <summary>
         /// Opens new tab or reloads content if tab already exist.
@@ -462,6 +455,7 @@ namespace IDE.Common.ViewModels
             }
 
             OpenTab(new Program(name) { Path = path, Content = content });
+            Session.Instance.SavePrograms(TabItems);
         }
 
         /// <summary>
@@ -508,6 +502,7 @@ namespace IDE.Common.ViewModels
             tabItem.Header = tabItem.Program.Name;
             tabItem.UnsavedChanged = false;
 
+            Session.Instance.SavePrograms(TabItems);
             return true;
         }
 
@@ -525,7 +520,8 @@ namespace IDE.Common.ViewModels
                 return SaveAsTab(tabItem);
             }
             //else just save it under path declared in ~Program.path~
-            File.WriteAllText(tabItem.Program.Path, tabItem.ProgramEditor.Text);
+           // File.WriteAllText(tabItem.Program.Path, tabItem.ProgramEditor.Text);
+
 
             //update gui
             tabItem.UnsavedChanged = false;
@@ -563,8 +559,6 @@ namespace IDE.Common.ViewModels
             }
             TabItems.Add(tabToAdd);
             SelectedTabItem = tabToAdd;
-
-            PositionManagerVisibility = tabItems.Count < 1 ? Visibility.Hidden : Visibility.Visible;
         }
 
         private void AddTab(object obj)
@@ -577,7 +571,7 @@ namespace IDE.Common.ViewModels
             var tabItem = obj as TabItem;
             SelectedTabItem = tabItem;  //show user what he is about to close
 
-            if (tabItem.Program != null && tabItem.UnsavedChanged || tabItem.Program == null && tabItem.ProgramEditor.Text != string.Empty)
+            if (tabItem != null && (tabItem.Program != null && tabItem.UnsavedChanged || tabItem.Program == null && tabItem.ProgramEditor.Text != string.Empty))
             {
                 var dialog = MessageBox.Show($"Save file {tabItem.Header.Replace("*", string.Empty)}?",
                     "Unsaved data", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -592,8 +586,7 @@ namespace IDE.Common.ViewModels
             }
 
             TabItems.Remove(tabItem);
-
-            PositionManagerVisibility = tabItems.Count < 1 ? Visibility.Hidden : Visibility.Visible;
+            Session.Instance.SavePrograms(TabItems);
         }
 
         #endregion

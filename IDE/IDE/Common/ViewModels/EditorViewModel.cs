@@ -520,10 +520,10 @@ namespace IDE.Common.ViewModels
                 return SaveAsTab(tabItem);
             }
             //else just save it under path declared in ~Program.path~
-           // File.WriteAllText(tabItem.Program.Path, tabItem.ProgramEditor.Text);
+            File.WriteAllText(tabItem.Program.Path, tabItem.ProgramEditor.Text);
 
 
-            //update gui
+            //update UI
             tabItem.UnsavedChanged = false;
             return true;
         }

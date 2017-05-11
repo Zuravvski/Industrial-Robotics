@@ -603,6 +603,7 @@ namespace IDE.Common.ViewModels
         public ICommand RadialMenuItem3Command { get; private set; }
         public ICommand ChangeFontCommand { get; private set; }
         public ICommand MouseOutsideRadialCommand { get; private set; }
+        public ICommand DummyCommand { get; set; }
 
         public ICommand CtrlSKey { get; private set; }
         public ICommand CtrlNKey { get; private set; }
@@ -619,10 +620,16 @@ namespace IDE.Common.ViewModels
             RadialMenuItem3Command = new RelayCommand(RadialMenuItem3Execute, RadialMenuItem3CanExecute);
             ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
             MouseOutsideRadialCommand = new RelayCommand(MouseOutsideRadial);
+            DummyCommand = new RelayCommand(Dummy);
 
             CtrlSKey = new RelayCommand(CtrlS);
             CtrlNKey = new RelayCommand(AddTab);
             EscKey = new RelayCommand(Esc);
+        }
+
+        private void Dummy(object obj)
+        {
+            MessageBox.Show("Im in");
         }
 
         private async void MouseOutsideRadial(object obj)

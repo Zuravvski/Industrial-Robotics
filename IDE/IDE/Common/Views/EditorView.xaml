@@ -4,12 +4,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              d:DesignHeight="600" d:DesignWidth="800"
              mc:Ignorable="d"
-             
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
-             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs">
+             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
+             xmlns:materialMenu="clr-namespace:MaterialMenu;assembly=MaterialMenu">
+
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -72,8 +74,9 @@
     </UserControl.InputBindings>
 
 
-    <Grid Style="{StaticResource FocusRadialMenu}">
 
+    <Grid Style="{StaticResource FocusRadialMenu}">
+        
         <!--#region RowDefinitions-->
         
         <Grid.RowDefinitions>
@@ -86,11 +89,55 @@
         </Grid.ColumnDefinitions>
         
         <!--#endregion-->
-        
+
+
         <!--#region Menu-->
 
+        <Button HorizontalAlignment="Left" Click="Button_Click">
+            <Rectangle Width="25" Height="25">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_lines_horizontal_4}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Button>
+
+
+        <materialMenu:SideMenu HorizontalAlignment="Left" x:Name="Menu" Background="Aqua"
+                               MenuWidth="500" Margin="50,0,0,0"
+                               Theme="Default"
+                               State="Hidden">
+
+            <materialMenu:SideMenu.Menu>
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" Background="Transparent" >
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+
+                        <materialMenu:MenuButton Text="1" Background="AliceBlue" MouseDown="MenuButton_MouseDown">
+                        </materialMenu:MenuButton>
+
+                        <materialMenu:MenuButton Text="2">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeave">
+                                    <i:InvokeCommandAction Command="{Binding DummyCommand}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </materialMenu:MenuButton>
+
+                        <materialMenu:MenuButton Text="3"/>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </materialMenu:SideMenu.Menu>
+        </materialMenu:SideMenu>
+
+
+        <!--<i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeave">
+                    <i:InvokeCommandAction Command="{Binding EditorClick}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
+
         <!-- Button enabling radial menu -->
-        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0" ToolTip="Options">
+        <!--<RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0" ToolTip="Options" Panel.ZIndex="99">
             <RadialMenu:RadialMenu.CentralItem>
                 <RadialMenu:RadialMenuCentralItem Command="{Binding OpenRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}">
                     <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuEnableButtonVisibility}">
@@ -103,7 +150,7 @@
         </RadialMenu:RadialMenu>
 
 
-        <!-- Radial menu -->
+        --><!-- Radial menu --><!--
         <RadialMenu:RadialMenu x:Name="MyRadial"
                                IsOpen="{Binding RadialMenuIsOpen}"
                                Grid.RowSpan="2" 
@@ -113,7 +160,7 @@
                                Panel.ZIndex="99">
 
 
-            <!-- CentralMenuItem -->
+            --><!-- CentralMenuItem --><!--
             <RadialMenu:RadialMenu.CentralItem>
                 <RadialMenu:RadialMenuCentralItem Command="{Binding CloseRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuCentralItemTooltip}">
                     <Rectangle Width="25" Height="25">
@@ -124,7 +171,7 @@
                 </RadialMenu:RadialMenuCentralItem>
             </RadialMenu:RadialMenu.CentralItem>
 
-            <!-- MenuItems Around -->
+            --><!-- MenuItems Around --><!--
             <RadialMenu:RadialMenuItem Visibility="Hidden" />
 
             <RadialMenu:RadialMenuItem Command="{Binding RadialMenuItem3Command}" Visibility="{Binding RadialMenuItem3Visibility}" ArrowBackground="{Binding RadialMenuArrow3Background}" EdgeBackground="{Binding Path=Appearance.ThemeColor}" ToolTip="{Binding RadialMenuItem3Tooltip}">
@@ -166,7 +213,8 @@
             <RadialMenu:RadialMenuItem Visibility="Hidden"/>
             <RadialMenu:RadialMenuItem Visibility="Hidden"/>
 
-        </RadialMenu:RadialMenu>
+        </RadialMenu:RadialMenu>-->
+
 
         <!--#endregion-->
         

@@ -11,6 +11,7 @@ using Driver;
 using Microsoft.Win32;
 using System.IO;
 using IDE.Common.Utilities;
+using System;
 
 namespace IDE.Common.ViewModels
 {
@@ -601,6 +602,7 @@ namespace IDE.Common.ViewModels
         public ICommand RadialMenuItem2Command { get; private set; }
         public ICommand RadialMenuItem3Command { get; private set; }
         public ICommand ChangeFontCommand { get; private set; }
+        public ICommand MouseOutsideRadialCommand { get; private set; }
 
         public ICommand CtrlSKey { get; private set; }
         public ICommand CtrlNKey { get; private set; }
@@ -616,12 +618,20 @@ namespace IDE.Common.ViewModels
             RadialMenuItem2Command = new RelayCommand(RadialMenuItem2Execute, RadialMenuItem2CanExecute);
             RadialMenuItem3Command = new RelayCommand(RadialMenuItem3Execute, RadialMenuItem3CanExecute);
             ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
+            MouseOutsideRadialCommand = new RelayCommand(MouseOutsideRadial);
 
             CtrlSKey = new RelayCommand(CtrlS);
             CtrlNKey = new RelayCommand(AddTab);
             EscKey = new RelayCommand(Esc);
         }
-        
+
+        private async void MouseOutsideRadial(object obj)
+        {
+            RadialMenuIsOpen = false;
+            await Task.Delay(300);
+            SetupMainSubmenu();
+        }
+
         private bool CanChangeFont(object obj)
         {
             if (TabItems.Count == 0)

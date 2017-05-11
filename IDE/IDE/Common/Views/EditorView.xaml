@@ -4,12 +4,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              d:DesignHeight="600" d:DesignWidth="800"
              mc:Ignorable="d"
-             
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
-             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs">
+             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls">
+
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -72,8 +74,8 @@
     </UserControl.InputBindings>
 
 
-    <Grid Style="{StaticResource FocusRadialMenu}">
 
+    <Grid Style="{StaticResource FocusRadialMenu}">
         <!--#region RowDefinitions-->
         
         <Grid.RowDefinitions>
@@ -86,11 +88,18 @@
         </Grid.ColumnDefinitions>
         
         <!--#endregion-->
-        
+
+
         <!--#region Menu-->
+            
+            <!--<i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeave">
+                    <i:InvokeCommandAction Command="{Binding EditorClick}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
 
         <!-- Button enabling radial menu -->
-        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0" ToolTip="Options">
+        <RadialMenu:RadialMenu IsOpen="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-100,-125,0,0" ToolTip="Options" Panel.ZIndex="99">
             <RadialMenu:RadialMenu.CentralItem>
                 <RadialMenu:RadialMenuCentralItem Command="{Binding OpenRadialMenuCommand}" BorderBrush="{Binding Path=Appearance.ThemeColor}">
                     <Rectangle Width="25" Height="25" Visibility="{Binding RadialMenuEnableButtonVisibility}">
@@ -167,6 +176,7 @@
             <RadialMenu:RadialMenuItem Visibility="Hidden"/>
 
         </RadialMenu:RadialMenu>
+
 
         <!--#endregion-->
         

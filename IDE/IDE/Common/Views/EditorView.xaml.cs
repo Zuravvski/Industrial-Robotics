@@ -17,7 +17,8 @@ namespace IDE.Common.Views
             DataContext = new EditorViewModel();
         }
 
+
         #endregion
-        
+
     }
 }

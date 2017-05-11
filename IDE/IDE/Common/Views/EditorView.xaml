@@ -9,16 +9,19 @@
              d:DesignHeight="600" d:DesignWidth="800"
              mc:Ignorable="d"
              xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
-             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
-             xmlns:materialMenu="clr-namespace:MaterialMenu;assembly=MaterialMenu">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs">
 
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary  Source="/Icons/Icons.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
 
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Icons/Icons.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
             <converters:RemoveStarConverter x:Key="RemoveStar"/>
 
@@ -93,41 +96,56 @@
 
         <!--#region Menu-->
 
-        <Button HorizontalAlignment="Left" Click="Button_Click">
-            <Rectangle Width="25" Height="25">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_lines_horizontal_4}"/>
-                </Rectangle.Fill>
-            </Rectangle>
-        </Button>
+        <StackPanel Orientation="Horizontal">
+
+            <materialDesign:PopupBox PopupMode="Click"  PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}">
+                <materialDesign:PopupBox.ToggleContent>
+                    <materialDesign:PackIcon Kind="File" Width="24" Height="24"/>
+                </materialDesign:PopupBox.ToggleContent>
+                <StackPanel>
+                    <Button ToolTip="Create new tab">
+                        <materialDesign:PackIcon Kind="File"/>
+                    </Button>
+                    <Button ToolTip="Open tab from a file">
+                        <materialDesign:PackIcon Kind="FileDocument"/>
+                    </Button>
+                </StackPanel>
+            </materialDesign:PopupBox>
+
+            <materialDesign:PopupBox PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}">
+                <materialDesign:PopupBox.ToggleContent>
+                    <materialDesign:PackIcon Kind="Floppy" Width="24" Height="24"/>
+                </materialDesign:PopupBox.ToggleContent>
+                <StackPanel>
+                    <Button ToolTip="Save current tab">
+                        <materialDesign:PackIcon Kind="ContentSave"/>
+                    </Button>
+                    <Button ToolTip="Save current tab as">
+                        <materialDesign:PackIcon Kind="ContentSaveSettings"/>
+                    </Button>
+                    <Button ToolTip="Save all tabs">
+                        <materialDesign:PackIcon Kind="ContentSaveAll"/>
+                    </Button>
+                </StackPanel>
+            </materialDesign:PopupBox>
+
+            <materialDesign:PopupBox StaysOpen="True" PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}">
+                <materialDesign:PopupBox.ToggleContent>
+                    <materialDesign:PackIcon Kind="Settings" Width="24" Height="24"/>
+                </materialDesign:PopupBox.ToggleContent>
+                <StackPanel>
+                    <Button ToolTip="If checked, intellisense will be enabled">
+                        <ToggleButton Content="i" Style="{StaticResource MaterialDesignActionLightToggleButton}"  Height="35" Width="35"/>
+                    </Button>
+                    <Button ToolTip="If checked, syntax check will be enabled">
+                        <ToggleButton Content="s" Style="{StaticResource MaterialDesignActionLightToggleButton}" Height="35" Width="35"/>
+                    </Button>
+                </StackPanel>
+            </materialDesign:PopupBox>
+            
+        </StackPanel>
 
 
-        <materialMenu:SideMenu HorizontalAlignment="Left" x:Name="Menu" Background="Aqua"
-                               MenuWidth="500" Margin="50,0,0,0"
-                               Theme="Default"
-                               State="Hidden">
-
-            <materialMenu:SideMenu.Menu>
-                <ScrollViewer VerticalScrollBarVisibility="Hidden" Background="Transparent" >
-                    <StackPanel Orientation="Horizontal" Background="Transparent">
-
-                        <materialMenu:MenuButton Text="1" Background="AliceBlue" MouseDown="MenuButton_MouseDown">
-                        </materialMenu:MenuButton>
-
-                        <materialMenu:MenuButton Text="2">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseLeave">
-                                    <i:InvokeCommandAction Command="{Binding DummyCommand}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </materialMenu:MenuButton>
-
-                        <materialMenu:MenuButton Text="3"/>
-                        
-                    </StackPanel>
-                </ScrollViewer>
-            </materialMenu:SideMenu.Menu>
-        </materialMenu:SideMenu>
 
 
         <!--<i:Interaction.Triggers>

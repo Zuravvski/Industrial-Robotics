@@ -98,10 +98,8 @@
     </ApplicationDefinition>
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\AvalonEditBehavior.cs" />
-    <Compile Include="Common\Models\BrowseModel.cs" />
     <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
     <Compile Include="Common\Models\CustomHighlighting.cs" />
-    <Compile Include="Common\Models\HomeModel.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\Value Objects\Positions.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />

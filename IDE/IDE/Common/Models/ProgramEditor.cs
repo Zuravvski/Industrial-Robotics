@@ -33,6 +33,9 @@ namespace IDE.Common.Models
 
         #region enums
         
+        /// <summary>
+        /// Describes wheter syntax check will occcur on the real time or on demand.
+        /// </summary>
         public enum SyntaxCheckerModeE
         {
             RealTime,
@@ -77,12 +80,14 @@ namespace IDE.Common.Models
                 isIntellisenseEnabled = value;
                 if (isIntellisenseEnabled)
                 {
+                    //Subscribes to intellisense events.
                     TextArea.TextEntering += OnIntellisensePreparation;
                     TextArea.TextEntered += OnIntellisenseShow;
                     TextArea.PreviewKeyDown += OnIntellisenseSubmition;
                 }
                 else
                 {
+                    //Unsubscribes from intellisense events.
                     TextArea.TextEntering -= OnIntellisensePreparation;
                     TextArea.TextEntered -= OnIntellisenseShow;
                     TextArea.PreviewKeyDown -= OnIntellisenseSubmition;

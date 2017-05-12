@@ -8,6 +8,8 @@
         MinWidth="1000" MinHeight="600" 
         WindowStartupLocation="CenterScreen">
 
+
+
     <mui:ModernWindow.MenuLinkGroups>
     
     

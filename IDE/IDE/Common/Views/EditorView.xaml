@@ -29,6 +29,7 @@
             <!--HEADER TEMPLATE-->
             <DataTemplate x:Key="HeaderTemplate">
                 <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type ct:ChromeTabItem}}}">
+                    
                     <StackPanel Orientation="Horizontal"
                                     Background="Transparent">
                         <Image Source="{Binding Image}"
@@ -96,40 +97,41 @@
 
         <!--#region Menu-->
 
+
         <StackPanel Orientation="Horizontal">
 
-            <materialDesign:PopupBox PopupMode="Click"  PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}">
+            <materialDesign:PopupBox PopupMode="Click"  PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
                     <materialDesign:PackIcon Kind="File" Width="24" Height="24"/>
                 </materialDesign:PopupBox.ToggleContent>
                 <StackPanel>
-                    <Button ToolTip="Create new tab">
+                    <Button ToolTip="Create new tab" Command="{Binding MenuCreateCommand}">
                         <materialDesign:PackIcon Kind="File"/>
                     </Button>
-                    <Button ToolTip="Open tab from a file">
+                    <Button ToolTip="Open tab from a file" Command="{Binding MenuOpenCommand}">
                         <materialDesign:PackIcon Kind="FileDocument"/>
                     </Button>
                 </StackPanel>
             </materialDesign:PopupBox>
 
-            <materialDesign:PopupBox PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}">
+            <materialDesign:PopupBox PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
                     <materialDesign:PackIcon Kind="Floppy" Width="24" Height="24"/>
                 </materialDesign:PopupBox.ToggleContent>
                 <StackPanel>
-                    <Button ToolTip="Save current tab">
+                    <Button ToolTip="Save current tab" Command="{Binding MenuSaveCommand}">
                         <materialDesign:PackIcon Kind="ContentSave"/>
                     </Button>
-                    <Button ToolTip="Save current tab as">
+                    <Button ToolTip="Save current tab as" Command="{Binding MenuSaveAsCommand}">
                         <materialDesign:PackIcon Kind="ContentSaveSettings"/>
                     </Button>
-                    <Button ToolTip="Save all tabs">
+                    <Button ToolTip="Save all tabs" Command="{Binding MenuSaveAllCommand}">
                         <materialDesign:PackIcon Kind="ContentSaveAll"/>
                     </Button>
                 </StackPanel>
             </materialDesign:PopupBox>
 
-            <materialDesign:PopupBox StaysOpen="True" PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}">
+            <materialDesign:PopupBox StaysOpen="True" PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
                     <materialDesign:PackIcon Kind="Settings" Width="24" Height="24"/>
                 </materialDesign:PopupBox.ToggleContent>
@@ -247,6 +249,12 @@
                              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                              IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
                              ItemTemplate="{StaticResource HeaderTemplate}">
+
+
+
+            <ct:ChromeTabControl.InputBindings>
+                <MouseBinding Gesture="MiddleClick" Command="{Binding CloseTabCommand}"/>
+            </ct:ChromeTabControl.InputBindings>
 
 
             <ct:ChromeTabControl.Resources>

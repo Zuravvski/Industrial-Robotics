@@ -7,6 +7,8 @@
              xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:k="http://schemas.microsoft.com/kinect/2013"
              xmlns:models="clr-namespace:IDE.Common.Models"
              mc:Ignorable="d" 
@@ -15,11 +17,18 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
             <converters:ColorToBrush x:Key="ColorToBrush"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid x:Name="grid">
+
+
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220*"/>
             <ColumnDefinition Width="71*"/>
@@ -27,13 +36,14 @@
             <ColumnDefinition Width="33*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="18*"/>
-            <RowDefinition Height="7*"/>
+            <RowDefinition Height="23*"/>
+            <RowDefinition Height="193*"/>
+            <RowDefinition Height="84*"/>
         </Grid.RowDefinitions>
 
         <!--#region RemoteProgram List-->
 
-        <Border Margin="0,0,10,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.RowSpan="2" Grid.ColumnSpan="2">
+        <Border Margin="0,0,20,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.Row="1"  Grid.RowSpan="2" Grid.ColumnSpan="2">
             <DockPanel Height="Auto">
                 <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="20,3,0,0" DockPanel.Dock="Top"/>
                 <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False" DockPanel.Dock="Bottom">
@@ -94,20 +104,20 @@
                 </DataGrid>
             </DockPanel>
         </Border>
-        
+
         <!--#endregion-->
 
         <!--#region KINECT STUFF-->
 
-        <Border Grid.Column="2" Margin="0,0,0,10" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
+        <Border Grid.Column="1" Margin="62.8,0,0.4,10" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="1">
 
         </Border>
-        
+
         <!--#endregion-->
 
         <!--#region Command window-->
-        
-        <Border Grid.Row="1" Grid.Column="2" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3">
+
+        <Border Grid.Row="2" Grid.Column="1" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Margin="62.8,0,0.4,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*"/>
@@ -162,15 +172,15 @@
                             </MenuItem>
 
                         </ContextMenu>
-                        
+
                     </models:ProgramEditor.ContextMenu>
-                    
+
                 </models:ProgramEditor>
 
                 <DockPanel Grid.Row="1">
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                        <Button Content="Send" Command="{Binding SendClickCommand}"  Width="75" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
-                        <Controls:ToggleSwitch x:Name="SyntaxCheckToggle" MaxWidth="75" Margin="0,-5,0,0"  ThumbIndicatorBrush="#FFC1C1C1" ToolTip="If checked, syntax will be validated." OffSwitchBrush="Red" OnSwitchBrush="Green" OffLabel="" OnLabel=""/>
+                        <Button Content="Send" Command="{Binding SendClickCommand}"  Width="65" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                        <ToggleButton x:Name="SyntaxCheckToggle" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" VerticalAlignment="Center" ToolTip="If checked, syntax will be validated" />
                     </StackPanel>
                     <models:ProgramEditor x:Name="CommandInput" Padding="3" IsOneLine="True" DoSyntaxCheck="{Binding ElementName=SyntaxCheckToggle, Path=IsChecked}" IsHighlightingEnabled="True" IsIntellisenseEnabled="True" Background="Transparent" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0,0,3,0" BorderBrush="{Binding Path=Appearance.ThemeColor}" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}" ShowLineNumbers="False">
                         <i:Interaction.Behaviors>
@@ -214,8 +224,8 @@
                 </DockPanel>
             </Grid>
         </Border>
-        
+
         <!--#endregion-->
-        
+
     </Grid>
 </UserControl>

@@ -21,8 +21,13 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:ColorToBrush x:Key="ColorToBrush"/>
+            <converters:ConnectionToTextConverter x:Key="ConnectionConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -40,6 +45,13 @@
             <RowDefinition Height="193*"/>
             <RowDefinition Height="84*"/>
         </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Path=Manipulator.Connected, Converter={StaticResource ConnectionConverter}}"/>
+            <materialDesign:Badged Margin="10 0 0 0" Badge="!" BadgeColorZoneMode="Dark">
+                <ToggleButton x:Name="ConnectionToggle" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" IsChecked="{Binding Path=Manipulator.Connected, Mode=OneWay}" Command="{Binding ConnectionCommand}" CommandParameter="{Binding ElementName=ConnectionToggle, Path=IsChecked}"/>
+            </materialDesign:Badged>
+        </StackPanel>
 
         <!--#region RemoteProgram List-->
 

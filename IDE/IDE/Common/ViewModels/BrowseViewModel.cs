@@ -8,7 +8,7 @@ using IDE.Common.Models.Value_Objects;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using IDE.Common.Models.Syntax_Check;
+using IDE.Common.Views;
 
 namespace IDE.Common.ViewModels
 {
@@ -19,15 +19,13 @@ namespace IDE.Common.ViewModels
 
         private string commandHistoryText;
         private string commandInputText;
-        private readonly ProgramEditor commandHistory, commandInput;
-        private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
         private bool lineWasNotValid;
         private int messageSelectionArrows;
         private ObservableCollection<RemoteProgram> remotePrograms;
         private RemoteProgram selectedRemoteProgram;
-        //this should be removed later on
-        readonly E3JManipulator manipulator;
-        readonly ProgramService programServce;
+        private E3JManipulator manipulator;
+        private readonly ProgramService programServce;
+        private readonly ProgramEditor commandHistory, commandInput;
 
         #endregion
 
@@ -119,7 +117,19 @@ namespace IDE.Common.ViewModels
                 NotifyPropertyChanged("RemotePrograms");
             }
         }
-        
+
+        public E3JManipulator Manipulator
+        {
+            get
+            {
+                return manipulator;
+            }
+            private set
+            {
+                manipulator = value;
+                NotifyPropertyChanged("Manipulator");
+            }
+        }
 
         /// <summary>
         /// List storing sent commands,
@@ -181,8 +191,6 @@ namespace IDE.Common.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(commandInputText))
             {
-                var line = commandInput.Document.GetLineByNumber(1);
-
                 if (commandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
                     //syntaxCheckVisualizer.Visualize(true, line);
@@ -314,7 +322,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void commandHistory_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            bool handle = (Keyboard.Modifiers & ModifierKeys.Control) > 0;
+            var handle = (Keyboard.Modifiers & ModifierKeys.Control) > 0;
             if (!handle)
                 return;
 
@@ -337,6 +345,7 @@ namespace IDE.Common.ViewModels
         public ICommand ClearHistoryCommand { get; private set; }
         public ICommand ExportHistoryCommand { get; private set; }
         public ICommand ChangeFontCommand { get; private set; }
+        public ICommand ConnectionCommand { get; private set; }
 
         private void DeclareCommands()
         {
@@ -349,6 +358,27 @@ namespace IDE.Common.ViewModels
             ClearHistoryCommand = new RelayCommand(ClearHistory, IscommandHistoryNotEmpty);
             ExportHistoryCommand = new RelayCommand(ExportHistory, IscommandHistoryNotEmpty);
             ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
+            ConnectionCommand = new RelayCommand(Connection);
+        }
+
+        private void Connection(object obj)
+        {
+            // Open dialog here
+            if (null != obj)
+            {
+                var state = (bool) obj;
+                if (!state)
+                {
+                    Manipulator.Disconnect();
+                }
+                else
+                {
+                    var connectionDialog = new ConnectionDialog();
+                    connectionDialog.Show();
+                   // Manipulator.Connect("");
+                    
+                }
+            }
         }
 
         private bool CanChangeFont(object obj)

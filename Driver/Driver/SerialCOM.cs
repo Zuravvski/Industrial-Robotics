@@ -98,10 +98,10 @@ namespace Driver
 
         public async void OpenPort(string portName)
         {
-            if (port.IsOpen) return;
-            port.PortName = portName;
             try
             {
+                if (port.IsOpen) return;
+                port.PortName = portName;
                 port.Open();
                 // delay for initialization purposes
                 await Task.Delay(1000);

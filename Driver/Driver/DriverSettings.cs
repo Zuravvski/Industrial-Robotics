@@ -23,6 +23,7 @@ namespace Driver
         public int DataBits { get; set; }
         public Parity Parity { get; set; }
         public StopBits StopBits { get; set; }
+        public string Handshake { get; set; }
         public bool RtsEnable { get; set; }
         public int ReadTimeout { get; set; }
         public int WriteTimeout { get; set; }

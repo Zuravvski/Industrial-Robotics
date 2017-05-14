@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO.Ports;
 using IDE.Common.Views;
+using System.Windows.Controls;
 
 namespace IDE.Common.ViewModels
 {
@@ -26,6 +27,8 @@ namespace IDE.Common.ViewModels
         private ObservableCollection<string> availableCOMPorts;
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
+        private DriverSettings settings;
+        private string selectedCOMPort;
         private readonly ProgramService programServce;
         private readonly ProgramEditor commandHistory, commandInput;
 
@@ -48,6 +51,7 @@ namespace IDE.Common.ViewModels
             commandHistory.PreviewMouseWheel += commandHistory_PreviewMouseWheel;
 
             MessageList = new MessageList();
+            Settings = DriverSettings.CreateDefaultSettings();
 
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
@@ -65,6 +69,26 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public DriverSettings Settings
+        {
+            get { return settings; }
+            set
+            {
+                settings = value;
+                NotifyPropertyChanged("Settings");
+            }
+        }
+
+        public string SelectedCOMPort
+        {
+            get { return selectedCOMPort; }
+            set
+            {
+                selectedCOMPort = value;
+                NotifyPropertyChanged("SelectedCOMPort");
+            }
+        }
 
         public ObservableCollection<string> AvailableCOMPorts
         {
@@ -391,9 +415,16 @@ namespace IDE.Common.ViewModels
                     Manipulator?.Disconnect();
                 }
                 else
-                { 
-                   // Manipulator.Connect("");
-                    
+                {
+                    try
+                    {
+                        Manipulator = new E3JManipulator(Settings);
+                        Manipulator.Connect(SelectedCOMPort);
+                    }
+                    catch (Exception)
+                    {
+                        //TODO 
+                    }
                 }
             }
         }

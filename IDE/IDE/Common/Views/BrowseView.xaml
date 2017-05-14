@@ -21,12 +21,19 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ScrollViewer.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Converters.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignComboBox}" />
-            <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MaterialDesignScrollViewer}" />
-            <SolidColorBrush x:Key="MaterialDesignDarkBackground" Color="#FF303030"/>
-            <SolidColorBrush x:Key="MaterialDesignDarkForeground" Color="#FFFAFAFA"/>
-            <SolidColorBrush x:Key="MaterialDesignDarkSeparatorBackground" Color="#1F000000" />
+
+            <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignComboBox}">
+                <Setter Property="Background" Value="{DynamicResource WindowBackground}"/>
+            </Style> 
+            
+            <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MaterialDesignScrollViewer}"/>
+            
+            <!--<Style TargetTye="{x:Type ComboBoxItem}" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
+                <Setter Property="Background" Value="#333333"/>
+            </Style>-->
+            
             <!--#region TOGGLE -->
             <Style x:Key="AnimatedSwitch" TargetType="{x:Type ToggleButton}">
                 <Setter Property="Foreground" Value="Black" />
@@ -88,7 +95,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-
+    
 
     <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
@@ -109,53 +116,53 @@
 
             <materialDesign:Badged Badge="!" BadgeColorZoneMode="Dark" VerticalAlignment="Center">
                 <materialDesign:PopupBox StaysOpen="True" Margin="25,0,0,0" VerticalAlignment="Center">
-                    <Border BorderBrush="{Binding Appearance.ThemeColor}" BorderThickness="2" Background="White" Padding="10">
+                    <Border BorderBrush="{Binding Appearance.ThemeColor}" BorderThickness="2" Padding="10" Background="{DynamicResource WindowBackground}">
                         <StackPanel Width="200">
                             <TextBlock Text="Connection settings:" Style="{StaticResource Heading2}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" Background="White" ItemsSource="{Binding AvailableCOMPorts}">
+                            <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="DropDownOpened">
                                         <i:InvokeCommandAction Command="{Binding Path=RefreshCOMPortsCommand}"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True" Background="White">
-                                <ComboBoxItem Content="110" Background="White"/>
-                                <ComboBoxItem Content="150" Background="White"/>
-                                <ComboBoxItem Content="300" Background="White"/>
-                                <ComboBoxItem Content="2400" Background="White"/>
-                                <ComboBoxItem Content="4800" Background="White"/>
-                                <ComboBoxItem Content="9600" Background="White"/>
-                                <ComboBoxItem Content="19200" Background="White"/>
-                                <ComboBoxItem Content="38400" Background="White"/>
-                                <ComboBoxItem Content="57600" Background="White"/>
-                                <ComboBoxItem Content="115200" Background="White"/>
-                                <ComboBoxItem Content="230400" Background="White"/>
-                                <ComboBoxItem Content="460800" Background="White"/>
-                                <ComboBoxItem Content="921600" Background="White"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True">
+                                <ComboBoxItem Content="110"/>
+                                <ComboBoxItem Content="150"/>
+                                <ComboBoxItem Content="300"/>
+                                <ComboBoxItem Content="2400"/>
+                                <ComboBoxItem Content="4800"/>
+                                <ComboBoxItem Content="9600"/>
+                                <ComboBoxItem Content="19200"/>
+                                <ComboBoxItem Content="38400"/>
+                                <ComboBoxItem Content="57600"/>
+                                <ComboBoxItem Content="115200"/>
+                                <ComboBoxItem Content="230400"/>
+                                <ComboBoxItem Content="460800"/>
+                                <ComboBoxItem Content="921600"/>
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True" Background="White">
-                                <ComboBoxItem Content="8 bits" Background="White"/>
-                                <ComboBoxItem Content="7 bits" Background="White"/>
-                                <ComboBoxItem Content="6 bits" Background="White"/>
-                                <ComboBoxItem Content="5 bits" Background="White"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True">
+                                <ComboBoxItem Content="8 bits"/>
+                                <ComboBoxItem Content="7 bits"/>
+                                <ComboBoxItem Content="6 bits"/>
+                                <ComboBoxItem Content="5 bits"/>
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True" Background="White">
-                                <ComboBoxItem Content="1" Background="White"/>
-                                <ComboBoxItem Content="2" Background="White"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True">
+                                <ComboBoxItem Content="1"/>
+                                <ComboBoxItem Content="2"/>
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True" Background="White">
-                                <ComboBoxItem Content="None" Background="White"/>
-                                <ComboBoxItem Content="Odd" Background="White"/>
-                                <ComboBoxItem Content="Even" Background="White"/>
-                                <ComboBoxItem Content="Mark" Background="White"/>
-                                <ComboBoxItem Content="Space" Background="White"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True">
+                                <ComboBoxItem Content="None"/>
+                                <ComboBoxItem Content="Odd"/>
+                                <ComboBoxItem Content="Even"/>
+                                <ComboBoxItem Content="Mark"/>
+                                <ComboBoxItem Content="Space"/>
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True" Background="White">
-                                <ComboBoxItem Content="None" Background="White"/>
-                                <ComboBoxItem Content="RTS/CTS" Background="White"/>
-                                <ComboBoxItem Content="DTR/DSR" Background="White"/>
-                                <ComboBoxItem Content="RS485-rts" Background="White"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True">
+                                <ComboBoxItem Content="None"/>
+                                <ComboBoxItem Content="RTS/CTS"/>
+                                <ComboBoxItem Content="DTR/DSR"/>
+                                <ComboBoxItem Content="RS485-rts"/>
                             </ComboBox>
                         </StackPanel>
                     </Border>

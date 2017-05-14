@@ -4,13 +4,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              d:DesignHeight="600" d:DesignWidth="800"
              mc:Ignorable="d"
-             xmlns:RadialMenu="clr-namespace:RadialMenu.Controls;assembly=RadialMenu"
+             xmlns:viewModels="clr-namespace:IDE.Common.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:EditorViewModel, IsDesignTimeCreatable=True}"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs">
+             xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
+             xmlns:models="clr-namespace:IDE.Common.Models"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
 
     <UserControl.Resources>
@@ -24,62 +26,43 @@
             
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
             <converters:RemoveStarConverter x:Key="RemoveStar"/>
-
+            <converters:ColorToBrush x:Key="ColorToBrush"></converters:ColorToBrush>
+            
+            <Style TargetType="{x:Type models:ProgramEditor}">
+                <Setter Property="Foreground" Value="{DynamicResource WindowText}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Style> 
 
             <!--HEADER TEMPLATE-->
             <DataTemplate x:Key="HeaderTemplate">
                 <Grid Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type ct:ChromeTabItem}}}">
-                    
+
                     <StackPanel Orientation="Horizontal"
-                                    Background="Transparent">
-                        <Image Source="{Binding Image}"
-                                   Stretch="Fill"
-                                       Margin="5,5,5,5" />
+                    Background="Transparent">
+                        <Image Source="{Binding Image}" Stretch="Fill" Margin="5,5,5,5" />
                         <TextBlock Text="{Binding Header}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       VerticalAlignment="Center" />
+                                TextWrapping="NoWrap"
+                                TextTrimming="CharacterEllipsis"
+                                VerticalAlignment="Center" 
+                                Foreground="Black"/>
                     </StackPanel>
 
-                    <Grid.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Close"
-                                          Command="{Binding Path=PlacementTarget.Tag.CloseTabCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <MenuItem Header="Close all"
-                                          Command="{Binding Path=PlacementTarget.Tag.CloseAllTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <MenuItem Header="Close other tabs"
-                                          Command="{Binding Path=PlacementTarget.Tag.CloseOtherTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                          CommandParameter="{Binding}" />
-                        </ContextMenu>
-                    </Grid.ContextMenu>
                     <Grid.ToolTip>
                         <ToolTip Content="{Binding Header, Converter={StaticResource RemoveStar}}"/>
                     </Grid.ToolTip>
                 </Grid>
             </DataTemplate>
-
-            <Style x:Key="FocusRadialMenu" TargetType="Grid">
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ElementName=MyRadial, Path=IsVisible}" Value="True">
-                        <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=MyRadial}"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <UserControl.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding CtrlSKey}"/>
         <KeyBinding Modifiers="Ctrl" Key="N" Command="{Binding CtrlNKey}"/>
-        <KeyBinding Key="Escape" Command="{Binding EscKey}"/>
     </UserControl.InputBindings>
 
 
 
-    <Grid Style="{StaticResource FocusRadialMenu}">
+    <Grid>
         
         <!--#region RowDefinitions-->
         
@@ -153,11 +136,10 @@
                              SelectedIndex="{Binding SelectedTabIndex}"
                              AddTabCommand="{Binding AddTabCommand}"
                              CloseTabCommand="{Binding CloseTabCommand}"
+                             ItemTemplate="{StaticResource HeaderTemplate}"
                              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                             IsEnabled="{Binding RadialMenuIsOpen, Converter={StaticResource InvertBoolean}}"
-                             ItemTemplate="{StaticResource HeaderTemplate}">
-
-
+                             SelectedTabBrush="DodgerBlue"
+                             Foreground="{DynamicResource WindowText}">
 
             <ct:ChromeTabControl.InputBindings>
                 <MouseBinding Gesture="MiddleClick" Command="{Binding CloseTabCommand}"/>

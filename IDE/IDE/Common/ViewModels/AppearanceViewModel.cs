@@ -71,8 +71,17 @@ namespace IDE.Common.ViewModels
         protected AppearanceViewModel()
         {
             // add the default themes
-            Themes.Add(new Link {DisplayName = "dark", Source = AppearanceManager.DarkThemeSource});
-            Themes.Add(new Link {DisplayName = "light", Source = AppearanceManager.LightThemeSource});
+            Themes.Add(new Link
+            {
+                DisplayName = "dark",
+                Source = AppearanceManager.DarkThemeSource
+            });
+
+            Themes.Add(new Link
+            {
+                DisplayName = "light",
+                Source = AppearanceManager.LightThemeSource
+            });
 
             // add additional themes
             Themes.Add(new Link

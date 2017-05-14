@@ -28,6 +28,7 @@ namespace IDE.Common.ViewModels
         private E3JManipulator manipulator;
         private readonly ProgramService programServce;
         private readonly ProgramEditor commandHistory, commandInput;
+        private DriverSettings settings;
 
         #endregion
 
@@ -48,6 +49,7 @@ namespace IDE.Common.ViewModels
             commandHistory.PreviewMouseWheel += commandHistory_PreviewMouseWheel;
 
             MessageList = new MessageList();
+            Settings = DriverSettings.CreateDefaultSettings();
 
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
@@ -65,6 +67,16 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public DriverSettings Settings
+        {
+            get { return settings; }
+            set
+            {
+                settings = value;
+                NotifyPropertyChanged("Settings");
+            }
+        }
 
         public ObservableCollection<string> AvailableCOMPorts
         {
@@ -393,7 +405,8 @@ namespace IDE.Common.ViewModels
                 else
                 { 
                    // Manipulator.Connect("");
-                    
+                    Manipulator = new E3JManipulator(Settings);
+                    Manipulator.Connect("COMx");
                 }
             }
         }

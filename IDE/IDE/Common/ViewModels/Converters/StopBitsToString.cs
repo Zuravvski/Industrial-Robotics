@@ -6,27 +6,31 @@ using System.Windows.Data;
 
 namespace IDE.Common.ViewModels.Converters
 {
-    [ValueConversion(typeof(ComboBoxItem), typeof(StopBits))]
-    public class ComboBoxItemToStopBits : IValueConverter
+    [ValueConversion(typeof(StopBits), typeof(string))]
+    public class StopBitsToString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new ComboBoxItem() { Content = value?.ToString() };
+            var stopBits = value.ToString();
+
+            if (stopBits == "One")
+                return "1";
+            if (stopBits == "OnePointFive")
+                return "1.5";
+            else
+                return "2";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var item = value as ComboBoxItem;
-            var itemContent = item.Content.ToString();
+            var stopBits = value.ToString();
 
-            if (itemContent == "1")
+            if (stopBits == "1")
                 return StopBits.One;
-            if (itemContent == "1.5")
+            if (stopBits == "1.5")
                 return StopBits.OnePointFive;
-            if (itemContent == "2")
-                return StopBits.Two;
             else
-                return StopBits.None;
+                return StopBits.Two;
         }
     }
 }

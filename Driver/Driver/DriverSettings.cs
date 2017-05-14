@@ -12,6 +12,7 @@ namespace Driver
         private const int DEFAULT_BAUDRATE = 9600;
         private const Parity DEFAULT_PARITY = Parity.Even;
         private const StopBits DEFAULT_STOP_BITS = StopBits.Two;
+        private const string DEFAULT_HANDSHAKE = "RTS/CTS";
         private const bool DEFAULT_RTS_ENABLE = true;
         private const int DEFAULT_READ_TIMEOUT = 5000;
         private const int DEFAULT_WRITE_TIMEOUT = 2000;
@@ -94,6 +95,7 @@ namespace Driver
             BaudRate = DEFAULT_BAUDRATE;
             DataBits = DEFAULT_DATA_BITS;
             StopBits = DEFAULT_STOP_BITS;
+            Handshake = DEFAULT_HANDSHAKE;
             Parity = DEFAULT_PARITY;
             RtsEnable = DEFAULT_RTS_ENABLE;
             ReadTimeout = DEFAULT_READ_TIMEOUT;

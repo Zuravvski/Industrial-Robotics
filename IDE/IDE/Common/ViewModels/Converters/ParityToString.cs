@@ -6,26 +6,26 @@ using System.Windows.Data;
 
 namespace IDE.Common.ViewModels.Converters
 {
-    [ValueConversion(typeof(ComboBoxItem), typeof(Parity))]
-    public class ComboBoxItemToParity : IValueConverter
+    [ValueConversion(typeof(Parity), typeof(string))]
+    public class ParityToString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new ComboBoxItem() { Content = value?.ToString() };
+            var parity = (Parity)value;
+            return parity.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var item = value as ComboBoxItem;
-            var itemContent = item.Content.ToString();
+            var parityType = value as string;
 
-            if (itemContent == "Odd")
+            if (parityType == "Odd")
                 return Parity.Odd;
-            if (itemContent == "Even")
+            if (parityType == "Even")
                 return Parity.Even;
-            if (itemContent == "Mark")
+            if (parityType == "Mark")
                 return Parity.Mark;
-            if (itemContent == "Space")
+            if (parityType == "Space")
                 return Parity.Space;
             else
                 return Parity.None;

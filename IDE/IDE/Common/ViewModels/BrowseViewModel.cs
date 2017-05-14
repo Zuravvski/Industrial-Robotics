@@ -28,9 +28,11 @@ namespace IDE.Common.ViewModels
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
         private DriverSettings settings;
-        private string selectedCOMPort;
         private readonly ProgramService programServce;
         private readonly ProgramEditor commandHistory, commandInput;
+
+        //settings
+        private string selectedCOMPort;
 
         #endregion
 
@@ -52,7 +54,7 @@ namespace IDE.Common.ViewModels
 
             MessageList = new MessageList();
             Settings = DriverSettings.CreateDefaultSettings();
-
+            
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
             programServce = new ProgramService(manipulator);
@@ -406,7 +408,6 @@ namespace IDE.Common.ViewModels
         
         private void Connection(object obj)
         {
-            // Open dialog here
             if (null != obj)
             {
                 var state = (bool) obj;
@@ -416,15 +417,8 @@ namespace IDE.Common.ViewModels
                 }
                 else
                 {
-                    try
-                    {
-                        Manipulator = new E3JManipulator(Settings);
-                        Manipulator.Connect(SelectedCOMPort);
-                    }
-                    catch (Exception)
-                    {
-                        //TODO 
-                    }
+                    Manipulator = new E3JManipulator(Settings);
+                    Manipulator.Connect(SelectedCOMPort);
                 }
             }
         }

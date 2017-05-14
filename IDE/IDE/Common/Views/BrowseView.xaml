@@ -1,4 +1,5 @@
-﻿<UserControl x:Class="IDE.Common.Views.Browse"
+﻿<UserControl Name="BrowseUserControl"
+             x:Class="IDE.Common.Views.Browse"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -18,32 +19,157 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Badged.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ScrollViewer.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MaterialDesignComboBox}" />
+            <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MaterialDesignScrollViewer}" />
+            <SolidColorBrush x:Key="MaterialDesignDarkBackground" Color="#FF303030"/>
+            <SolidColorBrush x:Key="MaterialDesignDarkForeground" Color="#FFFAFAFA"/>
+            <SolidColorBrush x:Key="MaterialDesignDarkSeparatorBackground" Color="#1F000000" />
+            <!--#region TOGGLE -->
+            <Style x:Key="AnimatedSwitch" TargetType="{x:Type ToggleButton}">
+                <Setter Property="Foreground" Value="Black" />
+                <Setter Property="Background" Value="#FAF9F9" />
+                <Setter Property="BorderBrush" Value="#FAF9F9" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Viewbox Stretch="Uniform">
+                                <Canvas Name="Layer_1" Width="20" Height="20" Canvas.Left="10" Canvas.Top="0">
+                                    <Ellipse  Canvas.Left="0" Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="0.5"/>
+                                    <Ellipse  Canvas.Left="15" Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="0.5"/>
+                                    <Border Canvas.Left="10" Width="15" Height="20" Name="rect416927" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0.5,0,0.5"/>
+                                    <Ellipse x:Name="ellipse"  Canvas.Left="0" Width="20" Height="20" Fill="White" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="0.3">
+                                        <Ellipse.RenderTransform>
+                                            <TranslateTransform X="0" Y="0" />
+                                        </Ellipse.RenderTransform>
+                                        <Ellipse.BitmapEffect>
+                                            <DropShadowBitmapEffect Softness="0.1" ShadowDepth="0.7" Direction="270" Color="#BBBBBB"/>
+                                        </Ellipse.BitmapEffect>
+                                    </Ellipse>
+                                </Canvas>
+                            </Viewbox>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True" >
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#52D468" Duration="0:0:0.2" />
+                                                <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#41C955" Duration="0:0:0.2" />
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Ellipse.RenderTransform).(TranslateTransform.X)" Storyboard.TargetName="ellipse">
+                                                    <SplineDoubleKeyFrame KeyTime="0" Value="0"/>
+                                                    <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="15" KeySpline="0, 1, 0.6, 1"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#d45252" Duration="0:0:0.2" />
+                                                <ColorAnimation Storyboard.TargetProperty="BorderBrush.Color" To="#C94141" Duration="0:0:0.2" />
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Ellipse.RenderTransform).(TranslateTransform.X)" Storyboard.TargetName="ellipse">
+                                                    <SplineDoubleKeyFrame KeyTime="0" Value="15"/>
+                                                    <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0" KeySpline="0, 0.5, 0.5, 1"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--#endregion-->
             <converters:ColorToBrush x:Key="ColorToBrush"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
 
 
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220*"/>
-            <ColumnDefinition Width="71*"/>
-            <ColumnDefinition Width="576*"/>
-            <ColumnDefinition Width="33*"/>
+            <ColumnDefinition Width="129*"/>
+            <ColumnDefinition Width="256*"/>
+            <ColumnDefinition Width="15*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="23*"/>
-            <RowDefinition Height="193*"/>
-            <RowDefinition Height="84*"/>
+            <RowDefinition Height="18*"/>
+            <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
+
+        <!--#region Connection menu-->
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-30,0.4,0" ToolTip="Check to establish connection with&#10;settings defined in popout on the right.">
+            <TextBlock Text="Connection status: " Style="{StaticResource Heading2}" VerticalAlignment="Center"/>
+            <ToggleButton Style="{StaticResource AnimatedSwitch}" Height="25"  VerticalAlignment="Center" IsChecked="False" Background="#C94141"/>
+
+            <materialDesign:Badged Badge="!" BadgeColorZoneMode="Dark" VerticalAlignment="Center">
+                <materialDesign:PopupBox StaysOpen="True" Margin="25,0,0,0" VerticalAlignment="Center">
+                    <Border BorderBrush="{Binding Appearance.ThemeColor}" BorderThickness="2" Background="White" Padding="10">
+                        <StackPanel Width="200">
+                            <TextBlock Text="Connection settings:" Style="{StaticResource Heading2}"/>
+                            <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" Background="White" IsEditable="True">
+                                <ComboBoxItem Content="COM1" Background="White"/>
+                                <ComboBoxItem Content="COM2" Background="White"/>
+                                <ComboBoxItem Content="COM3" Background="White"/>
+                                <ComboBoxItem Content="COM4" Background="White"/>
+                                <ComboBoxItem Content="COM5" Background="White"/>
+                            </ComboBox>
+                            <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True" Background="White">
+                                <ComboBoxItem Content="110" Background="White"/>
+                                <ComboBoxItem Content="150" Background="White"/>
+                                <ComboBoxItem Content="300" Background="White"/>
+                                <ComboBoxItem Content="2400" Background="White"/>
+                                <ComboBoxItem Content="4800" Background="White"/>
+                                <ComboBoxItem Content="9600" Background="White"/>
+                                <ComboBoxItem Content="19200" Background="White"/>
+                                <ComboBoxItem Content="38400" Background="White"/>
+                                <ComboBoxItem Content="57600" Background="White"/>
+                                <ComboBoxItem Content="115200" Background="White"/>
+                                <ComboBoxItem Content="230400" Background="White"/>
+                                <ComboBoxItem Content="460800" Background="White"/>
+                                <ComboBoxItem Content="921600" Background="White"/>
+                            </ComboBox>
+                            <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True" Background="White">
+                                <ComboBoxItem Content="8 bits" Background="White"/>
+                                <ComboBoxItem Content="7 bits" Background="White"/>
+                                <ComboBoxItem Content="6 bits" Background="White"/>
+                                <ComboBoxItem Content="5 bits" Background="White"/>
+                            </ComboBox>
+                            <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True" Background="White">
+                                <ComboBoxItem Content="1" Background="White"/>
+                                <ComboBoxItem Content="2" Background="White"/>
+                            </ComboBox>
+                            <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True" Background="White">
+                                <ComboBoxItem Content="None" Background="White"/>
+                                <ComboBoxItem Content="Odd" Background="White"/>
+                                <ComboBoxItem Content="Even" Background="White"/>
+                                <ComboBoxItem Content="Mark" Background="White"/>
+                                <ComboBoxItem Content="Space" Background="White"/>
+                            </ComboBox>
+                            <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True" Background="White">
+                                <ComboBoxItem Content="None" Background="White"/>
+                                <ComboBoxItem Content="RTS/CTS" Background="White"/>
+                                <ComboBoxItem Content="DTR/DSR" Background="White"/>
+                                <ComboBoxItem Content="RS485-rts" Background="White"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Border>
+                </materialDesign:PopupBox>
+            </materialDesign:Badged>
+        </StackPanel>
+
+        <!--#endregion-->
 
         <!--#region RemoteProgram List-->
 
-        <Border Margin="0,0,20,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.Row="1"  Grid.RowSpan="2" Grid.ColumnSpan="2">
+        <Border Margin="0,0,10,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3"  Grid.RowSpan="2">
             <DockPanel Height="Auto">
                 <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="20,3,0,0" DockPanel.Dock="Top"/>
                 <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False" DockPanel.Dock="Bottom">
@@ -109,15 +235,13 @@
 
         <!--#region KINECT STUFF-->
 
-        <Border Grid.Column="1" Margin="62.8,0,0.4,10" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="1">
-
-        </Border>
+        <Border Grid.Column="1" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Grid.RowSpan="1"/>
 
         <!--#endregion-->
 
         <!--#region Command window-->
 
-        <Border Grid.Row="2" Grid.Column="1" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Margin="62.8,0,0.4,0">
+        <Border Grid.Row="1" Grid.Column="1" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Margin="0,10,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*"/>
@@ -178,9 +302,9 @@
                 </models:ProgramEditor>
 
                 <DockPanel Grid.Row="1">
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                        <Button Content="Send" Command="{Binding SendClickCommand}"  Width="65" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
-                        <ToggleButton x:Name="SyntaxCheckToggle" Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" VerticalAlignment="Center" ToolTip="If checked, syntax will be validated" />
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Width="105" MinHeight="25">
+                        <Button Content="Send" Command="{Binding SendClickCommand}"/>
+                        <ToggleButton x:Name="SyntaxCheckToggle" Style="{StaticResource AnimatedSwitch}" Height="25" VerticalAlignment="Center" IsChecked="True" ToolTip="If checked, syntax will be validated" Background="#C94141"/>
                     </StackPanel>
                     <models:ProgramEditor x:Name="CommandInput" Padding="3" IsOneLine="True" DoSyntaxCheck="{Binding ElementName=SyntaxCheckToggle, Path=IsChecked}" IsHighlightingEnabled="True" IsIntellisenseEnabled="True" Background="Transparent" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0,0,3,0" BorderBrush="{Binding Path=Appearance.ThemeColor}" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}" ShowLineNumbers="False">
                         <i:Interaction.Behaviors>

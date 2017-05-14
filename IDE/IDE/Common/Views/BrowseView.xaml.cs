@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Controls;
+using FirstFloor.ModernUI.Presentation;
 using IDE.Common.ViewModels;
 
 namespace IDE.Common.Views

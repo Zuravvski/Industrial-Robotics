@@ -40,7 +40,6 @@ namespace IDE.Common.Models
                 ProgramEditor = new ProgramEditor
                 {
                     Text = string.Empty,
-                    Background = System.Windows.Media.Brushes.Transparent,
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                     IsHighlightingEnabled = true,
@@ -80,6 +79,8 @@ namespace IDE.Common.Models
         #endregion
 
         #region Properties
+
+        public string ProgramEditorText { get; set; } = "Dupsko";
 
         public Grid TabContent { get; set; }
 
@@ -161,12 +162,13 @@ namespace IDE.Common.Models
             TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(5, System.Windows.GridUnitType.Star) });
             TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(4, System.Windows.GridUnitType.Star) });
 
-            DataGrid = new DataGrid()
+            DataGrid = new DataGrid
             {
-                CanUserAddRows = true
+                Name = "PositionGrid",
+                CanUserAddRows = true,
+                ItemsSource = PositionItemSource
             };
 
-            DataGrid.ItemsSource = PositionItemSource;
 
             ProgramEditor.SetValue(Grid.ColumnProperty, 0);
             DataGrid.SetValue(Grid.ColumnProperty, 1);

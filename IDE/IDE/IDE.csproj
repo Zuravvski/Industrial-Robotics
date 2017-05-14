@@ -134,6 +134,10 @@
     <Compile Include="Common\ViewModels\Converters\BitmapToBitmapImage.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\ColorToBrush.cs" />
+    <Compile Include="Common\ViewModels\Converters\ComboBoxItemToInt.cs" />
+    <Compile Include="Common\ViewModels\Converters\ComboBoxItemToParity.cs" />
+    <Compile Include="Common\ViewModels\Converters\ComboBoxItemToStopBits.cs" />
+    <Compile Include="Common\ViewModels\Converters\ComboBoxItemToString.cs" />
     <Compile Include="Common\ViewModels\Converters\ConnectionToTextConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\RemoveStarConverter.cs" />

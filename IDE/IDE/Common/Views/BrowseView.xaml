@@ -92,6 +92,10 @@
             <!--#endregion-->
             <converters:ColorToBrush x:Key="ColorToBrush"/>
             <converters:ConnectionToTextConverter x:Key="ConnectionConverter"/>
+            <converters:ComboBoxItemToString x:Key="ComboItemToString"/>
+            <converters:ComboBoxItemToInt x:Key="ComboItemToInt"/>
+            <converters:ComboBoxItemToParity x:Key="ComboItemToParity"/>
+            <converters:ComboBoxItemToStopBits x:Key="ComboItemToStopBits"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -119,51 +123,52 @@
                     <Border BorderBrush="{Binding Appearance.ThemeColor}" BorderThickness="2" Padding="10" Background="{DynamicResource WindowBackground}">
                         <StackPanel Width="200">
                             <TextBlock Text="Connection settings:" Style="{StaticResource Heading2}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="DropDownOpened">
-                                        <i:InvokeCommandAction Command="{Binding Path=RefreshCOMPortsCommand}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
+                            <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}" SelectedItem="{Binding SelectedCOMPort, Converter={StaticResource ComboItemToString}}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="DropDownOpened">
+                                            <i:InvokeCommandAction Command="{Binding Path=RefreshCOMPortsCommand}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True">
-                                <ComboBoxItem Content="110"/>
-                                <ComboBoxItem Content="150"/>
-                                <ComboBoxItem Content="300"/>
-                                <ComboBoxItem Content="2400"/>
-                                <ComboBoxItem Content="4800"/>
-                                <ComboBoxItem Content="9600"/>
-                                <ComboBoxItem Content="19200"/>
-                                <ComboBoxItem Content="38400"/>
-                                <ComboBoxItem Content="57600"/>
-                                <ComboBoxItem Content="115200"/>
-                                <ComboBoxItem Content="230400"/>
-                                <ComboBoxItem Content="460800"/>
-                                <ComboBoxItem Content="921600"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True" SelectedItem="{Binding Settings.BaudRate, Converter={StaticResource ComboItemToInt}}">
+                                <ComboBoxItem Content="110" />
+                                <ComboBoxItem Content="150" />
+                                <ComboBoxItem Content="300" />
+                                <ComboBoxItem Content="2400" />
+                                <ComboBoxItem Content="4800" />
+                                <ComboBoxItem Content="9600" />
+                                <ComboBoxItem Content="19200" />
+                                <ComboBoxItem Content="38400" />
+                                <ComboBoxItem Content="57600" />
+                                <ComboBoxItem Content="115200" />
+                                <ComboBoxItem Content="230400" />
+                                <ComboBoxItem Content="460800" />
+                                <ComboBoxItem Content="921600" />
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True">
-                                <ComboBoxItem Content="8 bits"/>
-                                <ComboBoxItem Content="7 bits"/>
-                                <ComboBoxItem Content="6 bits"/>
-                                <ComboBoxItem Content="5 bits"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True" SelectedItem="{Binding Settings.DataBits, Converter={StaticResource ComboItemToInt}}">
+                                <ComboBoxItem Content="8 bits" />
+                                <ComboBoxItem Content="7 bits" />
+                                <ComboBoxItem Content="6 bits" />
+                                <ComboBoxItem Content="5 bits" />
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True">
-                                <ComboBoxItem Content="1"/>
-                                <ComboBoxItem Content="2"/>
+                            <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True" SelectedItem="{Binding Settings.StopBits, Converter={StaticResource ComboItemToStopBits}}">
+                                <ComboBoxItem Content="1" />
+                                <ComboBoxItem Content="1.5" />
+                                <ComboBoxItem Content="2" />
                             </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True">
+                            <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True" SelectedItem="{Binding Settings.Parity, Converter={StaticResource ComboItemToParity}}">
+                                <ComboBoxItem Content="None" />
+                                <ComboBoxItem Content="Odd" />
+                                <ComboBoxItem Content="Even" />
+                                <ComboBoxItem Content="Mark" />
+                                <ComboBoxItem Content="Space" />
+                            </ComboBox>
+                            <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True" SelectedItem="{Binding Settings.Handshake, Converter={StaticResource ComboItemToString}}">
                                 <ComboBoxItem Content="None"/>
-                                <ComboBoxItem Content="Odd"/>
-                                <ComboBoxItem Content="Even"/>
-                                <ComboBoxItem Content="Mark"/>
-                                <ComboBoxItem Content="Space"/>
-                            </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True">
-                                <ComboBoxItem Content="None"/>
-                                <ComboBoxItem Content="RTS/CTS"/>
-                                <ComboBoxItem Content="DTR/DSR"/>
+                                <ComboBoxItem Content="RTS/CTS" />
+                                <ComboBoxItem Content="DTR/DSR" />
                                 <ComboBoxItem Content="RS485-rts"/>
-                            </ComboBox>
+                                </ComboBox>
                         </StackPanel>
                     </Border>
                 </materialDesign:PopupBox>

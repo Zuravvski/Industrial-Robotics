@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO.Ports;
 using IDE.Common.Views;
+using System.Windows.Controls;
 
 namespace IDE.Common.ViewModels
 {
@@ -26,9 +27,10 @@ namespace IDE.Common.ViewModels
         private ObservableCollection<string> availableCOMPorts;
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
+        private DriverSettings settings;
+        private string selectedCOMPort;
         private readonly ProgramService programServce;
         private readonly ProgramEditor commandHistory, commandInput;
-        private DriverSettings settings;
 
         #endregion
 
@@ -75,6 +77,16 @@ namespace IDE.Common.ViewModels
             {
                 settings = value;
                 NotifyPropertyChanged("Settings");
+            }
+        }
+
+        public string SelectedCOMPort
+        {
+            get { return selectedCOMPort; }
+            set
+            {
+                selectedCOMPort = value;
+                NotifyPropertyChanged("SelectedCOMPort");
             }
         }
 
@@ -403,10 +415,16 @@ namespace IDE.Common.ViewModels
                     Manipulator?.Disconnect();
                 }
                 else
-                { 
-                   // Manipulator.Connect("");
-                    Manipulator = new E3JManipulator(Settings);
-                    Manipulator.Connect("COMx");
+                {
+                    try
+                    {
+                        Manipulator = new E3JManipulator(Settings);
+                        Manipulator.Connect(SelectedCOMPort);
+                    }
+                    catch (Exception)
+                    {
+                        //TODO 
+                    }
                 }
             }
         }

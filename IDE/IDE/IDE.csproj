@@ -42,8 +42,8 @@
       <HintPath>packages\WPFChromeTabsMVVM.1.2.7\lib\net40\ChromeTabs.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FirstFloor.ModernUI, Version=1.0.9.0, Culture=neutral, PublicKeyToken=bc9b0c37bf06c6a9, processorArchitecture=MSIL">
-      <HintPath>packages\ModernUI.WPF.1.0.9\lib\net45\FirstFloor.ModernUI.dll</HintPath>
+    <Reference Include="FirstFloor.ModernUI, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\ModernUI.WPF.Xrm.1.0.11\lib\net45\FirstFloor.ModernUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
@@ -59,8 +59,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.3.0.823, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\MaterialDesignInXamlToolkit-master\MaterialDesignInXamlToolkit-master\MaterialDesignThemes.Wpf\bin\Debug\MaterialDesignThemes.Wpf.dll</HintPath>
+      <HintPath>packages\MaterialDesignThemes.2.3.0.823\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -100,6 +100,7 @@
     </ApplicationDefinition>
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\AvalonEditBehavior.cs" />
+    <Compile Include="Common\Models\Code Completion\CompletionData.cs" />
     <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\Value Objects\Positions.cs" />
@@ -132,7 +133,6 @@
     <Compile Include="Common\ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToBitmapImage.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
-    <Compile Include="Common\ViewModels\Converters\BrushToColor.cs" />
     <Compile Include="Common\ViewModels\Converters\ColorToBrush.cs" />
     <Compile Include="Common\ViewModels\Converters\ConnectionToTextConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\InvertBooleanConverter.cs" />
@@ -145,12 +145,6 @@
     <Compile Include="Common\ViewModels\MacroManagerViewModel.cs" />
     <Compile Include="Common\Views\BrowseView.xaml.cs">
       <DependentUpon>BrowseView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Views\ConnectionDialog.xaml.cs">
-      <DependentUpon>ConnectionDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Views\DeleteProgramDialog.xaml.cs">
-      <DependentUpon>DeleteProgramDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Views\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>
@@ -179,15 +173,7 @@
     <Compile Include="Common\Views\AppearanceView.xaml.cs">
       <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Common\Views\ConnectionDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Common\Views\CustomThemes\ModernUI.WE.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Common\Views\DeleteProgramDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -271,9 +257,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <None Include="Others\packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Others\packages.config" />
     <EmbeddedResource Include="Others\Resources\Highlighting.xshd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

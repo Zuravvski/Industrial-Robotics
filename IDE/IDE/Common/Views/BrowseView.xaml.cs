@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using IDE.Common.ViewModels;
@@ -10,7 +11,6 @@ namespace IDE.Common.Views
     /// </summary>
     public partial class Browse : UserControl 
     {
-
         #region Constructor
 
         public Browse()
@@ -20,6 +20,5 @@ namespace IDE.Common.Views
         }
 
         #endregion
-
     }
 }

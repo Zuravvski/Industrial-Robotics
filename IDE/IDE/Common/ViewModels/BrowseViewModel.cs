@@ -8,6 +8,7 @@ using IDE.Common.Models.Value_Objects;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.IO.Ports;
 using IDE.Common.Views;
 
 namespace IDE.Common.ViewModels
@@ -22,6 +23,7 @@ namespace IDE.Common.ViewModels
         private bool lineWasNotValid;
         private int messageSelectionArrows;
         private ObservableCollection<RemoteProgram> remotePrograms;
+        private ObservableCollection<string> availableCOMPorts;
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
         private readonly ProgramService programServce;
@@ -63,6 +65,16 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public ObservableCollection<string> AvailableCOMPorts
+        {
+            get { return availableCOMPorts; }
+            set
+            {
+                availableCOMPorts = value;
+                NotifyPropertyChanged("AvailableCOMPorts");
+            }
+        }
 
         public string CommandInputText
         {
@@ -346,6 +358,7 @@ namespace IDE.Common.ViewModels
         public ICommand ExportHistoryCommand { get; private set; }
         public ICommand ChangeFontCommand { get; private set; }
         public ICommand ConnectionCommand { get; private set; }
+        public ICommand RefreshCOMPortsCommand { get; private set; }
 
         private void DeclareCommands()
         {
@@ -359,8 +372,14 @@ namespace IDE.Common.ViewModels
             ExportHistoryCommand = new RelayCommand(ExportHistory, IscommandHistoryNotEmpty);
             ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
             ConnectionCommand = new RelayCommand(Connection);
+            RefreshCOMPortsCommand = new RelayCommand(RefreshCOMPorts);
         }
 
+        private void RefreshCOMPorts(object obj)
+        {
+            AvailableCOMPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
+        }
+        
         private void Connection(object obj)
         {
             // Open dialog here
@@ -369,12 +388,10 @@ namespace IDE.Common.ViewModels
                 var state = (bool) obj;
                 if (!state)
                 {
-                    Manipulator.Disconnect();
+                    Manipulator?.Disconnect();
                 }
                 else
-                {
-                    var connectionDialog = new ConnectionDialog();
-                    connectionDialog.Show();
+                { 
                    // Manipulator.Connect("");
                     
                 }

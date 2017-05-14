@@ -87,6 +87,7 @@
             </Style>
             <!--#endregion-->
             <converters:ColorToBrush x:Key="ColorToBrush"/>
+            <converters:ConnectionToTextConverter x:Key="ConnectionConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 

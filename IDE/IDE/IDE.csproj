@@ -56,6 +56,7 @@
     </Reference>
     <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MaterialDesignColors.1.1.2\lib\net45\MaterialDesignColors.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.3.0.823, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -104,7 +105,6 @@
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\Value Objects\Positions.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
-    <Compile Include="Common\Models\Services\LineColorizer.cs" />
     <Compile Include="Common\Models\Services\MacroManager.cs" />
     <Compile Include="Common\Models\Syntax Check\ITextMarker.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />
@@ -135,6 +135,7 @@
     <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\BrushToColor.cs" />
     <Compile Include="Common\ViewModels\Converters\ColorToBrush.cs" />
+    <Compile Include="Common\ViewModels\Converters\ConnectionToTextConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\RemoveStarConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\SelectionToBoolean.cs" />
@@ -145,6 +146,9 @@
     <Compile Include="Common\ViewModels\MacroManagerViewModel.cs" />
     <Compile Include="Common\Views\BrowseView.xaml.cs">
       <DependentUpon>BrowseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\ConnectionDialog.xaml.cs">
+      <DependentUpon>ConnectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Views\DeleteProgramDialog.xaml.cs">
       <DependentUpon>DeleteProgramDialog.xaml</DependentUpon>
@@ -161,7 +165,6 @@
     <Compile Include="Common\Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\Models\Code Completion\MyCompletionData.cs" />
     <Compile Include="Common\Views\MacroManagerView.xaml.cs">
       <DependentUpon>MacroManagerView.xaml</DependentUpon>
     </Compile>
@@ -177,6 +180,10 @@
     <Compile Include="Common\Views\AppearanceView.xaml.cs">
       <DependentUpon>AppearanceView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Common\Views\ConnectionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Common\Views\CustomThemes\ModernUI.WE.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

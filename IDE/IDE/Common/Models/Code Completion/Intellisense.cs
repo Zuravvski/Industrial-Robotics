@@ -30,7 +30,8 @@ namespace IDE.Common.Models.Code_Completion
 
                 foreach (var command in commands)
                 {
-                    completionWindow.CompletionList.CompletionData.Add(new CompletionData(command.Content, command.Description, command.Type.Description()));
+                    //TODO
+                    //completionWindow.CompletionList.CompletionData.Add(new CompletionData(command.Content, command.Description, command.Type.Description()));
                 }
                 completionWindow.Closed += delegate
                 {
@@ -67,14 +68,15 @@ namespace IDE.Common.Models.Code_Completion
 
         public void Show()
         {
-            if (completionWindow?.CompletionList.ListBox.Items.Count >= 1 && !((CompletionData)completionWindow.CompletionList.ListBox.Items[0]).Text.Equals(string.Empty))
-            {
-                completionWindow.Show();
-            }
-            else
-            {
-                completionWindow?.Close();
-            }
+            //TODO
+            //if (completionWindow?.CompletionList.ListBox.Items.Count >= 1 && !((CompletionData)completionWindow.CompletionList.ListBox.Items[0]).Text.Equals(string.Empty))
+            //{
+            //    completionWindow.Show();
+            //}
+            //else
+            //{
+            //    completionWindow?.Close();
+            //}
         }
     }
 }

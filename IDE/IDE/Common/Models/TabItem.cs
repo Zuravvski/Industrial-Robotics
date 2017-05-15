@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace IDE.Common.Models
@@ -58,7 +59,6 @@ namespace IDE.Common.Models
                 ProgramEditor = new ProgramEditor()
                 {
                     Text = program.Content,
-                    Background = System.Windows.Media.Brushes.Transparent,
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                     IsHighlightingEnabled = true,
@@ -82,7 +82,9 @@ namespace IDE.Common.Models
 
         public string ProgramEditorText { get; set; } = "Dupsko";
 
-        public Grid TabContent { get; set; }
+        public Border TabContent { get; set; }
+
+        public Grid TabGrid { get; set; }
 
         public ProgramEditor ProgramEditor { get; set; }
 
@@ -158,9 +160,14 @@ namespace IDE.Common.Models
             var qry = new List<Positions>(PositionItemSource.DistinctBy(i => i.Pos).OrderBy(i => i.Pos));
             AsynchronousQueryExecutor.Call(qry, l => PositionItemSource = new List<Positions>(l), null);
 
-            TabContent = new Grid();
-            TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(5, System.Windows.GridUnitType.Star) });
-            TabContent.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(4, System.Windows.GridUnitType.Star) });
+            
+
+            TabGrid = new Grid();
+            TabGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(5, System.Windows.GridUnitType.Star) });
+            TabGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = System.Windows.GridLength.Auto });
+            TabGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(4, System.Windows.GridUnitType.Star) });
+
+            GridSplitter gridSplitter = new GridSplitter() { Width = 6 };
 
             DataGrid = new DataGrid
             {
@@ -169,12 +176,22 @@ namespace IDE.Common.Models
                 ItemsSource = PositionItemSource
             };
 
-
             ProgramEditor.SetValue(Grid.ColumnProperty, 0);
-            DataGrid.SetValue(Grid.ColumnProperty, 1);
+            gridSplitter.SetValue(Grid.ColumnProperty, 1);
+            DataGrid.SetValue(Grid.ColumnProperty, 2);
 
-            TabContent.Children.Add(ProgramEditor);
-            TabContent.Children.Add(DataGrid);
+            TabGrid.Children.Add(ProgramEditor);
+            TabGrid.Children.Add(gridSplitter);
+            TabGrid.Children.Add(DataGrid);
+
+            TabContent = new Border()
+            {
+                BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221)),
+                BorderThickness = new System.Windows.Thickness(1),
+                CornerRadius = new System.Windows.CornerRadius(0, 0, 10, 10),
+                Padding = new System.Windows.Thickness(5)
+            };
+            TabContent.Child = TabGrid;
         }
 
         private void GenerateDumpPositions(Random rand)

@@ -9,11 +9,10 @@
         MinWidth="1000" MinHeight="600" 
         WindowStartupLocation="CenterScreen">
 
-
+    
 
     <mui:ModernWindow.MenuLinkGroups>
-    
-    
+
         <mui:LinkGroup DisplayName="home">                                              <!-- THIS IS NAME VISIBLE ON A TAB -->
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="" Source="Common/Views/HomeView.xaml"/>          <!-- THIS IS PATH IT LEADS TO -->

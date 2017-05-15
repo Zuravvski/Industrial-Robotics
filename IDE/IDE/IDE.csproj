@@ -102,6 +102,7 @@
     <Compile Include="Common\Models\AvalonEditBehavior.cs" />
     <Compile Include="Common\Models\Code Completion\CompletionData.cs" />
     <Compile Include="Common\Models\Code Completion\Intellisense.cs" />
+    <Compile Include="Common\Models\DialogHost.cs" />
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\Value Objects\Positions.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />

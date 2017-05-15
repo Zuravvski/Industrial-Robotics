@@ -9,8 +9,8 @@ using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO.Ports;
-using IDE.Common.Views;
-using System.Windows.Controls;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace IDE.Common.ViewModels
 {
@@ -31,8 +31,9 @@ namespace IDE.Common.ViewModels
         private readonly ProgramService programServce;
         private readonly ProgramEditor commandHistory, commandInput;
 
-        //settings
         private string selectedCOMPort;
+        private DialogHost dialogHost;
+        private bool dialogHostIsOpen;
 
         #endregion
 
@@ -71,6 +72,26 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public bool DialogHostIsOpen
+        {
+            get { return dialogHostIsOpen; }
+            set
+            {
+                dialogHostIsOpen = value;
+                NotifyPropertyChanged("DialogHostIsOpen");
+            }
+        }
+
+        public DialogHost DialogHost
+        {
+            get { return dialogHost; }
+            set
+            {
+                dialogHost = value;
+                NotifyPropertyChanged("DialogHost");
+            }
+        }
 
         public DriverSettings Settings
         {
@@ -174,12 +195,23 @@ namespace IDE.Common.ViewModels
         /// </summary>
         public MessageList MessageList { get; }
 
-
         #endregion
 
         #region Actions
-
         
+        private void CreateDialogHost(bool isIndeterminate, string currentAction, string currentProgress = "", string message = "")
+        {
+            if (isIndeterminate && message.Equals(string.Empty))
+                message = "Just a moment...";   //default indeterminate dialog message
+
+            DialogHost = new DialogHost()
+            {
+                CurrentAction = currentAction,
+                CurrentProgress = currentProgress,
+                Message = message
+            };
+        }
+
         /// <summary>
         /// Occurs when there is any text change in Command Input editor.
         /// </summary>
@@ -194,6 +226,9 @@ namespace IDE.Common.ViewModels
                     lineWasNotValid = false;
                 }
             }
+
+            if (CommandInputText.Equals(string.Empty))
+                messageSelectionArrows = 0;
         }
 
 
@@ -237,6 +272,7 @@ namespace IDE.Common.ViewModels
                     manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
                     commandHistory.ScrollToEnd();
                     CommandInputText = string.Empty;
+                    messageSelectionArrows = 0;
                 }
                 else //if user wants to check syntax
                 {
@@ -249,6 +285,7 @@ namespace IDE.Common.ViewModels
                         manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
                         commandHistory.ScrollToEnd();
                         CommandInputText = string.Empty;
+                        messageSelectionArrows = 0;
                     }
                     else //if line is not valid colorize line and don't send
                     {
@@ -405,12 +442,12 @@ namespace IDE.Common.ViewModels
         {
             AvailableCOMPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
         }
-        
+
         private void Connection(object obj)
         {
             if (null != obj)
             {
-                var state = (bool) obj;
+                var state = (bool)obj;
                 if (!state)
                 {
                     Manipulator?.Disconnect();

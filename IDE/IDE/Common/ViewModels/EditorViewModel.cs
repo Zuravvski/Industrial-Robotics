@@ -22,8 +22,8 @@ namespace IDE.Common.ViewModels
         private ObservableCollection<Program> programList;
 
         private TabItem selectedTabItem;
-        private int selectedTabIndex;
         private ObservableCollection<TabItem> tabItems;
+        private bool intellisenseIsChecked, syntaxIsChecked;
 
         #endregion
 
@@ -35,12 +35,45 @@ namespace IDE.Common.ViewModels
             ProgramList = new ObservableCollection<Program>();
             LoadPreviousSessionTabs();
             DeclareCommands();
-            //SetupMainSubmenu();
         }
 
         #endregion
 
         #region Properties
+
+        public bool IntellisenseIsChecked
+        {
+            get
+            {
+                return intellisenseIsChecked;
+            }
+            set
+            {
+                intellisenseIsChecked = value;
+                foreach (var tabItem in TabItems)
+                {
+                    tabItem.ProgramEditor.IsIntellisenseEnabled = intellisenseIsChecked;
+                }
+                NotifyPropertyChanged("IntellisenseIsChecked");
+            }
+        }
+
+        public bool SyntaxIsChecked
+        {
+            get
+            {
+                return syntaxIsChecked;
+            }
+            set
+            {
+                syntaxIsChecked = value;
+                foreach (var tabItem in TabItems)
+                {
+                    tabItem.ProgramEditor.DoSyntaxCheck = syntaxIsChecked;
+                }
+                NotifyPropertyChanged("SyntaxIsChecked");
+            }
+        }
 
         public ObservableCollection<Program> ProgramList
         {
@@ -83,23 +116,13 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        public int SelectedTabIndex
-        {
-            get
-            {
-                return selectedTabIndex;
-            }
-            set
-            {
-                selectedTabIndex = value;
-                NotifyPropertyChanged("SelectedTabIndex");
-            }
-        }
-
         #endregion
 
         #region Actions
 
+        /// <summary>
+        /// Load tabs opened in previous session.
+        /// </summary>
         private void LoadPreviousSessionTabs()
         {
             foreach (var program in Session.Instance.LoadPrograms())
@@ -247,11 +270,19 @@ namespace IDE.Common.ViewModels
             SelectedTabItem = tabToAdd;
         }
 
+        /// <summary>
+        /// Add empty tab
+        /// </summary>
+        /// <param name="obj">D/C</param>
         private void AddTab(object obj)
         {
             OpenTab(null);
         }
 
+        /// <summary>
+        /// Closes tab.
+        /// </summary>
+        /// <param name="obj">Tab to close.</param>
         private void CloseTab(object obj)
         {
             var tabItem = obj as TabItem;
@@ -282,11 +313,9 @@ namespace IDE.Common.ViewModels
         public ICommand AddTabCommand { get; private set; }
         public ICommand CloseTabCommand { get; private set; }
         public ICommand ChangeFontCommand { get; private set; }
-
         public ICommand CtrlSKey { get; private set; }
         public ICommand CtrlNKey { get; private set; }
-
-        //new menu
+        
         public ICommand MenuCreateCommand { get; private set; }
         public ICommand MenuOpenCommand { get; private set; }
         public ICommand MenuSaveCommand { get; private set; }

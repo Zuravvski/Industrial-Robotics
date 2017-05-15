@@ -27,11 +27,12 @@
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
             <converters:RemoveStarConverter x:Key="RemoveStar"/>
             <converters:ColorToBrush x:Key="ColorToBrush"></converters:ColorToBrush>
-            
+
             <Style TargetType="{x:Type models:ProgramEditor}">
                 <Setter Property="Foreground" Value="{DynamicResource WindowText}"/>
                 <Setter Property="Background" Value="Transparent"/>
-            </Style> 
+            </Style>
+
 
             <!--HEADER TEMPLATE-->
             <DataTemplate x:Key="HeaderTemplate">
@@ -52,6 +53,7 @@
                     </Grid.ToolTip>
                 </Grid>
             </DataTemplate>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -77,9 +79,7 @@
         
         <!--#endregion-->
 
-
         <!--#region Menu-->
-
 
         <StackPanel Orientation="Horizontal">
 
@@ -120,26 +120,28 @@
                 </materialDesign:PopupBox.ToggleContent>
                 <StackPanel>
                     <Button ToolTip="If checked, intellisense will be enabled" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <ToggleButton Content="i" Style="{StaticResource MaterialDesignActionLightToggleButton}"  Height="35" Width="35"/>
+                        <ToggleButton Content="i" Style="{StaticResource MaterialDesignActionLightToggleButton}"  Height="35" Width="35" IsChecked="{Binding IntellisenseIsChecked}"/>
                     </Button>
                     <Button ToolTip="If checked, syntax check will be enabled" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <ToggleButton Content="s" Style="{StaticResource MaterialDesignActionLightToggleButton}" Height="35" Width="35"/>
+                        <ToggleButton Content="s" Style="{StaticResource MaterialDesignActionLightToggleButton}" Height="35" Width="35" IsChecked="{Binding SyntaxIsChecked}"/>
                     </Button>
                 </StackPanel>
             </materialDesign:PopupBox>
 
         </StackPanel>
+        
+        <!--#endregion-->
+        
+        <!--#region Tabs-->
 
         <ct:ChromeTabControl AddTabButtonBehavior="OpenNewTab"
                              ItemsSource="{Binding TabItems}"
                              SelectedItem="{Binding SelectedTabItem}"
-                             SelectedIndex="{Binding SelectedTabIndex}"
                              AddTabCommand="{Binding AddTabCommand}"
                              CloseTabCommand="{Binding CloseTabCommand}"
                              ItemTemplate="{StaticResource HeaderTemplate}"
-                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                             SelectedTabBrush="DodgerBlue"
-                             Foreground="{DynamicResource WindowText}">
+                             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                             SelectedTabBrush="#DDDDDD">
 
             <ct:ChromeTabControl.InputBindings>
                 <MouseBinding Gesture="MiddleClick" Command="{Binding CloseTabCommand}"/>

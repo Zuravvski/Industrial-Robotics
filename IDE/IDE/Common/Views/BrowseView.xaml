@@ -91,7 +91,7 @@
                 </Setter>
             </Style>
             <!--#endregion-->
-            <converters:ColorToBrush x:Key="ColorToBrush"/>
+            <converters:SolidColorToBrush x:Key="ColorToBrush"/>
             <converters:ConnectionToTextConverter x:Key="ConnectionConverter"/>
             <converters:StopBitsToString x:Key="StopBitsToString"/>
             <converters:IntToString x:Key="IntToString"/>

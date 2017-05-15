@@ -10,7 +10,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace IDE.Common.ViewModels
 {
@@ -443,7 +442,7 @@ namespace IDE.Common.ViewModels
             AvailableCOMPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
         }
 
-        private void Connection(object obj)
+        private async void Connection(object obj)
         {
             if (null != obj)
             {

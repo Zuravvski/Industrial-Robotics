@@ -135,6 +135,7 @@
     <Compile Include="Common\ViewModels\Converters\BitmapToBitmapImage.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\ColorToBrush.cs" />
+    <Compile Include="Common\ViewModels\Converters\SolidColorToBrush.cs" />
     <Compile Include="Common\ViewModels\Converters\ConnectionToTextConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\IntToString.cs" />
     <Compile Include="Common\ViewModels\Converters\InvertBooleanConverter.cs" />
@@ -408,6 +409,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\JakubZdj.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\MichalZdj.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

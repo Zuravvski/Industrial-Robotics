@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -6,16 +6,16 @@ using System.Windows.Media;
 namespace IDE.Common.ViewModels.Converters
 {
     [ValueConversion(typeof(Color), typeof(Brush))]
-    public class ColorToBrush : IValueConverter
+    public class SolidColorToBrush : IValueConverter
     {
         private static readonly Color DEFAULT_COLOR = Colors.White;
         private static readonly Brush DEFAULT_BRUSH = Brushes.White;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Color)
+            if (value is SolidColorBrush)
             {
-                var color = (Color)value;
+                var color = (SolidColorBrush)value;
                 var colorWithoutAlpha = color.ToString().Remove(1, 2);
                 return colorWithoutAlpha;
             }

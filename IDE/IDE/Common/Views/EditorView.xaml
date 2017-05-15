@@ -26,7 +26,7 @@
             
             <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
             <converters:RemoveStarConverter x:Key="RemoveStar"/>
-            <converters:ColorToBrush x:Key="ColorToBrush"></converters:ColorToBrush>
+            <converters:SolidColorToBrush x:Key="ColorToBrush"></converters:SolidColorToBrush>
 
             <Style TargetType="{x:Type models:ProgramEditor}">
                 <Setter Property="Foreground" Value="{DynamicResource WindowText}"/>

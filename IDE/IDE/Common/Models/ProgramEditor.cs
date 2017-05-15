@@ -8,10 +8,8 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Driver;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Syntax_Check;
-using IDE.Common.Models.Value_Objects;
 using IDE.Common.Utilities;
 using Microsoft.Win32;
 
@@ -26,12 +24,11 @@ namespace IDE.Common.Models
         private readonly SyntaxChecker syntaxChecker;
         private readonly Intellisense intellisense;
         private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
-        private bool isIntellisenseEnabled;
         private bool isHighlightingEnabled;
 
         #endregion
 
-        #region enums
+        #region Enums
         
         /// <summary>
         /// Describes wheter syntax check will occcur on the real time or on demand.
@@ -72,13 +69,17 @@ namespace IDE.Common.Models
             }
         }
 
+        public static readonly DependencyProperty IsIntellisenseEnabledProperty =
+            DependencyProperty.Register("IsIntellisenseEnabled", typeof(bool),
+            typeof(ProgramEditor), new FrameworkPropertyMetadata(false));
+
         public bool IsIntellisenseEnabled
         {
-            get { return isIntellisenseEnabled; }
+            get { return (bool)GetValue(IsIntellisenseEnabledProperty); }
             set
             {
-                isIntellisenseEnabled = value;
-                if (isIntellisenseEnabled)
+                SetValue(IsIntellisenseEnabledProperty, value);
+                if (value)
                 {
                     //Subscribes to intellisense events.
                     TextArea.TextEntering += OnIntellisensePreparation;
@@ -187,15 +188,6 @@ namespace IDE.Common.Models
                 SyntaxHighlighting = null;
             }
 
-        }
-
-        public bool CheckLineValidationManually(string line)
-        {
-            if (!string.IsNullOrEmpty(line))
-            {
-                return syntaxChecker.Validate(line);
-            }
-            return false;
         }
 
         #endregion

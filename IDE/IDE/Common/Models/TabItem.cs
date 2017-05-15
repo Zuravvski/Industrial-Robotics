@@ -44,8 +44,6 @@ namespace IDE.Common.Models
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                     IsHighlightingEnabled = true,
-                    IsIntellisenseEnabled = true,
-                    DoSyntaxCheck = true,
                     SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime,
                     ShowLineNumbers = true
                 };
@@ -62,8 +60,6 @@ namespace IDE.Common.Models
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                     IsHighlightingEnabled = true,
-                    IsIntellisenseEnabled = true,
-                    DoSyntaxCheck = true,
                     SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime,
                     ShowLineNumbers = true
                 };
@@ -79,8 +75,6 @@ namespace IDE.Common.Models
         #endregion
 
         #region Properties
-
-        public string ProgramEditorText { get; set; } = "Dupsko";
 
         public Border TabContent { get; set; }
 
@@ -184,14 +178,14 @@ namespace IDE.Common.Models
             TabGrid.Children.Add(gridSplitter);
             TabGrid.Children.Add(DataGrid);
 
-            TabContent = new Border()
+            TabContent = new Border
             {
                 BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(221, 221, 221)),
                 BorderThickness = new System.Windows.Thickness(1),
                 CornerRadius = new System.Windows.CornerRadius(0, 0, 10, 10),
-                Padding = new System.Windows.Thickness(5)
+                Padding = new System.Windows.Thickness(5),
+                Child = TabGrid
             };
-            TabContent.Child = TabGrid;
         }
 
         private void GenerateDumpPositions(Random rand)
@@ -216,18 +210,11 @@ namespace IDE.Common.Models
             if (Program != null)
             {
                 //if the text has changed and it does not match saved content anymore
-                if (!ProgramEditor.Text.Equals(Program.Content))
-                {
-                    UnsavedChanged = true;
-                }
-                else
-                {
-                    UnsavedChanged = false;
-                }
+                UnsavedChanged = !ProgramEditor.Text.Equals(Program.Content);
             }
         }
 
-        public BitmapImage Bitmap2BitmapImage(Bitmap bitmap)
+        private BitmapImage Bitmap2BitmapImage(Bitmap bitmap)
         {
             var bitmapImage = new BitmapImage();
             using (var memory = new MemoryStream())

@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.IO;
 using IDE.Common.Utilities;
 using System;
+using System.Windows.Data;
 
 namespace IDE.Common.ViewModels
 {
@@ -35,6 +36,9 @@ namespace IDE.Common.ViewModels
             ProgramList = new ObservableCollection<Program>();
             LoadPreviousSessionTabs();
             DeclareCommands();
+
+            IntellisenseIsChecked = true;
+            SyntaxIsChecked = true;
         }
 
         #endregion
@@ -163,7 +167,7 @@ namespace IDE.Common.ViewModels
                 return;
             }
 
-            OpenTab(new Program(name) { Path = path, Content = content });
+            OpenTab(new Program(name) { Path = path, Content = content});
             Session.Instance.SavePrograms(TabItems);
         }
 
@@ -268,6 +272,8 @@ namespace IDE.Common.ViewModels
             }
             TabItems.Add(tabToAdd);
             SelectedTabItem = tabToAdd;
+            selectedTabItem.ProgramEditor.IsIntellisenseEnabled = IntellisenseIsChecked;
+            selectedTabItem.ProgramEditor.DoSyntaxCheck = SyntaxIsChecked;
         }
 
         /// <summary>

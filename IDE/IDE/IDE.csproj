@@ -54,8 +54,8 @@
       <HintPath>packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\MaterialDesignColors.1.1.2\lib\net45\MaterialDesignColors.dll</HintPath>
+    <Reference Include="MaterialDesignColors, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MaterialDesignColors.1.1.3\lib\net45\MaterialDesignColors.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.3.0.823, Culture=neutral, processorArchitecture=MSIL">
@@ -197,6 +197,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Common\Views\Transitions\Slide_1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\Transitions\Slide_2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\Transitions\Transition1Beginning.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Icons\Icons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -205,6 +217,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Common\Views\Transitions\Slide_1.xaml.cs">
+      <DependentUpon>Slide_1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\Slide_2.xaml.cs">
+      <DependentUpon>Slide_2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\Transition1Beginning.xaml.cs">
+      <DependentUpon>Transition1Beginning.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Others\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -384,6 +405,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\AdamZdj.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\JakubZdj.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

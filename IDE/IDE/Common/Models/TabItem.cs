@@ -136,6 +136,7 @@ namespace IDE.Common.Models
                 unsavedChanges = value;
             }
         }
+
         public List<Positions> PositionItemSource { get; set; }
 
         #endregion

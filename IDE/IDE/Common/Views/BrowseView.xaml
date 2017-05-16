@@ -32,7 +32,8 @@
 
             <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MaterialDesignScrollViewer}"/>
             
-            <!--<Style TargetTye="{x:Type ComboBoxItem}" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
+            
+            <!--<Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
                 <Setter Property="Background" Value="#333333"/>
             </Style>-->
             
@@ -278,10 +279,10 @@
 
         <Border Grid.Row="1" Grid.Column="1" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1" Grid.ColumnSpan="2" Margin="0,10,0,0">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="9*"/>
-                    <RowDefinition Height="2*"/>
-                </Grid.RowDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="9*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
 
                     <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,1" BorderBrush="#DDDDDD" ShowLineNumbers="False" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}">
                     <i:Interaction.Behaviors>

@@ -21,7 +21,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ScrollViewer.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml"/>
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Converters.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
@@ -145,18 +145,18 @@
             <ToggleButton x:Name="ConnectionToggle" Style="{StaticResource AnimatedSwitch}" Height="25"  VerticalAlignment="Center" Background="#C94141" Command="{Binding ConnectionCommand}" CommandParameter="{Binding ElementName=ConnectionToggle, Path=IsChecked}" IsChecked="{Binding ConnectionToggleIsChecked}"/>
 
                 <materialDesign:Badged Badge="{Binding BadgeText}" BadgeColorZoneMode="Accent" VerticalAlignment="Center" >
-                <materialDesign:PopupBox StaysOpen="True" Margin="25,0,0,0" VerticalAlignment="Center">
-                    <Border Padding="10" Background="{DynamicResource WindowBackground}" BorderBrush="{DynamicResource WindowBackground}">
+                <materialDesign:PopupBox StaysOpen="True" Margin="25,0,0,0" VerticalAlignment="Center" PlacementMode="LeftAndAlignTopEdges">
+                    <Border Padding="10" Background="{DynamicResource WindowBackground}" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="10">
                         <StackPanel Width="200">
-                                <TextBlock Text="Connection settings:" Style="{StaticResource Heading2}" Foreground="{DynamicResource WindowText}"/>
-                                <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}" SelectedValue="{Binding SelectedCOMPort}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}" Foreground="{DynamicResource WindowText}">
+                                <TextBlock Text="Connection settings:" Style="{StaticResource Heading2}"/>
+                                <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}" SelectedValue="{Binding SelectedCOMPort}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="DropDownOpened">
                                             <i:InvokeCommandAction Command="{Binding Path=RefreshCOMPortsCommand}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </ComboBox>
-                                <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.BaudRate, Converter={StaticResource IntToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}" Foreground="{DynamicResource WindowText}">
+                                <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.BaudRate, Converter={StaticResource IntToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
                                     <ComboBoxItem Content="110" />
                                     <ComboBoxItem Content="150" />
                                     <ComboBoxItem Content="300" />
@@ -171,25 +171,25 @@
                                     <ComboBoxItem Content="460800" />
                                     <ComboBoxItem Content="921600" />
                                 </ComboBox>
-                                <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.DataBits, Converter={StaticResource IntToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}" Foreground="{DynamicResource WindowText}">
+                                <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.DataBits, Converter={StaticResource IntToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
                                     <ComboBoxItem Content="8" />
                                     <ComboBoxItem Content="7" />
                                     <ComboBoxItem Content="6" />
                                     <ComboBoxItem Content="5" />
                                 </ComboBox>
-                                <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.StopBits, Converter={StaticResource StopBitsToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}" Foreground="{DynamicResource WindowText}">
+                                <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.StopBits, Converter={StaticResource StopBitsToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
                                     <ComboBoxItem Content="1" />
                                     <ComboBoxItem Content="1.5" />
                                     <ComboBoxItem Content="2" />
                                 </ComboBox>
-                                <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Parity, Converter={StaticResource ParityToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}" Foreground="{DynamicResource WindowText}">
+                                <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Parity, Converter={StaticResource ParityToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
                                     <ComboBoxItem Content="None" />
                                     <ComboBoxItem Content="Odd" />
                                     <ComboBoxItem Content="Even" />
                                     <ComboBoxItem Content="Mark" />
                                     <ComboBoxItem Content="Space" />
                                 </ComboBox>
-                                <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Handshake}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}" Foreground="{DynamicResource WindowText}">
+                                <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Handshake}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
                                     <ComboBoxItem Content="None"/>
                                     <ComboBoxItem Content="RTS/CTS" />
                                     <ComboBoxItem Content="DTR/DSR" />

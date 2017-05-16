@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +10,7 @@ namespace Driver
     {
         private readonly SerialPort port;
         private readonly Queue<string> bufferedMessages;
+        private readonly Thread heartBeatThread;
 
         #region Enums and data structures
         public enum Terminator
@@ -27,8 +26,10 @@ namespace Driver
         #region Events
 
         public delegate void ReceiveData(string data);
+        public delegate void StatusChangedDelegate(object sender, ConnectionStatusChangedArgs e);
 
         public event ReceiveData DataReceived;
+        public event StatusChangedDelegate ConnectionStatusChanged;
 
         #endregion
 
@@ -83,6 +84,8 @@ namespace Driver
 
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
             port.DataReceived += Port_DataReceived;
+            heartBeatThread = new Thread(HeartBeat);
+            heartBeatThread.Start();
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -162,6 +165,22 @@ namespace Driver
                     break;
             }
             return terminator;
+        }
+
+        private void HeartBeat()
+        {
+            var oldStatus = Opened;
+            while (true)
+            {
+                Thread.Sleep(500);
+                var newStatus = Opened;
+
+                if (oldStatus != newStatus)
+                {
+                    ConnectionStatusChanged?.Invoke(this, new ConnectionStatusChangedArgs(oldStatus, newStatus));
+                }
+                oldStatus = newStatus;
+            }
         }
     }
 }

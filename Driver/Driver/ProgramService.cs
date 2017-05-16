@@ -116,7 +116,8 @@ namespace Driver
             for(var i = 0; i < remotePrograms.Count; i++)
             {
                 programs.Add(await DownloadProgram(remotePrograms[i]));
-                StepUpdate?.Invoke(this, new NotificationEventArgs(i, remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
+                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading Programs", i, 
+                    remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
             }
             return programs;
         }
@@ -142,7 +143,7 @@ namespace Driver
                     var line = lines[index];
                     await Task.Delay(500);
                     manipulator.SendCustom(line);
-                    StepUpdate?.Invoke(this, new NotificationEventArgs(index, lines.Count, EventType.LINE_UPLOADED));
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", index, lines.Count, EventType.LINE_UPLOADED));
                 }
             }
             catch (Exception ex)
@@ -188,7 +189,7 @@ namespace Driver
                     await Task.Delay(500);
                     //var prefix = $"{Convert.ToString(i + 1)} ";
                     manipulator.SendCustom(lines[i]);
-                    StepUpdate?.Invoke(this, new NotificationEventArgs(i, lines.Length, EventType.LINE_UPLOADED));
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i, lines.Length, EventType.LINE_UPLOADED));
                     Debug.WriteLine($"{i + 1}/{lines.Length}, {lines[i]}");
                 }
             }

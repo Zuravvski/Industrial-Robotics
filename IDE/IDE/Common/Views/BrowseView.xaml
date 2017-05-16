@@ -21,8 +21,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ScrollViewer.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml"/>
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Converters.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
@@ -146,8 +145,8 @@
             <ToggleButton x:Name="ConnectionToggle" Style="{StaticResource AnimatedSwitch}" Height="25"  VerticalAlignment="Center" Background="#C94141" Command="{Binding ConnectionCommand}" CommandParameter="{Binding ElementName=ConnectionToggle, Path=IsChecked}" IsChecked="{Binding ConnectionToggleIsChecked}"/>
 
                 <materialDesign:Badged Badge="{Binding BadgeText}" BadgeColorZoneMode="Accent" VerticalAlignment="Center" >
-                <materialDesign:PopupBox StaysOpen="True" Margin="25,0,0,0" VerticalAlignment="Center">
-                    <Border Padding="10" Background="{DynamicResource WindowBackground}" BorderBrush="{DynamicResource WindowBackground}">
+                <materialDesign:PopupBox StaysOpen="True" Margin="25,0,0,0" VerticalAlignment="Center" PlacementMode="LeftAndAlignTopEdges">
+                    <Border Padding="10" Background="{DynamicResource WindowBackground}" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="10">
                         <StackPanel Width="200">
                                 <TextBlock Text="Connection settings:" Style="{StaticResource Heading2}"/>
                                 <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}" SelectedValue="{Binding SelectedCOMPort}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">

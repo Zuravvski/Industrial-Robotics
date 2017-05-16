@@ -4,6 +4,7 @@ using System.Windows.Input;
 using IDE.Common.Models;
 using IDE.Common.ViewModels.Commands;
 using Driver;
+using System.Linq;
 using IDE.Common.Models.Value_Objects;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Collections.ObjectModel;
@@ -201,6 +202,7 @@ namespace IDE.Common.ViewModels
             {
                 manipulator = value;
                 programService = new ProgramService(manipulator);
+                programService.StepUpdate += ProgramService_StepUpdate;
                 NotifyPropertyChanged("Manipulator");
             }
         }
@@ -213,16 +215,44 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Actions
-        
-        private void CreateDialogHost(bool isIndeterminate, string currentAction, string currentProgress = "", string message = "")
+
+        private void Port_ConnectionStatusChanged(object sender, ConnectionStatusChangedArgs e)
+        {
+            if (e.OldStatus == true && e.NewStatus == false)
+            {
+                Manipulator.Port.DataReceived -= Port_DataReceived;
+                ConnectionToggleIsChecked = false;
+                SelectedCOMPort = null;
+            }
+        }
+
+        private void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
+        {
+            DialogHostIsOpen = true;
+            int progress = (int)(e.CurrentStep / (float)e.NumberOfSteps * 100);
+            CreateDialogHost(false, e.ActionType.Description(), progress, "csocso");
+        }
+
+        private void CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0, string message = "")
         {
             if (isIndeterminate && message.Equals(string.Empty))
                 message = "Just a moment...";   //default indeterminate dialog message
+            else
+            {
+                if (currentProgress < 30)
+                    message = "Hold on. Looks like it might take a while.";
+                else if (currentProgress < 60)
+                    message = "How about you get yourself some coffee?";
+                else if (currentProgress < 90)
+                    message = "Well, worst part is over, right?";
+                else
+                    message = "Get ready. We are almost done.";
+            }
 
             DialogHost = new DialogHost()
             {
                 CurrentAction = currentAction,
-                CurrentProgress = currentProgress,
+                CurrentProgress = currentProgress.ToString() + "%",
                 Message = message
             };
         }
@@ -271,6 +301,7 @@ namespace IDE.Common.ViewModels
         private void Upload(object obj)
         {
             programService.UploadProgram();
+
         }
 
         /// <summary>
@@ -283,7 +314,7 @@ namespace IDE.Common.ViewModels
                 if (commandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
                     //syntaxCheckVisualizer.Visualize(true, line);
-                    MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text));
+                    MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text, Message.Type.Send));
                     CommandHistoryText += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                     manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
                     commandHistory.ScrollToEnd();
@@ -296,7 +327,7 @@ namespace IDE.Common.ViewModels
 
                     if (isLineValid)    //if line is valid, send it
                     {
-                        MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text));
+                        MessageList.AddMessage(new Message(DateTime.Now, commandInput.Text, Message.Type.Send));
                         CommandHistoryText += MessageList.Messages[MessageList.Messages.Count - 1].DisplayMessage();
                         manipulator.SendCustom(MessageList.Messages[MessageList.Messages.Count - 1].MyMessage); //send
                         commandHistory.ScrollToEnd();
@@ -384,11 +415,14 @@ namespace IDE.Common.ViewModels
 
             if (!commandInput.IsIntellisenseShowing)  //if theres no completion window use arrows to show previous messages
             {
+                var sentMessages = MessageList.Messages.Where(i => i.MyType == Message.Type.Send).ToList();
+
                 if (e.Key == Key.Up)
                 {
-                    if (messageSelectionArrows < MessageList.Messages.Count)
+                    if (messageSelectionArrows < sentMessages.Count)
                     {
-                        commandInput.Text = MessageList.Messages[MessageList.Messages.Count - ++messageSelectionArrows].MyMessage;
+                        commandInput.Text = sentMessages[sentMessages.Count - ++messageSelectionArrows].MyMessage;
+                        //commandInput.Text = MessageList.Messages[MessageList.Messages.Count - ++messageSelectionArrows].MyMessage;
                         commandInput.TextArea.Caret.Offset = commandInput.Text.Length;  //bring carret to end of text
                     }
                 }
@@ -396,7 +430,8 @@ namespace IDE.Common.ViewModels
                 {
                     if (messageSelectionArrows > 1)
                     {
-                        commandInput.Text = MessageList.Messages[MessageList.Messages.Count - --messageSelectionArrows].MyMessage;
+                        commandInput.Text = sentMessages[sentMessages.Count - --messageSelectionArrows].MyMessage;
+                        //commandInput.Text = MessageList.Messages[MessageList.Messages.Count - --messageSelectionArrows].MyMessage;
                         commandInput.TextArea.Caret.Offset = commandInput.Text.Length;  //bring carret to end of text
                     }
                     else if (messageSelectionArrows > 0)
@@ -479,9 +514,21 @@ namespace IDE.Common.ViewModels
 
                     ConnectionToggleIsChecked = true;
                     Manipulator = new E3JManipulator(Settings);
+                    Manipulator.Port.ConnectionStatusChanged += Port_ConnectionStatusChanged;
                     Manipulator.Connect(SelectedCOMPort);
+                    Manipulator.Port.DataReceived += Port_DataReceived;
                 }
             }
+        }
+
+        private void Port_DataReceived(string data)
+        {
+            data = data.Replace("\r", string.Empty);
+            MessageList.AddMessage(new Message(DateTime.Now, data, Message.Type.Received));
+
+            var receivedMessages = MessageList.Messages.Where(i => i.MyType == Message.Type.Received).ToList();
+            CommandHistoryText += receivedMessages[receivedMessages.Count - 1].DisplayMessage();
+            commandHistory.Dispatcher.Invoke(() => commandHistory.ScrollToEnd());
         }
 
         private bool CanChangeFont(object obj)

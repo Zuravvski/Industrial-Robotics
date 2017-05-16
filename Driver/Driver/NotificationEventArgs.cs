@@ -4,7 +4,6 @@ namespace Driver
 {
     public class NotificationEventArgs : EventArgs
     {
-        public string Action { get; }
         public int CurrentStep { get; }
         public int NumberOfSteps { get; }
         public ProgramService.EventType ActionType { get; }

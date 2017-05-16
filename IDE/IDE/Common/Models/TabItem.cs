@@ -45,7 +45,7 @@ namespace IDE.Common.Models
                     VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                     IsHighlightingEnabled = true,
                     SyntaxCheckerMode = ProgramEditor.SyntaxCheckerModeE.RealTime,
-                    ShowLineNumbers = true
+                    ShowLineNumbers = true,
                 };
                 //we are setting this twice to trigger rising edge event. Dont change it, just accept fact that it is working this way.
                 UnsavedChanged = false;

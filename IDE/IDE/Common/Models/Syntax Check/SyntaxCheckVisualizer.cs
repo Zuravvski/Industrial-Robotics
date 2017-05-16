@@ -28,6 +28,7 @@ namespace IDE.Common.Models.Syntax_Check
             }
             else
             {
+                RemoveMarker(line);
                 AddMarker(line);
             }
         }

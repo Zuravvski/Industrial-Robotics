@@ -27,7 +27,7 @@ namespace IDE.Common.ViewModels
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
         private DriverSettings settings;
-        private readonly ProgramService programServce;
+        private readonly ProgramService programService;
         private readonly ProgramEditor commandHistory, commandInput;
 
         private string selectedCOMPort;
@@ -57,7 +57,7 @@ namespace IDE.Common.ViewModels
             
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
-            programServce = new ProgramService(manipulator);
+            programService = new ProgramService(manipulator);
 
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>())
             {
@@ -237,7 +237,7 @@ namespace IDE.Common.ViewModels
         /// <param name="obj"></param>
         private async void Refresh(object obj)
         {
-            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programServce.ReadProgramInfo()));
+            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Download(object obj)
         {
-            await programServce.UploadProgram(SelectedRemoteProgram);
+            await programService.DownloadProgram(SelectedRemoteProgram);
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
-            programServce.DownloadProgram();
+            programService.UploadProgram();
         }
 
         /// <summary>
@@ -296,12 +296,12 @@ namespace IDE.Common.ViewModels
 
         private void Stop(object obj)
         {
-            programServce.StopProgram();
+            programService.StopProgram();
         }
 
         private void Run(object obj)
         {
-            programServce.RunProgram(SelectedRemoteProgram);
+            programService.RunProgram(SelectedRemoteProgram);
         }
 
         /// <summary>

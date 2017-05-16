@@ -48,6 +48,7 @@
     <Compile Include="DriverSettings.cs" />
     <Compile Include="E3JManipulator.cs" />
     <Compile Include="Exceptions\AlarmException.cs" />
+    <Compile Include="NotificationEventArgs.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgramService.cs" />

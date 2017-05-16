@@ -101,47 +101,47 @@
 
         <StackPanel Orientation="Horizontal">
 
-            <materialDesign:PopupBox PopupMode="Click" Background="{Binding ElementName=MenuElement2, Path=Background}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="File" BorderBrush="{Binding Appearance.ThemeColor}" Margin="30,0,0,0">
+            <materialDesign:PopupBox PopupMode="Click" Background="{DynamicResource ButtonBorder}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="File" BorderBrush="#DDDDDD" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
-                    <materialDesign:PackIcon Kind="File" Width="24" Height="24"/>
+                    <materialDesign:PackIcon Kind="File" Width="24" Height="24" Foreground="{DynamicResource WindowText}"/>
                 </materialDesign:PopupBox.ToggleContent>
                 <StackPanel>
-                    <Button Name="MenuElement" ToolTip="Create new tab" Command="{Binding MenuCreateCommand}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <materialDesign:PackIcon Kind="File"/>
+                    <Button Name="MenuElement" ToolTip="Create new tab" Command="{Binding MenuCreateCommand}" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                        <materialDesign:PackIcon Kind="File" Foreground="{DynamicResource WindowText}"/>
                     </Button>
-                    <Button ToolTip="Open tab from a file" Command="{Binding MenuOpenCommand}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <materialDesign:PackIcon Kind="FileDocument"/>
+                    <Button ToolTip="Open tab from a file" Command="{Binding MenuOpenCommand}" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                        <materialDesign:PackIcon Kind="FileDocument" Foreground="{DynamicResource WindowText}"/>
                     </Button>
                 </StackPanel>
             </materialDesign:PopupBox>
 
-            <materialDesign:PopupBox PopupMode="Click" Background="{Binding ElementName=MenuElement, Path=Background}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="Save" BorderBrush="{Binding Appearance.ThemeColor}" Margin="30,0,0,0">
+            <materialDesign:PopupBox PopupMode="Click" Background="{DynamicResource ButtonBorder}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="Save" BorderBrush="#DDDDDD" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
-                    <materialDesign:PackIcon Kind="Floppy" Width="24" Height="24"/>
+                    <materialDesign:PackIcon Kind="Floppy" Width="24" Height="24" Foreground="{DynamicResource WindowText}"/>
                 </materialDesign:PopupBox.ToggleContent>
                 <StackPanel>
-                    <Button Name="MenuElement2" ToolTip="Save current tab" Command="{Binding MenuSaveCommand}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <materialDesign:PackIcon Kind="ContentSave"/>
+                    <Button Name="MenuElement2" ToolTip="Save current tab" Command="{Binding MenuSaveCommand}" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                        <materialDesign:PackIcon Kind="ContentSave" Foreground="{DynamicResource WindowText}"/>
                     </Button>
-                    <Button ToolTip="Save current tab as" Command="{Binding MenuSaveAsCommand}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <materialDesign:PackIcon Kind="ContentSaveSettings"/>
+                    <Button ToolTip="Save current tab as" Command="{Binding MenuSaveAsCommand}" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                        <materialDesign:PackIcon Kind="ContentSaveSettings" Foreground="{DynamicResource WindowText}"/>
                     </Button>
-                    <Button ToolTip="Save all tabs" Command="{Binding MenuSaveAllCommand}" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <materialDesign:PackIcon Kind="ContentSaveAll"/>
+                    <Button ToolTip="Save all tabs" Command="{Binding MenuSaveAllCommand}" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                        <materialDesign:PackIcon Kind="ContentSaveAll" Foreground="{DynamicResource WindowText}"/>
                     </Button>
                 </StackPanel>
             </materialDesign:PopupBox>
 
-            <materialDesign:PopupBox StaysOpen="True" Background="{Binding ElementName=MenuElement, Path=Background}" PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}" ToolTip="Settings" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}" Margin="30,0,0,0">
+            <materialDesign:PopupBox StaysOpen="True" Background="{DynamicResource ButtonBorder}" PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}" ToolTip="Settings" BorderThickness="2" BorderBrush="#DDDDDD" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
-                    <materialDesign:PackIcon Kind="Settings" Width="24" Height="24"/>
+                    <materialDesign:PackIcon Kind="Settings" Width="24" Height="24" Foreground="{DynamicResource WindowText}"/>
                 </materialDesign:PopupBox.ToggleContent>
                 <StackPanel>
-                    <Button ToolTip="If checked, intellisense will be enabled" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <ToggleButton Content="i" Style="{StaticResource MaterialDesignActionLightToggleButton}"  Height="35" Width="35" IsChecked="{Binding IntellisenseIsChecked}"/>
+                    <Button ToolTip="If checked, intellisense will be enabled" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                        <ToggleButton Content="i" Style="{StaticResource MaterialDesignActionLightToggleButton}"  Height="35" Width="35" IsChecked="{Binding IntellisenseIsChecked}" Foreground="{DynamicResource WindowText}" Background="{DynamicResource ButtonBorder}"/>
                     </Button>
-                    <Button ToolTip="If checked, syntax check will be enabled" BorderThickness="2" BorderBrush="{Binding Appearance.ThemeColor}">
-                        <ToggleButton Content="s" Style="{StaticResource MaterialDesignActionLightToggleButton}" Height="35" Width="35" IsChecked="{Binding SyntaxIsChecked}"/>
+                    <Button ToolTip="If checked, syntax check will be enabled" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                        <ToggleButton Content="s" Style="{StaticResource MaterialDesignActionLightToggleButton}" Height="35" Width="35" IsChecked="{Binding SyntaxIsChecked}" Foreground="{DynamicResource WindowText}" Background="{DynamicResource ButtonBorder}"/>
                     </Button>
                 </StackPanel>
             </materialDesign:PopupBox>

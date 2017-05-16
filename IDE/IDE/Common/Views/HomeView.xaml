@@ -19,7 +19,7 @@
         
         <!--#region TRANSITIONS-->
 
-        <!--<local:Transition1Beginning Grid.Row="1" Grid.Column="1"/>-->
+        <local:Transition1Beginning Grid.RowSpan="2" Grid.ColumnSpan="2"/>
 
         <!--#endregion-->
         

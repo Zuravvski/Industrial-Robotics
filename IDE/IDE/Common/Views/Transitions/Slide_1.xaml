@@ -18,9 +18,8 @@
 
     <Grid>
         <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="SampleText" Style="{StaticResource Heading2}"/>
             <Button Style="{DynamicResource MaterialDesignFloatingActionButton}" Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" Margin="64">
-                <materialDesign:PackIcon Kind="InformationVariant" Height="40" Width="40"/>
+                <materialDesign:PackIcon Kind="Pill" Height="20" Width="20"/>
             </Button>
         </StackPanel>
     </Grid>

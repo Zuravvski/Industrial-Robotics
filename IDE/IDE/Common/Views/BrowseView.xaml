@@ -22,6 +22,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ScrollViewer.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Converters.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
@@ -96,6 +97,7 @@
             <converters:StopBitsToString x:Key="StopBitsToString"/>
             <converters:IntToString x:Key="IntToString"/>
             <converters:ParityToString x:Key="ParityToString"/>
+            <converters:InvertBooleanConverter x:Key="InvertBoolean"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -139,60 +141,60 @@
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-30,0.4,0" ToolTip="Check to establish connection with&#10;settings defined in popout on the right.">
             <TextBlock Text="Connection status: " Style="{StaticResource Heading2}" VerticalAlignment="Center"/>
-            <ToggleButton x:Name="ConnectionToggle" Style="{StaticResource AnimatedSwitch}" Height="25"  VerticalAlignment="Center" IsChecked="False" Background="#C94141" Command="{Binding ConnectionCommand}" CommandParameter="{Binding ElementName=ConnectionToggle, Path=IsChecked}"/>
+            <ToggleButton x:Name="ConnectionToggle" Style="{StaticResource AnimatedSwitch}" Height="25"  VerticalAlignment="Center" Background="#C94141" Command="{Binding ConnectionCommand}" CommandParameter="{Binding ElementName=ConnectionToggle, Path=IsChecked}" IsChecked="{Binding ConnectionToggleIsChecked}"/>
 
-            <materialDesign:Badged Badge="!" BadgeColorZoneMode="Dark" VerticalAlignment="Center">
+            <materialDesign:Badged Badge="{Binding BadgeText}" BadgeColorZoneMode="Accent" VerticalAlignment="Center">
                 <materialDesign:PopupBox StaysOpen="True" Margin="25,0,0,0" VerticalAlignment="Center">
-                    <Border BorderBrush="{Binding Appearance.ThemeColor}" BorderThickness="2" Padding="10" Background="{DynamicResource WindowBackground}">
+                    <Border Padding="10" Background="{DynamicResource WindowBackground}">
                         <StackPanel Width="200">
                             <TextBlock Text="Connection settings:" Style="{StaticResource Heading2}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}" SelectedValuePath="Content" SelectedValue="{Binding SelectedCOMPort}">
+                                <ComboBox materialDesign:HintAssist.Hint="COM port" materialDesign:HintAssist.IsFloating="True" ItemsSource="{Binding AvailableCOMPorts}" SelectedValue="{Binding SelectedCOMPort}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="DropDownOpened">
                                             <i:InvokeCommandAction Command="{Binding Path=RefreshCOMPortsCommand}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
-                            </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.BaudRate, Converter={StaticResource IntToString}}">
-                                <ComboBoxItem Content="110" />
-                                <ComboBoxItem Content="150" />
-                                <ComboBoxItem Content="300" />
-                                <ComboBoxItem Content="2400" />
-                                <ComboBoxItem Content="4800" />
-                                <ComboBoxItem Content="9600" />
-                                <ComboBoxItem Content="19200" />
-                                <ComboBoxItem Content="38400" />
-                                <ComboBoxItem Content="57600" />
-                                <ComboBoxItem Content="115200" />
-                                <ComboBoxItem Content="230400" />
-                                <ComboBoxItem Content="460800" />
-                                <ComboBoxItem Content="921600" />
-                            </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.DataBits, Converter={StaticResource IntToString}}">
-                                <ComboBoxItem Content="8" />
-                                <ComboBoxItem Content="7" />
-                                <ComboBoxItem Content="6" />
-                                <ComboBoxItem Content="5" />
-                            </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.StopBits, Converter={StaticResource StopBitsToString}}">
-                                <ComboBoxItem Content="1" />
-                                <ComboBoxItem Content="1.5" />
-                                <ComboBoxItem Content="2" />
-                            </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Parity, Converter={StaticResource ParityToString}}">
-                                <ComboBoxItem Content="None" />
-                                <ComboBoxItem Content="Odd" />
-                                <ComboBoxItem Content="Even" />
-                                <ComboBoxItem Content="Mark" />
-                                <ComboBoxItem Content="Space" />
-                            </ComboBox>
-                            <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Handshake}">
-                                <ComboBoxItem Content="None"/>
-                                <ComboBoxItem Content="RTS/CTS" />
-                                <ComboBoxItem Content="DTR/DSR" />
-                                <ComboBoxItem Content="RS485-rts"/>
                                 </ComboBox>
-                        </StackPanel>
+                                <ComboBox materialDesign:HintAssist.Hint="Baudrate" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.BaudRate, Converter={StaticResource IntToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
+                                    <ComboBoxItem Content="110" />
+                                    <ComboBoxItem Content="150" />
+                                    <ComboBoxItem Content="300" />
+                                    <ComboBoxItem Content="2400" />
+                                    <ComboBoxItem Content="4800" />
+                                    <ComboBoxItem Content="9600" />
+                                    <ComboBoxItem Content="19200" />
+                                    <ComboBoxItem Content="38400" />
+                                    <ComboBoxItem Content="57600" />
+                                    <ComboBoxItem Content="115200" />
+                                    <ComboBoxItem Content="230400" />
+                                    <ComboBoxItem Content="460800" />
+                                    <ComboBoxItem Content="921600" />
+                                </ComboBox>
+                                <ComboBox materialDesign:HintAssist.Hint="Data bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.DataBits, Converter={StaticResource IntToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
+                                    <ComboBoxItem Content="8" />
+                                    <ComboBoxItem Content="7" />
+                                    <ComboBoxItem Content="6" />
+                                    <ComboBoxItem Content="5" />
+                                </ComboBox>
+                                <ComboBox materialDesign:HintAssist.Hint="Stop bits" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.StopBits, Converter={StaticResource StopBitsToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
+                                    <ComboBoxItem Content="1" />
+                                    <ComboBoxItem Content="1.5" />
+                                    <ComboBoxItem Content="2" />
+                                </ComboBox>
+                                <ComboBox materialDesign:HintAssist.Hint="Parity" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Parity, Converter={StaticResource ParityToString}}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
+                                    <ComboBoxItem Content="None" />
+                                    <ComboBoxItem Content="Odd" />
+                                    <ComboBoxItem Content="Even" />
+                                    <ComboBoxItem Content="Mark" />
+                                    <ComboBoxItem Content="Space" />
+                                </ComboBox>
+                                <ComboBox materialDesign:HintAssist.Hint="Handshake" materialDesign:HintAssist.IsFloating="True" SelectedValuePath="Content" SelectedValue="{Binding Settings.Handshake}" IsEnabled="{Binding ElementName=ConnectionToggle, Path=IsChecked, Converter={StaticResource InvertBoolean}}">
+                                    <ComboBoxItem Content="None"/>
+                                    <ComboBoxItem Content="RTS/CTS" />
+                                    <ComboBoxItem Content="DTR/DSR" />
+                                    <ComboBoxItem Content="RS485-rts"/>
+                                </ComboBox>
+                            </StackPanel>
                     </Border>
                 </materialDesign:PopupBox>
             </materialDesign:Badged>
@@ -202,7 +204,7 @@
 
         <!--#region RemoteProgram List-->
 
-        <Border Margin="0,0,10,0" Width="Auto" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3"  Grid.RowSpan="2">
+        <Border Margin="0,0,10,0" Width="Auto" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1"  Grid.RowSpan="2">
             <DockPanel Height="Auto">
                 <TextBlock x:Name="textBlockGridHeader" Text="Available remote programs:" Style="{StaticResource Heading2}" Margin="20,3,0,0" DockPanel.Dock="Top"/>
                 <DataGrid ItemsSource="{Binding RemotePrograms}" SelectedItem="{Binding SelectedRemoteProgram}" AutoGenerateColumns="False" DockPanel.Dock="Bottom">
@@ -213,46 +215,46 @@
                         <mui:DataGridTextColumn Header="Last edited" Binding="{Binding Timestamp, Mode=OneWay}"/>
                     </DataGrid.Columns>
 
-                    <DataGrid.Resources>
-                        <ContextMenu x:Key="RemoteContextMenu">
-                            <ContextMenu.Items>
-                                <MenuItem Header="Refresh" Command="{Binding DataContext.RefreshClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Refreshes list of programs stored on manipulator." CommandParameter="Refresh">
+                        <DataGrid.Resources>
+                            <ContextMenu x:Key="RemoteContextMenu" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                <ContextMenu.Items>
+                                    <MenuItem Header="Refresh" Command="{Binding DataContext.RefreshClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Refreshes list of programs stored on manipulator." CommandParameter="Refresh">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Refresh-16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Acquire" Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Acquiring program from manipulator to be stored on local drive." CommandParameter="Pull">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Download-16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Execute" Command="{Binding DataContext.RunClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Starts executing selected program." CommandParameter="Execute">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Play-16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Send new" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Icons/Upload-16.png"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu.Items>
+                            </ContextMenu>
+                        </DataGrid.Resources>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                <MenuItem Header="Refresh" Command="{Binding RefreshClickCommand}" ToolTip="Refreshes list of programs stored on manipulator.">
                                     <MenuItem.Icon>
                                         <Image Source="/Icons/Refresh-16.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Acquire" Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Acquiring program from manipulator to be stored on local drive." CommandParameter="Pull">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Icons/Download-16.png"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Execute" Command="{Binding DataContext.RunClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Starts executing selected program." CommandParameter="Execute">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Icons/Play-16.png"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Send new" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull">
+                                <MenuItem Header="Send new" Command="{Binding UploadClickCommand}" ToolTip="Sends program from local drive to manipulator.">
                                     <MenuItem.Icon>
                                         <Image Source="/Icons/Upload-16.png"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                            </ContextMenu.Items>
-                        </ContextMenu>
-                    </DataGrid.Resources>
-                    <DataGrid.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Refresh" Command="{Binding DataContext.RefreshClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Refreshes list of programs stored on manipulator." CommandParameter="Refresh">
-                                <MenuItem.Icon>
-                                    <Image Source="/Icons/Refresh-16.png"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="Send new" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull">
-                                <MenuItem.Icon>
-                                    <Image Source="/Icons/Upload-16.png"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                        </ContextMenu>
-                    </DataGrid.ContextMenu>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
 
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
@@ -268,26 +270,26 @@
 
         <!--#region KINECT STUFF-->
 
-        <Border Grid.Column="1" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Grid.RowSpan="1"/>
+            <Border Grid.Column="1" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1" Grid.ColumnSpan="2" Grid.RowSpan="1"/>
 
         <!--#endregion-->
 
         <!--#region Command window-->
 
-        <Border Grid.Row="1" Grid.Column="1" CornerRadius="10" BorderBrush="{Binding Path=Appearance.ThemeColor, Converter={StaticResource ColorToBrush}}" BorderThickness="3" Grid.ColumnSpan="2" Margin="0,10,0,0">
+        <Border Grid.Row="1" Grid.Column="1" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1" Grid.ColumnSpan="2" Margin="0,10,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9*"/>
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
-                <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,3" BorderBrush="{Binding Path=Appearance.ThemeColor}" ShowLineNumbers="False" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}">
+                    <models:ProgramEditor  x:Name="CommandHistory" Padding="3" Background="Transparent" IsHighlightingEnabled="True" IsReadOnly="True"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" BorderThickness="0,0,0,1" BorderBrush="#DDDDDD" ShowLineNumbers="False" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}">
                     <i:Interaction.Behaviors>
                         <models:AvalonEditBehaviour GiveMeTheText="{Binding CommandHistoryText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </i:Interaction.Behaviors>
 
                     <models:ProgramEditor.ContextMenu>
-                        <ContextMenu>
+                        <ContextMenu ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
                             <MenuItem Header="Font Family">
                                 <MenuItem.Icon>
@@ -339,13 +341,13 @@
                         <Button Content="Send" Command="{Binding SendClickCommand}"/>
                         <ToggleButton x:Name="SyntaxCheckToggle" Style="{StaticResource AnimatedSwitch}" Height="25" VerticalAlignment="Center" IsChecked="True" ToolTip="If checked, syntax will be validated" Background="#C94141"/>
                     </StackPanel>
-                    <models:ProgramEditor x:Name="CommandInput" Padding="3" IsOneLine="True" DoSyntaxCheck="{Binding ElementName=SyntaxCheckToggle, Path=IsChecked}" IsHighlightingEnabled="True" IsIntellisenseEnabled="True" Background="Transparent" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0,0,3,0" BorderBrush="{Binding Path=Appearance.ThemeColor}" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}" ShowLineNumbers="False">
+                        <models:ProgramEditor x:Name="CommandInput" Padding="3" IsOneLine="True" DoSyntaxCheck="{Binding ElementName=SyntaxCheckToggle, Path=IsChecked}" IsHighlightingEnabled="True" IsIntellisenseEnabled="True" Background="Transparent" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" BorderThickness="0,0,1,0" BorderBrush="#DDDDDD" Foreground="{Binding ElementName=textBlockGridHeader, Path=Foreground}" ShowLineNumbers="False">
                         <i:Interaction.Behaviors>
                             <models:AvalonEditBehaviour GiveMeTheText="{Binding CommandInputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </i:Interaction.Behaviors>
 
                         <models:ProgramEditor.ContextMenu>
-                            <ContextMenu>
+                                <ContextMenu ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
                                 <MenuItem Header="Font Family">
                                     <MenuItem.Icon>

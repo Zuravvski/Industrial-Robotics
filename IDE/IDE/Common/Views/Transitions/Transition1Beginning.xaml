@@ -15,12 +15,9 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    
-    
-    <Grid>
-        <Grid.RowDefinitions>
-        </Grid.RowDefinitions>
 
+
+    <Grid>
 
         <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True">
             <local:Slide_1/>

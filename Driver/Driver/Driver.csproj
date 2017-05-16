@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="DriverSettings.cs" />
     <Compile Include="E3JManipulator.cs" />
+    <Compile Include="EnumExtensions.cs" />
     <Compile Include="Exceptions\AlarmException.cs" />
     <Compile Include="NotificationEventArgs.cs" />
     <Compile Include="Position.cs" />

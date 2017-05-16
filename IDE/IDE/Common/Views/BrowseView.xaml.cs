@@ -18,5 +18,10 @@ namespace IDE.Common.Views
         }
 
         #endregion
+
+        private void ContextMenu_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+        {
+
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace IDE.Common.ViewModels
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
         private DriverSettings settings;
-        private ProgramService programService;
+        private ProgramService programServce;
         private readonly ProgramEditor commandHistory, commandInput;
 
         private string selectedCOMPort;
@@ -200,7 +200,7 @@ namespace IDE.Common.ViewModels
             private set
             {
                 manipulator = value;
-                programService = new ProgramService(manipulator);
+                programServce = new ProgramService(manipulator);
                 NotifyPropertyChanged("Manipulator");
             }
         }
@@ -254,7 +254,7 @@ namespace IDE.Common.ViewModels
         private async void Refresh(object obj)
         {
             RemotePrograms = null;
-            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
+            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programServce.ReadProgramInfo()));
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Download(object obj)
         {
-            await programService.DownloadProgram(SelectedRemoteProgram);
+            await programServce.UploadProgram(SelectedRemoteProgram);
         }
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
-            programService.UploadProgram();
+            programServce.DownloadProgram();
         }
 
         /// <summary>
@@ -313,12 +313,12 @@ namespace IDE.Common.ViewModels
 
         private void Stop(object obj)
         {
-            programService.StopProgram();
+            programServce.StopProgram();
         }
 
         private void Run(object obj)
         {
-            programService.RunProgram(SelectedRemoteProgram);
+            programServce.RunProgram(SelectedRemoteProgram);
         }
 
         /// <summary>

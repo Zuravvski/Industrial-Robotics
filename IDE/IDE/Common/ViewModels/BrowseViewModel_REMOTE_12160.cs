@@ -27,14 +27,12 @@ namespace IDE.Common.ViewModels
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
         private DriverSettings settings;
-        private ProgramService programService;
+        private readonly ProgramService programService;
         private readonly ProgramEditor commandHistory, commandInput;
 
         private string selectedCOMPort;
-        private string badgeText;
         private DialogHost dialogHost;
         private bool dialogHostIsOpen;
-        private bool connectionToggleIsChecked;
 
         #endregion
 
@@ -59,33 +57,20 @@ namespace IDE.Common.ViewModels
             
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
+            programService = new ProgramService(manipulator);
+
+            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>())
+            {
+                new RemoteProgram("Pierwszy", 2567, "10-03-15 11:12:56"),
+                new RemoteProgram("Wtorek", 1200, "08-06-17 09:34:43"),
+                new RemoteProgram("Asd", 45, "17-11-24 04:32:23"),
+                new RemoteProgram("qwerty", 52789, "29-09-32 18:14:32")
+            };
         }
 
         #endregion
 
         #region Properties
-
-        public bool ConnectionToggleIsChecked
-        {
-            get { return connectionToggleIsChecked; }
-            set
-            {
-                connectionToggleIsChecked = value;
-                if (connectionToggleIsChecked)
-                    BadgeText = string.Empty;
-                NotifyPropertyChanged("ConnectionToggleIsChecked");
-            }
-        }
-
-        public string BadgeText
-        {
-            get { return badgeText; }
-            set
-            {
-                badgeText = value;
-                NotifyPropertyChanged("BadgeText");
-            }
-        }
 
         public bool DialogHostIsOpen
         {
@@ -200,7 +185,6 @@ namespace IDE.Common.ViewModels
             private set
             {
                 manipulator = value;
-                programService = new ProgramService(manipulator);
                 NotifyPropertyChanged("Manipulator");
             }
         }
@@ -253,7 +237,6 @@ namespace IDE.Common.ViewModels
         /// <param name="obj"></param>
         private async void Refresh(object obj)
         {
-            RemotePrograms = null;
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
         }
 
@@ -442,7 +425,7 @@ namespace IDE.Common.ViewModels
         private void DeclareCommands()
         {
             RefreshClickCommand = new RelayCommand(Refresh, IsConnectionEstablished);
-            DownloadClickCommand = new RelayCommand(Download);
+            DownloadClickCommand = new RelayCommand(Download, IsItemSelected);
             UploadClickCommand = new RelayCommand(Upload, IsConnectionEstablished);
             SendClickCommand = new RelayCommand(Send, IscommandInputNotEmpty);
             RunClickCommand = new RelayCommand(Run, IsConnectionEstablished);
@@ -470,14 +453,6 @@ namespace IDE.Common.ViewModels
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(SelectedCOMPort))
-                    {
-                        BadgeText = "!";
-                        ConnectionToggleIsChecked = false;
-                        return;
-                    }
-
-                    ConnectionToggleIsChecked = true;
                     Manipulator = new E3JManipulator(Settings);
                     Manipulator.Connect(SelectedCOMPort);
                 }
@@ -503,13 +478,21 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private bool IsConnectionEstablished(object obj)
         {
-            var isConnected = Manipulator.Connected;
-            if (!isConnected)
-                ConnectionToggleIsChecked = false;
-
-            return isConnected;
+            //TODO
+            return true;
         }
 
+        /// <summary>
+        /// Returns a value based upon wheter a item is selected in remote program list or not.
+        /// </summary>
+        private bool IsItemSelected(object obj)
+        {
+            //if (SelecteRemotedProgram != null)
+            //    return true;
+            //else
+            //    return false;
+            return true;
+        }
 
         /// <summary>
         /// Returns a value based upon wheter a Command Input is empty or not.

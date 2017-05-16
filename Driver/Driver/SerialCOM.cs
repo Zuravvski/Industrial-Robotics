@@ -85,6 +85,7 @@ namespace Driver
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
             port.DataReceived += Port_DataReceived;
             heartBeatThread = new Thread(HeartBeat);
+            heartBeatThread.Start();
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -105,7 +106,6 @@ namespace Driver
                 if (port.IsOpen) return;
                 port.PortName = portName;
                 port.Open();
-                heartBeatThread.Start();
                 // delay for initialization purposes
                 await Task.Delay(1000);
             }

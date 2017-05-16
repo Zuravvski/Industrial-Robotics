@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,17 @@ namespace Driver
             var name = splittedInfo[0].Substring(startIndex, endIndex - startIndex);
 
             var size = Convert.ToInt32(splittedInfo[1]);
-            var timestamp = splittedInfo[2];
+
+            //var timestamp = splittedInfo[2];
+            var date = splittedInfo[2].Substring(0, 8);
+            var time = splittedInfo[2].Substring(8, splittedInfo.Length);
+            var splittedData = date.Split('-');
+            var temp = splittedData[0];
+            splittedData[0] = splittedData[2];
+            splittedData[2] = "20" + temp;
+            splittedData[1] = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(int.Parse(splittedData[1]));
+
+            var timestamp = $"{string.Join(" ", splittedData)} {date.Replace('-', ':')}";
 
             return new RemoteProgram(name, size, timestamp);
         }

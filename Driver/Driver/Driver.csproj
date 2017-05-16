@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionStatusChangedArgs.cs" />
     <Compile Include="DriverSettings.cs" />
     <Compile Include="E3JManipulator.cs" />
     <Compile Include="EnumExtensions.cs" />

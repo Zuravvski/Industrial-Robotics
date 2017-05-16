@@ -201,6 +201,7 @@ namespace IDE.Common.ViewModels
             {
                 manipulator = value;
                 programService = new ProgramService(manipulator);
+                programService.StepUpdate += ProgramService_StepUpdate;
                 NotifyPropertyChanged("Manipulator");
             }
         }
@@ -213,16 +214,34 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Actions
-        
-        private void CreateDialogHost(bool isIndeterminate, string currentAction, string currentProgress = "", string message = "")
+
+        private void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
+        {
+            DialogHostIsOpen = true;
+            int progress = (int)(e.CurrentStep / (float)e.NumberOfSteps * 100);
+            CreateDialogHost(false, e.ActionType.Description(), progress, "csocso");
+        }
+
+        private void CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0, string message = "")
         {
             if (isIndeterminate && message.Equals(string.Empty))
                 message = "Just a moment...";   //default indeterminate dialog message
+            else
+            {
+                if (currentProgress < 30)
+                    message = "Hold on. Looks like it might take a while.";
+                else if (currentProgress < 60)
+                    message = "Still faster than COSIROP...";
+                else if (currentProgress < 90)
+                    message = "Well, worst part is over, right?";
+                else
+                    message = "Get ready. We are almost done.";
+            }
 
             DialogHost = new DialogHost()
             {
                 CurrentAction = currentAction,
-                CurrentProgress = currentProgress,
+                CurrentProgress = currentProgress.ToString() + "%",
                 Message = message
             };
         }
@@ -271,6 +290,7 @@ namespace IDE.Common.ViewModels
         private void Upload(object obj)
         {
             programService.UploadProgram();
+
         }
 
         /// <summary>

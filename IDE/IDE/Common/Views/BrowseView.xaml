@@ -291,7 +291,7 @@
                     <models:ProgramEditor.ContextMenu>
                         <ContextMenu ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
-                            <MenuItem Header="Font Family">
+                                <MenuItem Header="Font Family"  ScrollViewer.VerticalScrollBarVisibility="Hidden">
                                 <MenuItem.Icon>
                                     <Image Source="/Icons/Font_16.png"/>
                                 </MenuItem.Icon>

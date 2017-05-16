@@ -236,7 +236,16 @@ namespace IDE.Common.ViewModels
         private void CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0, string message = "")
         {
             if (isIndeterminate && message.Equals(string.Empty))
-                message = "Just a moment...";   //default indeterminate dialog message
+            {
+                message = "Just a moment...";   //default indeterminate dialog 
+
+                DialogHost = new DialogHost()
+                {
+                    CurrentAction = currentAction,
+                    CurrentProgress = string.Empty,
+                    Message = message
+                };
+            }
             else
             {
                 if (currentProgress < 30)
@@ -247,14 +256,14 @@ namespace IDE.Common.ViewModels
                     message = "Well, worst part is over, right?";
                 else
                     message = "Get ready. We are almost done.";
-            }
 
-            DialogHost = new DialogHost()
-            {
-                CurrentAction = currentAction,
-                CurrentProgress = currentProgress.ToString() + "%",
-                Message = message
-            };
+                DialogHost = new DialogHost()
+                {
+                    CurrentAction = currentAction,
+                    CurrentProgress = currentProgress.ToString() + "%",
+                    Message = message
+                };
+            }
         }
 
         /// <summary>
@@ -283,8 +292,11 @@ namespace IDE.Common.ViewModels
         /// <param name="obj"></param>
         private async void Refresh(object obj)
         {
+            DialogHostIsOpen = true;
+            CreateDialogHost(true, "Refreshing program list");
             RemotePrograms = null;
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
+            DialogHostIsOpen = false;
         }
 
         /// <summary>

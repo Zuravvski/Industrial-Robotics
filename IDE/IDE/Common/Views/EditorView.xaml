@@ -48,6 +48,24 @@
                                 Foreground="Black"/>
                     </StackPanel>
 
+
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Close"
+                                           Command="{Binding Path=PlacementTarget.Tag.CloseTabCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                           CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                            <MenuItem Header="Close all"
+                                          Command="{Binding Path=PlacementTarget.Tag.CloseAllTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                           CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                            <MenuItem Header="Close other tabs"
+                                           Command="{Binding Path=PlacementTarget.Tag.CloseOtherTabsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                           CommandTarget="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                           CommandParameter="{Binding}" />
+                        </ContextMenu>
+                    </Grid.ContextMenu>
+
                     <Grid.ToolTip>
                         <ToolTip Content="{Binding Header, Converter={StaticResource RemoveStar}}"/>
                     </Grid.ToolTip>

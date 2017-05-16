@@ -25,6 +25,7 @@ namespace IDE.Common.Models
         private readonly Intellisense intellisense;
         private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
         private bool isHighlightingEnabled;
+        private bool isIntellisenseEnabled;
 
         #endregion
 
@@ -69,17 +70,13 @@ namespace IDE.Common.Models
             }
         }
 
-        public static readonly DependencyProperty IsIntellisenseEnabledProperty =
-            DependencyProperty.Register("IsIntellisenseEnabled", typeof(bool),
-            typeof(ProgramEditor), new FrameworkPropertyMetadata(false));
-
         public bool IsIntellisenseEnabled
         {
-            get { return (bool)GetValue(IsIntellisenseEnabledProperty); }
+            get { return isIntellisenseEnabled; }
             set
             {
-                SetValue(IsIntellisenseEnabledProperty, value);
-                if (value)
+                isIntellisenseEnabled = value;
+                if (isIntellisenseEnabled)
                 {
                     //Subscribes to intellisense events.
                     TextArea.TextEntering += OnIntellisensePreparation;

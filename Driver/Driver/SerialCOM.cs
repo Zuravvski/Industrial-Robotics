@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Driver
 {
@@ -84,7 +85,8 @@ namespace Driver
 
             FrameTerminator = DEFAULT_FRAME_TERMINATOR;
             port.DataReceived += Port_DataReceived;
-            heartBeatThread = new Thread(HeartBeat);
+
+            heartBeatThread = new Thread(HeartBeat) {IsBackground = true};
             heartBeatThread.Start();
         }
 
@@ -170,6 +172,7 @@ namespace Driver
         private void HeartBeat()
         {
             var oldStatus = Opened;
+            
             while (true)
             {
                 Thread.Sleep(500);
@@ -182,5 +185,7 @@ namespace Driver
                 oldStatus = newStatus;
             }
         }
+
+
     }
 }

@@ -25,6 +25,10 @@
         <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="True">
             <local:Slide_1/>
             <local:Slide_2/>
+            <local:Slide_3/>
+            <local:Slide_4/>
+            <local:Slide_5/>
+            <local:Slide_6/>
         </materialDesign:Transitioner>
 
     </Grid>

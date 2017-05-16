@@ -206,6 +206,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Common\Views\Transitions\Slide_3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\Transitions\Slide_4.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\Transitions\Slide_5.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\Transitions\Slide_6.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Common\Views\Transitions\Transition1Beginning.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -223,6 +239,18 @@
     </Compile>
     <Compile Include="Common\Views\Transitions\Slide_2.xaml.cs">
       <DependentUpon>Slide_2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\Slide_3.xaml.cs">
+      <DependentUpon>Slide_3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\Slide_4.xaml.cs">
+      <DependentUpon>Slide_4.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\Slide_5.xaml.cs">
+      <DependentUpon>Slide_5.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\Slide_6.xaml.cs">
+      <DependentUpon>Slide_6.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Views\Transitions\Transition1Beginning.xaml.cs">
       <DependentUpon>Transition1Beginning.xaml</DependentUpon>

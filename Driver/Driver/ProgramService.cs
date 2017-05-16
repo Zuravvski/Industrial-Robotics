@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using Driver.Exceptions;
 using Microsoft.Win32;
@@ -12,6 +12,30 @@ namespace Driver
     public class ProgramService
     {
         private readonly E3JManipulator manipulator;
+
+        #region Enums
+
+        public enum EventType
+        {
+            [Description("Program Downloaded")]
+            PROGRAM_DOWNLOADED,
+
+            [Description("Program Uploaded")]
+            PROGRAM_UPLOADED,
+
+            [Description("Line Uploaded")]
+            LINE_UPLOADED
+        }
+
+        #endregion
+
+        #region Events
+
+        public delegate void StepUpdateHandler(object sender, NotificationEventArgs e);
+
+        public event StepUpdateHandler StepUpdate;
+
+        #endregion
 
         public ProgramService(E3JManipulator manipulator)
         {
@@ -55,13 +79,12 @@ namespace Driver
         /// </summary>
         /// <param name="programName">Name of program on manipulator</param>
         /// <returns>Requested program or null when program with given name does not exist</returns>
-        public async Task<Program> UploadProgram(RemoteProgram remoteProgram)
+        public async Task<Program> DownloadProgram(RemoteProgram remoteProgram)
         {
             var dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == false)
                 return null;
-
-            // TODO: Test if this works
+            
             manipulator.Number(remoteProgram.Name);
             await Task.Delay(1000);
             var errorCode = await manipulator.ErrorRead();
@@ -71,7 +94,7 @@ namespace Driver
                 throw new AlarmException(errorCode);
             }
 
-            var content = string.Empty;
+            var content = String.Empty;
             for (uint i = 1;; i++)
             {
                 var line = await manipulator.StepRead(i);
@@ -87,12 +110,13 @@ namespace Driver
         /// Receives all programs downloaded from manipulator
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Program>> UploadPrograms(List<RemoteProgram> remotePrograms)
+        public async Task<List<Program>> DownloadPrograms(List<RemoteProgram> remotePrograms)
         {
             var programs = new List<Program>();
-            for(int i = 0; i < remotePrograms.Count; i++)
+            for(var i = 0; i < remotePrograms.Count; i++)
             {
-                programs.Add(await UploadProgram(remotePrograms[i]));
+                programs.Add(await DownloadProgram(remotePrograms[i]));
+                StepUpdate?.Invoke(this, new NotificationEventArgs(i, remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
             }
             return programs;
         }
@@ -101,7 +125,7 @@ namespace Driver
         /// Sends program to manipulator
         /// </summary>
         /// <param name="program"></param>
-        public async void DownloadProgram(Program program)
+        public async void UploadProgram(Program program)
         {
             if (!manipulator.Connected) return;
             try
@@ -113,10 +137,12 @@ namespace Driver
 
                 var lines = program.GetLines();
 
-                foreach (var line in lines)
+                for (var index = 0; index < lines.Count; index++)
                 {
+                    var line = lines[index];
                     await Task.Delay(500);
                     manipulator.SendCustom(line);
+                    StepUpdate?.Invoke(this, new NotificationEventArgs(index, lines.Count, EventType.LINE_UPLOADED));
                 }
             }
             catch (Exception ex)
@@ -129,7 +155,7 @@ namespace Driver
         /// Sends program to manipulator
         /// </summary>
         /// <param name="program"></param>
-        public async void DownloadProgram()
+        public async void UploadProgram()
         {
             var dialog = new OpenFileDialog
             {
@@ -156,12 +182,13 @@ namespace Driver
                 await Task.Delay(1000);
                 manipulator.New();
                 await Task.Delay(1000);
-
+                
                 for (var i = 0; i < lines.Length; i++)
                 {
                     await Task.Delay(500);
                     //var prefix = $"{Convert.ToString(i + 1)} ";
                     manipulator.SendCustom(lines[i]);
+                    StepUpdate?.Invoke(this, new NotificationEventArgs(i, lines.Length, EventType.LINE_UPLOADED));
                     Debug.WriteLine($"{i + 1}/{lines.Length}, {lines[i]}");
                 }
             }
@@ -183,7 +210,7 @@ namespace Driver
 
         public async Task<List<RemoteProgram>> ReadProgramInfo()
         {
-            List<RemoteProgram> remoteProgramList = new List<RemoteProgram>();
+            var remoteProgramList = new List<RemoteProgram>();
 
             // Decode data
             for (int i = 1; ; i++)

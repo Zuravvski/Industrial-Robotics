@@ -27,11 +27,7 @@ namespace IDE.Common.ViewModels
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
         private DriverSettings settings;
-<<<<<<< HEAD
         private ProgramService programServce;
-=======
-        private readonly ProgramService programService;
->>>>>>> b33c1a97f12ac95672a3f7cb30c0cd9d7a386f57
         private readonly ProgramEditor commandHistory, commandInput;
 
         private string selectedCOMPort;
@@ -63,18 +59,6 @@ namespace IDE.Common.ViewModels
             
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
-<<<<<<< HEAD
-=======
-            programService = new ProgramService(manipulator);
-
-            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>())
-            {
-                new RemoteProgram("Pierwszy", 2567, "10-03-15 11:12:56"),
-                new RemoteProgram("Wtorek", 1200, "08-06-17 09:34:43"),
-                new RemoteProgram("Asd", 45, "17-11-24 04:32:23"),
-                new RemoteProgram("qwerty", 52789, "29-09-32 18:14:32")
-            };
->>>>>>> b33c1a97f12ac95672a3f7cb30c0cd9d7a386f57
         }
 
         #endregion
@@ -269,12 +253,8 @@ namespace IDE.Common.ViewModels
         /// <param name="obj"></param>
         private async void Refresh(object obj)
         {
-<<<<<<< HEAD
             RemotePrograms = null;
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programServce.ReadProgramInfo()));
-=======
-            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
->>>>>>> b33c1a97f12ac95672a3f7cb30c0cd9d7a386f57
         }
 
         /// <summary>
@@ -282,7 +262,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Download(object obj)
         {
-            await programService.DownloadProgram(SelectedRemoteProgram);
+            await programServce.UploadProgram(SelectedRemoteProgram);
         }
 
         /// <summary>
@@ -290,7 +270,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
-            programService.UploadProgram();
+            programServce.DownloadProgram();
         }
 
         /// <summary>
@@ -333,12 +313,12 @@ namespace IDE.Common.ViewModels
 
         private void Stop(object obj)
         {
-            programService.StopProgram();
+            programServce.StopProgram();
         }
 
         private void Run(object obj)
         {
-            programService.RunProgram(SelectedRemoteProgram);
+            programServce.RunProgram(SelectedRemoteProgram);
         }
 
         /// <summary>

@@ -27,18 +27,12 @@ namespace IDE.Common.ViewModels
         private RemoteProgram selectedRemoteProgram;
         private E3JManipulator manipulator;
         private DriverSettings settings;
-<<<<<<< HEAD
-        private ProgramService programServce;
-=======
-        private readonly ProgramService programService;
->>>>>>> b33c1a97f12ac95672a3f7cb30c0cd9d7a386f57
+        private readonly ProgramService programServce;
         private readonly ProgramEditor commandHistory, commandInput;
 
         private string selectedCOMPort;
-        private string badgeText;
         private DialogHost dialogHost;
         private bool dialogHostIsOpen;
-        private bool connectionToggleIsChecked;
 
         #endregion
 
@@ -63,9 +57,7 @@ namespace IDE.Common.ViewModels
             
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
-<<<<<<< HEAD
-=======
-            programService = new ProgramService(manipulator);
+            programServce = new ProgramService(manipulator);
 
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>())
             {
@@ -74,34 +66,11 @@ namespace IDE.Common.ViewModels
                 new RemoteProgram("Asd", 45, "17-11-24 04:32:23"),
                 new RemoteProgram("qwerty", 52789, "29-09-32 18:14:32")
             };
->>>>>>> b33c1a97f12ac95672a3f7cb30c0cd9d7a386f57
         }
 
         #endregion
 
         #region Properties
-
-        public bool ConnectionToggleIsChecked
-        {
-            get { return connectionToggleIsChecked; }
-            set
-            {
-                connectionToggleIsChecked = value;
-                if (connectionToggleIsChecked)
-                    BadgeText = string.Empty;
-                NotifyPropertyChanged("ConnectionToggleIsChecked");
-            }
-        }
-
-        public string BadgeText
-        {
-            get { return badgeText; }
-            set
-            {
-                badgeText = value;
-                NotifyPropertyChanged("BadgeText");
-            }
-        }
 
         public bool DialogHostIsOpen
         {
@@ -216,7 +185,6 @@ namespace IDE.Common.ViewModels
             private set
             {
                 manipulator = value;
-                programServce = new ProgramService(manipulator);
                 NotifyPropertyChanged("Manipulator");
             }
         }
@@ -269,12 +237,7 @@ namespace IDE.Common.ViewModels
         /// <param name="obj"></param>
         private async void Refresh(object obj)
         {
-<<<<<<< HEAD
-            RemotePrograms = null;
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programServce.ReadProgramInfo()));
-=======
-            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
->>>>>>> b33c1a97f12ac95672a3f7cb30c0cd9d7a386f57
         }
 
         /// <summary>
@@ -282,7 +245,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Download(object obj)
         {
-            await programService.DownloadProgram(SelectedRemoteProgram);
+            await programServce.UploadProgram(SelectedRemoteProgram);
         }
 
         /// <summary>
@@ -290,7 +253,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
-            programService.UploadProgram();
+            programServce.DownloadProgram();
         }
 
         /// <summary>
@@ -333,12 +296,12 @@ namespace IDE.Common.ViewModels
 
         private void Stop(object obj)
         {
-            programService.StopProgram();
+            programServce.StopProgram();
         }
 
         private void Run(object obj)
         {
-            programService.RunProgram(SelectedRemoteProgram);
+            programServce.RunProgram(SelectedRemoteProgram);
         }
 
         /// <summary>
@@ -462,7 +425,7 @@ namespace IDE.Common.ViewModels
         private void DeclareCommands()
         {
             RefreshClickCommand = new RelayCommand(Refresh, IsConnectionEstablished);
-            DownloadClickCommand = new RelayCommand(Download);
+            DownloadClickCommand = new RelayCommand(Download, IsItemSelected);
             UploadClickCommand = new RelayCommand(Upload, IsConnectionEstablished);
             SendClickCommand = new RelayCommand(Send, IscommandInputNotEmpty);
             RunClickCommand = new RelayCommand(Run, IsConnectionEstablished);
@@ -490,14 +453,6 @@ namespace IDE.Common.ViewModels
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(SelectedCOMPort))
-                    {
-                        BadgeText = "!";
-                        ConnectionToggleIsChecked = false;
-                        return;
-                    }
-
-                    ConnectionToggleIsChecked = true;
                     Manipulator = new E3JManipulator(Settings);
                     Manipulator.Connect(SelectedCOMPort);
                 }
@@ -523,13 +478,21 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private bool IsConnectionEstablished(object obj)
         {
-            var isConnected = Manipulator.Connected;
-            if (!isConnected)
-                ConnectionToggleIsChecked = false;
-
-            return isConnected;
+            //TODO
+            return true;
         }
 
+        /// <summary>
+        /// Returns a value based upon wheter a item is selected in remote program list or not.
+        /// </summary>
+        private bool IsItemSelected(object obj)
+        {
+            //if (SelecteRemotedProgram != null)
+            //    return true;
+            //else
+            //    return false;
+            return true;
+        }
 
         /// <summary>
         /// Returns a value based upon wheter a Command Input is empty or not.

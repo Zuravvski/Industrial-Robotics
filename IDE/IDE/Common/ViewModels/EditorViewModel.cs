@@ -3,16 +3,12 @@ using IDE.Common.ViewModels.Commands;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using RadialMenu.Controls;
 using System.Windows.Media;
-using System.Threading.Tasks;
 using System.Linq;
 using Driver;
 using Microsoft.Win32;
 using System.IO;
 using IDE.Common.Utilities;
-using System;
-using System.Windows.Data;
 
 namespace IDE.Common.ViewModels
 {

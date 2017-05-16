@@ -9,8 +9,9 @@ using IDE.Common.Models.Value_Objects;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
-using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace IDE.Common.ViewModels
 {
@@ -292,7 +293,13 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Download(object obj)
         {
-            await programService.DownloadProgram(SelectedRemoteProgram);
+            var dialog = new SaveFileDialog();
+            if (dialog.ShowDialog().GetValueOrDefault(false))
+            {
+                var program = await programService.DownloadProgram(SelectedRemoteProgram);
+                File.WriteAllText(dialog.FileName, program.Content);
+            }
+            
         }
 
         /// <summary>
@@ -300,8 +307,26 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
-            programService.UploadProgram();
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt",
+                CheckFileExists = true
+            };
 
+            if (dialog.ShowDialog().GetValueOrDefault(false))
+            {
+                var path = dialog.FileName;
+
+                if (string.IsNullOrWhiteSpace(path) || Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute))
+                    return;
+
+                var name = Path.GetFileNameWithoutExtension(path);
+                var content = File.ReadAllText(dialog.FileName);
+                var program = new Program(name) {Content = content};
+
+                programService.UploadProgram(program);
+            }
         }
 
         /// <summary>

@@ -106,14 +106,12 @@
     <Compile Include="Common\Models\MessageList.cs" />
     <Compile Include="Common\Models\Value Objects\Positions.cs" />
     <Compile Include="Common\Models\ProgramEditor.cs" />
-    <Compile Include="Common\Models\Services\MacroManager.cs" />
     <Compile Include="Common\Models\Syntax Check\ITextMarker.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxChecker.cs" />
     <Compile Include="Common\Models\Syntax Check\SyntaxCheckVisualizer.cs" />
     <Compile Include="Common\Models\Syntax Check\TextMarkerService.cs" />
     <Compile Include="Common\Models\TabItem.cs" />
     <Compile Include="Common\Models\Value Objects\Command.cs" />
-    <Compile Include="Common\Models\Value Objects\Macro.cs" />
     <Compile Include="Common\Models\Value Objects\Message.cs" />
     <Compile Include="Common\Utilities\AsynchronousQueryExecutor.cs" />
     <Compile Include="Common\Utilities\Commands.cs" />
@@ -147,7 +145,6 @@
     <Compile Include="Common\ViewModels\EditorViewModel.cs" />
     <Compile Include="Common\ViewModels\HighlightingViewModel.cs" />
     <Compile Include="Common\ViewModels\HomeViewModel.cs" />
-    <Compile Include="Common\ViewModels\MacroManagerViewModel.cs" />
     <Compile Include="Common\Views\BrowseView.xaml.cs">
       <DependentUpon>BrowseView.xaml</DependentUpon>
     </Compile>
@@ -162,9 +159,6 @@
     </Compile>
     <Compile Include="Common\Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Views\MacroManagerView.xaml.cs">
-      <DependentUpon>MacroManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Views\SaveAsDialog.xaml.cs">
       <DependentUpon>SaveAsDialog.xaml</DependentUpon>
@@ -187,10 +181,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Common\Views\HighlightingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Common\Views\MacroManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

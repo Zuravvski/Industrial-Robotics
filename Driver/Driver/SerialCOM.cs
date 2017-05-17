@@ -142,9 +142,14 @@ namespace Driver
 
         public async Task WaitForMessageAsync()
         {
-            await Task.Run(() =>
+            var counter = 0;
+            await Task.Run(async () =>
             {
-                while (bufferedMessages.Count == 0 ) ;
+                while (bufferedMessages.Count == 0 || counter == 4000)
+                {
+                    counter++;
+                    await Task.Delay(1);
+                }
             });
 
         }
@@ -185,7 +190,5 @@ namespace Driver
                 oldStatus = newStatus;
             }
         }
-
-
     }
 }

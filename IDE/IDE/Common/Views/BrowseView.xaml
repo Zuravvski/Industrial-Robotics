@@ -40,16 +40,16 @@
             <!--#region TOGGLE -->
             <Style x:Key="AnimatedSwitch" TargetType="{x:Type ToggleButton}">
                 <Setter Property="Foreground" Value="Black" />
-                <Setter Property="Background" Value="#FAF9F9" />
-                <Setter Property="BorderBrush" Value="#FAF9F9" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ToggleButton">
                             <Viewbox Stretch="Uniform">
-                                <Canvas Name="Layer_1" Width="20" Height="20" Canvas.Left="10" Canvas.Top="0">
+                                <Canvas Name="Layer_1" Width="20" Height="20" Canvas.Left="0" Canvas.Top="0">
                                     <Ellipse  Canvas.Left="0" Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="0.5"/>
                                     <Ellipse  Canvas.Left="15" Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="0.5"/>
-                                    <Border Canvas.Left="10" Width="15" Height="20" Name="rect416927" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0.5,0,0.5"/>
+                                    <Border   Canvas.Left="10" Width="15" Height="20" Name="rect416927" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0.5,0,0.5" VerticalAlignment="Center"/>
                                     <Ellipse x:Name="ellipse"  Canvas.Left="0" Width="20" Height="20" Fill="White" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="0.3">
                                         <Ellipse.RenderTransform>
                                             <TranslateTransform X="0" Y="0" />
@@ -105,7 +105,7 @@
 
 
     <materialDesign:DialogHost Margin="-300" IsOpen="{Binding DialogHostIsOpen}">
-        
+
         <!--#region Cover content-->
         
         <materialDesign:DialogHost.DialogContent>
@@ -137,6 +137,7 @@
             <RowDefinition Height="18*"/>
             <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
+
 
         <!--#region Connection menu-->
 
@@ -224,7 +225,7 @@
                                             <TextBlock Text="6" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="Acquire" Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Acquiring program from manipulator to be stored on local drive." CommandParameter="Pull" Style="{DynamicResource IconFont}">
+                                    <MenuItem Header="Download" Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Acquiring program from manipulator to be stored on local drive." CommandParameter="Pull" Style="{DynamicResource IconFont}">
                                         <MenuItem.Icon>
                                             <TextBlock Text="2" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
@@ -234,9 +235,14 @@
                                             <TextBlock Text="5" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="Send new" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull" Style="{DynamicResource IconFont}">
+                                    <MenuItem Header="Upload" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull" Style="{DynamicResource IconFont}">
                                         <MenuItem.Icon>
                                             <TextBlock Text="7" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Delete" Command="{Binding DataContext.DeleteClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Delete" Style="{DynamicResource IconFont}">
+                                        <MenuItem.Icon>
+                                            <TextBlock Text="X" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </ContextMenu.Items>
@@ -249,7 +255,7 @@
                                         <TextBlock Text="6" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Send new" Command="{Binding UploadClickCommand}" ToolTip="Sends program from local drive to manipulator." Style="{DynamicResource IconFont}">
+                                <MenuItem Header="Upload" Command="{Binding UploadClickCommand}" ToolTip="Sends program from local drive to manipulator." Style="{DynamicResource IconFont}">
                                     <MenuItem.Icon>
                                         <TextBlock Text="7" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                     </MenuItem.Icon>

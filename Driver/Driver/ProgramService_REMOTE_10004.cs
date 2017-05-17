@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Driver.Exceptions;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace Driver
 {
@@ -41,7 +39,7 @@ namespace Driver
             this.manipulator = manipulator;
         }
 
-        public async Task StopProgram()
+        public async void StopProgram()
         {
             if (!manipulator.Connected) return;
             try
@@ -56,7 +54,7 @@ namespace Driver
             }
         }
 
-        public async Task RunProgram(RemoteProgram remoteProgram)
+        public async void RunProgram(RemoteProgram remoteProgram)
         {
             if (!manipulator.Connected) return;
             try
@@ -88,7 +86,7 @@ namespace Driver
             }
 
             var content = string.Empty;
-            for (uint i = 1; ; i++)
+            for (uint i = 1;; i++)
             {
                 var line = await manipulator.StepRead(i);
                 if (line.Equals("\r"))
@@ -105,10 +103,10 @@ namespace Driver
         public async Task<List<Program>> DownloadPrograms(List<RemoteProgram> remotePrograms)
         {
             var programs = new List<Program>();
-            for (var i = 0; i < remotePrograms.Count; i++)
+            for(var i = 0; i < remotePrograms.Count; i++)
             {
                 programs.Add(await DownloadProgram(remotePrograms[i]));
-                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i + 1,
+                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i+1, 
                     remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
             }
             return programs;
@@ -118,7 +116,7 @@ namespace Driver
         /// Sends program to manipulator
         /// </summary>
         /// <param name="program"></param>
-        public async Task UploadProgram(Program program, CancellationToken cancellationToken)
+        public async void UploadProgram(Program program)
         {
             if (!manipulator.Connected) return;
             try
@@ -133,12 +131,8 @@ namespace Driver
                 for (var i = 0; i < lines.Count; i++)
                 {
                     await Task.Delay(500);
-
-                    if (cancellationToken != null && cancellationToken.IsCancellationRequested)
-                        break;
-
                     manipulator.SendCustom(lines[i]);
-                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i + 1,
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i+1, 
                         lines.Count, EventType.LINE_UPLOADED));
                 }
             }
@@ -152,20 +146,9 @@ namespace Driver
         /// [Deprecated] Deletes program from manipulator memory
         /// </summary>
         /// <param name="programName">Deleted program name</param>
-        public async Task DeleteProgram(string programName)
+        public void DeleteProgram(string programName)
         {
-            if (!manipulator.Connected) return;
-            try
-            {
-                manipulator.Number(programName);
-                await Task.Delay(1000);
-                manipulator.New();
-                await Task.Delay(1000);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-            }
+            throw new NotImplementedException();
         }
 
         public async Task<List<RemoteProgram>> ReadProgramInfo()
@@ -176,10 +159,10 @@ namespace Driver
             for (var i = 1; ; i++)
             {
                 manipulator.SendCustom(i == 1 ? "EXE0, \"Fd<*\"" : $"EXE0, \"Fd{i}\"");
-                
+
                 await manipulator.Port.WaitForMessageAsync();
                 var QoK = manipulator.Port.Read();
-                if (QoK.Equals("QoK\r") || Regex.IsMatch(QoK, @"^QoK\s*$"))
+                if (QoK.Equals("QoK\r"))
                     break;
 
                 var remoteProgram = RemoteProgram.Create(QoK);

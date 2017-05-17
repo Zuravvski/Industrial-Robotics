@@ -29,6 +29,8 @@ namespace Driver
             var name = splittedInfo[0].Substring(startIndex, endIndex - startIndex);
 
             var size = Convert.ToInt32(splittedInfo[1]);
+            if (size == 0)
+                return null;
 
             //var timestamp = splittedInfo[2];
             var date = splittedInfo[2].Substring(0, 8);

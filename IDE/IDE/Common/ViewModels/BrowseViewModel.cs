@@ -13,6 +13,8 @@ using System.IO;
 using System.IO.Ports;
 using Microsoft.Win32;
 using IDE.Common.Utilities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace IDE.Common.ViewModels
 {
@@ -96,6 +98,10 @@ namespace IDE.Common.ViewModels
             set
             {
                 dialogHostIsOpen = value;
+                if (!DialogHostIsOpen)
+                {
+                    DialogHost.CancellationTokenSource.Cancel();
+                }
                 NotifyPropertyChanged("DialogHostIsOpen");
             }
         }
@@ -228,16 +234,19 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        private void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
+        private async void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
         {
             int progress = (int)(e.CurrentStep / (float)e.NumberOfSteps * 100);
-            CreateDialogHost(false, e.ActionName, progress);
+            CreateDialogHost(false, e.ActionName, new CancellationTokenSource(), progress);
 
             if (e.CurrentStep == e.NumberOfSteps)
-                DialogHostIsOpen = false;
+            {
+                await Task.Delay(2000);
+                Refresh(null);
+            }
         }
 
-        private void CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0)
+        private void CreateDialogHost(bool isIndeterminate, string currentAction, CancellationTokenSource cancellationToken, int currentProgress = 0)
         {
             var message = "";
             var progress = "";
@@ -264,7 +273,8 @@ namespace IDE.Common.ViewModels
             {
                 CurrentAction = currentAction,
                 CurrentProgress = progress,
-                Message = message
+                Message = message,
+                CancellationTokenSource = cancellationToken
             };
         }
 
@@ -295,7 +305,7 @@ namespace IDE.Common.ViewModels
         private async void Refresh(object obj)
         {
             DialogHostIsOpen = true;
-            CreateDialogHost(true, "Refreshing program list");
+            CreateDialogHost(true, "Refreshing program list", new CancellationTokenSource());
             RemotePrograms = null;
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
             DialogHostIsOpen = false;
@@ -315,7 +325,7 @@ namespace IDE.Common.ViewModels
             if (dialog.ShowDialog().GetValueOrDefault(false))
             {
                 DialogHostIsOpen = true;
-                CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...");
+                CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...", new CancellationTokenSource());
                 var program = await programService.DownloadProgram(SelectedRemoteProgram);
                 var programWithoutLineNumbers = ProgramContentConverter.ToPC(program.Content);
                 program.Content = programWithoutLineNumbers;
@@ -326,9 +336,21 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
+        /// Deletes specified program and position data.
+        /// </summary>
+        /// <param name="obj"></param>
+        private async void Delete(object obj)
+        {
+            DialogHostIsOpen = true;
+            programService.DeleteProgram(SelectedRemoteProgram.Name);
+            await Task.Delay(2000);
+            Refresh(null);
+        }
+
+        /// <summary>
         /// Occurs after user triggers upload event.
         /// </summary>
-        private void Upload(object obj)
+        private async void Upload(object obj)
         {
             var dialog = new OpenFileDialog
             {
@@ -349,10 +371,12 @@ namespace IDE.Common.ViewModels
                 var program = new Program(name) {Content = content};
 
                 DialogHostIsOpen = true;
-                CreateDialogHost(false, $"Uploading program");
+                CreateDialogHost(false, $"Uploading program", new CancellationTokenSource());
                 var contentWithLineNumbers = ProgramContentConverter.ToManipulator(program.Content);
                 program.Content = contentWithLineNumbers;
-                programService.UploadProgram(program);
+
+                var cancellationToken = new CancellationTokenSource();
+                await programService.UploadProgram(program, cancellationToken.Token);
             }
         }
 
@@ -361,7 +385,7 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Send(object obj = null)
         {
-            if (!string.IsNullOrWhiteSpace(commandInputText))
+            if (Manipulator.Connected && !string.IsNullOrWhiteSpace(commandInputText))
             {
                 if (commandInput.DoSyntaxCheck != true) //if user dont want to check syntax just send it right away
                 {
@@ -519,7 +543,7 @@ namespace IDE.Common.ViewModels
         public ICommand UploadClickCommand { get; private set; }
         public ICommand SendClickCommand { get; private set; }
         public ICommand RunClickCommand { get; private set; }
-        public ICommand StopClickCommand { get; private set; }
+        public ICommand DeleteClickCommand { get; private set; }
         public ICommand ClearHistoryCommand { get; private set; }
         public ICommand ExportHistoryCommand { get; private set; }
         public ICommand ChangeFontCommand { get; private set; }
@@ -533,7 +557,7 @@ namespace IDE.Common.ViewModels
             UploadClickCommand = new RelayCommand(Upload, IsConnectionEstablished);
             SendClickCommand = new RelayCommand(Send, IscommandInputNotEmpty);
             RunClickCommand = new RelayCommand(Run, IsConnectionEstablished);
-            StopClickCommand = new RelayCommand(Stop, IsConnectionEstablished);
+            DeleteClickCommand = new RelayCommand(Delete, IsConnectionEstablished);
             ClearHistoryCommand = new RelayCommand(ClearHistory, IscommandHistoryNotEmpty);
             ExportHistoryCommand = new RelayCommand(ExportHistory, IscommandHistoryNotEmpty);
             ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);

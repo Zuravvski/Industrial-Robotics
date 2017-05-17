@@ -105,7 +105,7 @@
 
 
     <materialDesign:DialogHost Margin="-300" IsOpen="{Binding DialogHostIsOpen}">
-        
+
         <!--#region Cover content-->
         
         <materialDesign:DialogHost.DialogContent>
@@ -238,6 +238,11 @@
                                     <MenuItem Header="Upload" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull" Style="{DynamicResource IconFont}">
                                         <MenuItem.Icon>
                                             <TextBlock Text="7" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Delete" Command="{Binding DataContext.DeleteClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Delete" Style="{DynamicResource IconFont}">
+                                        <MenuItem.Icon>
+                                            <TextBlock Text="X" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </ContextMenu.Items>

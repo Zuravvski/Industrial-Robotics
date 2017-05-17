@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
 using Microsoft.Win32;
+using IDE.Common.Utilities;
 
 namespace IDE.Common.ViewModels
 {
@@ -239,17 +240,11 @@ namespace IDE.Common.ViewModels
         private void CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0)
         {
             var message = "";
+            var progress = "";
 
             if (isIndeterminate)
             {
                 message = "Just a moment...";   //default indeterminate dialog 
-
-                DialogHost = new DialogHost()
-                {
-                    CurrentAction = currentAction,
-                    CurrentProgress = string.Empty,
-                    Message = message
-                };
             }
             else
             {
@@ -262,13 +257,15 @@ namespace IDE.Common.ViewModels
                 else
                     message = "Get ready. We are almost done.";
 
-                DialogHost = new DialogHost()
-                {
-                    CurrentAction = currentAction,
-                    CurrentProgress = currentProgress.ToString() + "%",
-                    Message = message
-                };
+                progress = currentProgress.ToString() + "%";
             }
+
+            DialogHost = new DialogHost()
+            {
+                CurrentAction = currentAction,
+                CurrentProgress = progress,
+                Message = message
+            };
         }
 
         /// <summary>
@@ -308,18 +305,24 @@ namespace IDE.Common.ViewModels
         /// Occurs after user triggers upload event.
         /// </summary>
         private async void Download(object obj)
-        {
-            //DialogHostIsOpen = true;
-            //CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...");
-            //await programService.DownloadProgram(SelectedRemoteProgram);
-            //DialogHostIsOpen = false;
+        {  
+            var dialog = new SaveFileDialog()
+            {
+                Filter = "Text file (.txt)|*.txt",
+                FileName = SelectedRemoteProgram.Name
+            };
 
-            var dialog = new SaveFileDialog();
             if (dialog.ShowDialog().GetValueOrDefault(false))
             {
+                DialogHostIsOpen = true;
+                CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...");
                 var program = await programService.DownloadProgram(SelectedRemoteProgram);
+                var programWithoutLineNumbers = ProgramContentConverter.ToPC(program.Content);
+                program.Content = programWithoutLineNumbers;
                 File.WriteAllText(dialog.FileName, program.Content);
             }
+
+            DialogHostIsOpen = false;
         }
 
         /// <summary>
@@ -327,16 +330,12 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
-            //DialogHostIsOpen = true;
-            //CreateDialogHost(true, $"Uploading...");
-            //programService.UploadProgram();
-
             var dialog = new OpenFileDialog
             {
-                DefaultExt = ".txt",
-                Filter = "txt files (.txt)|*.txt",
+                Filter = "Text files (.txt)|*.txt",
                 CheckFileExists = true
             };
+            
 
             if (dialog.ShowDialog().GetValueOrDefault(false))
             {
@@ -349,6 +348,10 @@ namespace IDE.Common.ViewModels
                 var content = File.ReadAllText(dialog.FileName);
                 var program = new Program(name) {Content = content};
 
+                DialogHostIsOpen = true;
+                CreateDialogHost(false, $"Uploading program");
+                var contentWithLineNumbers = ProgramContentConverter.ToManipulator(program.Content);
+                program.Content = contentWithLineNumbers;
                 programService.UploadProgram(program);
             }
         }

@@ -200,7 +200,7 @@
     <Description>Resets the program and error condition.</Description>
   </Command>
 
-  <Command name="Return" content="RT" regex=" ^\s*RT\s*$" type="Programming">
+  <Command name="Return" content="RT" regex="^\s*RT\s*$" type="Programming">
     <Description>Completes a subroutine and returns to the main program.</Description>
   </Command>
 

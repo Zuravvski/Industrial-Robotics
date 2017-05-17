@@ -225,7 +225,7 @@
                                             <TextBlock Text="6" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="Acquire" Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Acquiring program from manipulator to be stored on local drive." CommandParameter="Pull" Style="{DynamicResource IconFont}">
+                                    <MenuItem Header="Download" Command="{Binding DataContext.DownloadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Acquiring program from manipulator to be stored on local drive." CommandParameter="Pull" Style="{DynamicResource IconFont}">
                                         <MenuItem.Icon>
                                             <TextBlock Text="2" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
@@ -235,7 +235,7 @@
                                             <TextBlock Text="5" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="Send new" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull" Style="{DynamicResource IconFont}">
+                                    <MenuItem Header="Upload" Command="{Binding DataContext.UploadClickCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" ToolTip="Sends program from local drive to manipulator." CommandParameter="Pull" Style="{DynamicResource IconFont}">
                                         <MenuItem.Icon>
                                             <TextBlock Text="7" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                         </MenuItem.Icon>
@@ -250,7 +250,7 @@
                                         <TextBlock Text="6" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Send new" Command="{Binding UploadClickCommand}" ToolTip="Sends program from local drive to manipulator." Style="{DynamicResource IconFont}">
+                                <MenuItem Header="Upload" Command="{Binding UploadClickCommand}" ToolTip="Sends program from local drive to manipulator." Style="{DynamicResource IconFont}">
                                     <MenuItem.Icon>
                                         <TextBlock Text="7" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                     </MenuItem.Icon>

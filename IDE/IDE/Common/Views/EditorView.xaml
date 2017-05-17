@@ -132,22 +132,22 @@
                 </StackPanel>
             </materialDesign:PopupBox>
 
-            <materialDesign:PopupBox StaysOpen="True" Background="{DynamicResource ButtonBorder}" PopupMode="MouseOver" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}" ToolTip="Settings" BorderThickness="2" BorderBrush="#DDDDDD" Margin="30,0,0,0">
-                <materialDesign:PopupBox.ToggleContent>
-                    <materialDesign:PackIcon Kind="Settings" Width="24" Height="24" Foreground="{DynamicResource WindowText}"/>
-                </materialDesign:PopupBox.ToggleContent>
-                <StackPanel>
-                    <Button ToolTip="If checked, intellisense will be enabled" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
-                        <ToggleButton Content="i" Style="{StaticResource MaterialDesignActionLightToggleButton}"  Height="35" Width="35" IsChecked="{Binding IntellisenseIsChecked}" Foreground="{DynamicResource WindowText}" Background="{DynamicResource ButtonBorder}"/>
-                    </Button>
-                    <Button ToolTip="If checked, syntax check will be enabled" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
-                        <ToggleButton Content="s" Style="{StaticResource MaterialDesignActionLightToggleButton}" Height="35" Width="35" IsChecked="{Binding SyntaxIsChecked}" Foreground="{DynamicResource WindowText}" Background="{DynamicResource ButtonBorder}"/>
-                    </Button>
-                </StackPanel>
-            </materialDesign:PopupBox>
-
         </StackPanel>
-        
+
+        <materialDesign:PopupBox HorizontalAlignment="Right" Grid.Column="1" StaysOpen="True" Background="{DynamicResource ButtonBorder}" PopupMode="Click" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}" ToolTip="Settings" BorderThickness="2" BorderBrush="#DDDDDD" Margin="0,0,30,0">
+            <materialDesign:PopupBox.ToggleContent>
+                <materialDesign:PackIcon Kind="Settings" Width="24" Height="24" Foreground="{DynamicResource WindowText}"/>
+            </materialDesign:PopupBox.ToggleContent>
+            <StackPanel>
+                <Button ToolTip="If checked, intellisense will be enabled" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                    <ToggleButton Content="i" Style="{StaticResource MaterialDesignActionLightToggleButton}"  Height="35" Width="35" IsChecked="{Binding IntellisenseIsChecked}" Foreground="{DynamicResource WindowText}" Background="{DynamicResource ButtonBorder}"/>
+                </Button>
+                <Button ToolTip="If checked, syntax check will be enabled" BorderThickness="2" BorderBrush="#DDDDDD" Background="{DynamicResource ButtonBorder}">
+                    <ToggleButton Content="s" Style="{StaticResource MaterialDesignActionLightToggleButton}" Height="35" Width="35" IsChecked="{Binding SyntaxIsChecked}" Foreground="{DynamicResource WindowText}" Background="{DynamicResource ButtonBorder}"/>
+                </Button>
+            </StackPanel>
+        </materialDesign:PopupBox>
+
         <!--#endregion-->
         
         <!--#region Tabs-->

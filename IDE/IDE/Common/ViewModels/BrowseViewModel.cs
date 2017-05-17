@@ -228,14 +228,18 @@ namespace IDE.Common.ViewModels
 
         private void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
         {
-            DialogHostIsOpen = true;
             int progress = (int)(e.CurrentStep / (float)e.NumberOfSteps * 100);
-            CreateDialogHost(false, e.ActionType.Description(), progress, "csocso");
+            CreateDialogHost(false, e.ActionName, progress);
+
+            if (e.CurrentStep == e.NumberOfSteps)
+                DialogHostIsOpen = false;
         }
 
-        private void CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0, string message = "")
+        private void CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0)
         {
-            if (isIndeterminate && message.Equals(string.Empty))
+            var message = "";
+
+            if (isIndeterminate)
             {
                 message = "Just a moment...";   //default indeterminate dialog 
 
@@ -304,7 +308,10 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private async void Download(object obj)
         {
+            DialogHostIsOpen = true;
+            CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...");
             await programService.DownloadProgram(SelectedRemoteProgram);
+            DialogHostIsOpen = false;
         }
 
         /// <summary>
@@ -312,8 +319,9 @@ namespace IDE.Common.ViewModels
         /// </summary>
         private void Upload(object obj)
         {
+            DialogHostIsOpen = true;
+            CreateDialogHost(true, $"Uploading...");
             programService.UploadProgram();
-
         }
 
         /// <summary>

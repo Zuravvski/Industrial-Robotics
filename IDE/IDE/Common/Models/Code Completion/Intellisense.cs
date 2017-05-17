@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Input;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Editing;
@@ -26,7 +27,10 @@ namespace IDE.Common.Models.Code_Completion
         {
             if (completionWindow == null)
             {
-                completionWindow = new CompletionWindow(textArea);
+                completionWindow = new CompletionWindow(textArea)
+                {
+                    CloseWhenCaretAtBeginning = true,
+                };
 
                 foreach (var command in commands)
                 {
@@ -71,14 +75,23 @@ namespace IDE.Common.Models.Code_Completion
             var caretLine = textArea.Document.GetLineByNumber(caretPosition);
             var careLineText = textArea.Document.GetText(caretLine);
 
-            if (!caretLine.IsDeleted && !careLineText.Contains(" "))
+            if (completionWindow != null)
             {
-                completionWindow?.Show();
+                if (completionWindow.CompletionList.ListBox.HasItems && !caretLine.IsDeleted &&
+                    !careLineText.Contains(" "))
+                {
+                    completionWindow.Show();
+                }
+                else
+                {
+                    completionWindow.Close();
+                }
             }
-            else
-            {
-                completionWindow?.Close();
-            }
+        }
+
+        public void Close()
+        {
+            completionWindow?.Close();
         }
     }
 }

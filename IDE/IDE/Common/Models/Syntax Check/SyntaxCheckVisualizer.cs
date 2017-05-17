@@ -22,14 +22,17 @@ namespace IDE.Common.Models.Syntax_Check
 
         public void Visualize(bool isValid, DocumentLine line)
         {
-            if (isValid || line.Length == 0)
+            if (!line.IsDeleted)
             {
-                RemoveMarker(line);
-            }
-            else
-            {
-                RemoveMarker(line);
-                AddMarker(line);
+                if (isValid || line.Length == 0)
+                {
+                    RemoveMarker(line);
+                }
+                else
+                {
+                    RemoveMarker(line);
+                    AddMarker(line);
+                }
             }
         }
 

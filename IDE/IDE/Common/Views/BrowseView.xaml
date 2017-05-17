@@ -352,28 +352,28 @@
 
                                 <MenuItem Header="Font Family">
                                     <MenuItem.Icon>
-                                        <Image Source="/Icons/Font_16.png"/>
+                                        <TextBlock Text="4" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
                                     </MenuItem.Icon>
-                                    <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman">
-                                        <MenuItem.Icon>
-                                            <Image Source="/Icons/Font_16.png"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
+                                        <MenuItem Header="Times New Roman" Command="{Binding ChangeFontCommand}" CommandParameter="Times New Roman">
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="4" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     <MenuItem Header="Arial" Command="{Binding ChangeFontCommand}" CommandParameter="Arial">
-                                        <MenuItem.Icon>
-                                            <Image Source="/Icons/Font_16.png"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="4" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     <MenuItem Header="Calibri" Command="{Binding ChangeFontCommand}" CommandParameter="Calibri">
-                                        <MenuItem.Icon>
-                                            <Image Source="/Icons/Font_16.png"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="4" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     <MenuItem Header="Segoe UI" Command="{Binding ChangeFontCommand}" CommandParameter="Segoe UI">
-                                        <MenuItem.Icon>
-                                            <Image Source="/Icons/Font_16.png"/>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
+                                            <MenuItem.Icon>
+                                                <TextBlock Text="4" Style="{DynamicResource IconFont}" TextAlignment="Center" FontWeight="Bold"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                 </MenuItem>
 
                             </ContextMenu>

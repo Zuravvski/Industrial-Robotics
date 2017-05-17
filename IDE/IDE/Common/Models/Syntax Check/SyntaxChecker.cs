@@ -17,12 +17,12 @@ namespace IDE.Common.Models.Syntax_Check
 
         public bool Validate(string line)
         {
-            return Commands.Any(command => command.Regex.IsMatch(line));
+            return Commands.Any(command => command.Regex.IsMatch(line) || string.IsNullOrWhiteSpace(line));
         }
 
         public async Task<bool> ValidateAsync(string line)
         {
-            return await Task.Run(() => Commands.Any(command => command.Regex.IsMatch(line)));
+            return await Task.Run(() => Commands.Any(command => command.Regex.IsMatch(line)) || string.IsNullOrWhiteSpace(line));
         }
     }
 }

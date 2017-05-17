@@ -6,8 +6,12 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interactivity;
+using ICSharpCode.AvalonEdit.Document;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Utilities;
@@ -198,12 +202,21 @@ namespace IDE.Common.Models
 
         private void OnIntellisensePreparation(object sender, TextCompositionEventArgs e)
         {
-            intellisense.Prepare(e);
+             intellisense.Prepare(e);
         }
 
         private void OnIntellisenseShow(object sender, TextCompositionEventArgs e)
         {
-            intellisense.Show();
+            var line = Document.GetLineByNumber(TextArea.Caret.Line);
+            // show only if nothing valid was typed in current line yet
+            if (!syntaxChecker.Validate(Document.GetText(line)))
+            {
+                intellisense.Show();
+            }
+            else
+            {
+                intellisense.Close();
+            }
         }
 
         private async void OnSyntaxCheck(object sender, EventArgs e)
@@ -222,8 +235,10 @@ namespace IDE.Common.Models
 
             var text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
 
-            Text = text;
-            ValidateAllLines();
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                ValidateAllLines();
+            }
         }
 
         public async void ValidateAllLines()

@@ -86,7 +86,7 @@ namespace Driver
             }
 
             var content = string.Empty;
-            for (uint i = 1; ; i++)
+            for (uint i = 1;; i++)
             {
                 var line = await manipulator.StepRead(i);
                 if (line.Equals("\r"))
@@ -103,10 +103,14 @@ namespace Driver
         public async Task<List<Program>> DownloadPrograms(List<RemoteProgram> remotePrograms)
         {
             var programs = new List<Program>();
-            for (var i = 0; i < remotePrograms.Count; i++)
+            for(var i = 0; i < remotePrograms.Count; i++)
             {
                 programs.Add(await DownloadProgram(remotePrograms[i]));
-                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i + 1,
+<<<<<<< HEAD
+                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading Programs", i+1, 
+=======
+                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i+1, 
+>>>>>>> 323c00cd4569823b34fc7ebed8128df7e68c85d7
                     remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
             }
             return programs;
@@ -131,9 +135,61 @@ namespace Driver
                 for (var i = 0; i < lines.Count; i++)
                 {
                     await Task.Delay(500);
+<<<<<<< HEAD
+                    manipulator.SendCustom(line);
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", index + 1, lines.Count, EventType.LINE_UPLOADED));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Sends program to manipulator
+        /// </summary>
+        /// <param name="program"></param>
+        public async void UploadProgram()
+        {
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt"
+            };
+            // Default file name
+            // Default file extension
+            // Filter files by extension
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var path = dialog.FileName;
+            var name = Path.GetFileNameWithoutExtension(path);
+            var lines = File.ReadAllLines($"{dialog.FileName}");
+
+            if (!manipulator.Connected) return;
+            try
+            {
+                manipulator.Number(name);
+                await Task.Delay(1000);
+                manipulator.New();
+                await Task.Delay(1000);
+                
+                for (var i = 0; i < lines.Length; i++)
+                {
+                    await Task.Delay(500);
+                    //var prefix = $"{Convert.ToString(i + 1)} ";
                     manipulator.SendCustom(lines[i]);
-                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i + 1,
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i+1, lines.Length, EventType.LINE_UPLOADED));
+                    Debug.WriteLine($"{i + 1}/{lines.Length}, {lines[i]}");
+=======
+                    manipulator.SendCustom(lines[i]);
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i+1, 
                         lines.Count, EventType.LINE_UPLOADED));
+>>>>>>> 323c00cd4569823b34fc7ebed8128df7e68c85d7
                 }
             }
             catch (Exception ex)

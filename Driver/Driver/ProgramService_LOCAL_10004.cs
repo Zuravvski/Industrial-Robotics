@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Driver.Exceptions;
+using Microsoft.Win32;
+using System.IO;
 
 namespace Driver
 {
@@ -51,6 +54,7 @@ namespace Driver
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -66,16 +70,21 @@ namespace Driver
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
         /// <summary>
         /// Uploads program from manipulator to PC memory
         /// </summary>
-        /// <param name="remoteProgram">Program downloaded from manipulator</param>
+        /// <param name="programName">Name of program on manipulator</param>
         /// <returns>Requested program or null when program with given name does not exist</returns>
         public async Task<Program> DownloadProgram(RemoteProgram remoteProgram)
         {
+            var dialog = new SaveFileDialog();
+            if (dialog.ShowDialog() == false)
+                return null;
+            
             manipulator.Number(remoteProgram.Name);
             await Task.Delay(1000);
             var errorCode = await manipulator.ErrorRead();
@@ -85,14 +94,15 @@ namespace Driver
                 throw new AlarmException(errorCode);
             }
 
-            var content = string.Empty;
-            for (uint i = 1; ; i++)
+            var content = String.Empty;
+            for (uint i = 1;; i++)
             {
                 var line = await manipulator.StepRead(i);
                 if (line.Equals("\r"))
                     break;
                 content += line + "\n";
             }
+            File.WriteAllText(dialog.FileName, content);
             return Program.CreateFromRemoteProgram(remoteProgram, content);
         }
 
@@ -103,10 +113,10 @@ namespace Driver
         public async Task<List<Program>> DownloadPrograms(List<RemoteProgram> remotePrograms)
         {
             var programs = new List<Program>();
-            for (var i = 0; i < remotePrograms.Count; i++)
+            for(var i = 0; i < remotePrograms.Count; i++)
             {
                 programs.Add(await DownloadProgram(remotePrograms[i]));
-                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i + 1,
+                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading Programs", i+1, 
                     remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
             }
             return programs;
@@ -128,12 +138,12 @@ namespace Driver
 
                 var lines = program.GetLines();
 
-                for (var i = 0; i < lines.Count; i++)
+                for (var index = 0; index < lines.Count; index++)
                 {
+                    var line = lines[index];
                     await Task.Delay(500);
-                    manipulator.SendCustom(lines[i]);
-                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i + 1,
-                        lines.Count, EventType.LINE_UPLOADED));
+                    manipulator.SendCustom(line);
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", index + 1, lines.Count, EventType.LINE_UPLOADED));
                 }
             }
             catch (Exception ex)
@@ -143,7 +153,55 @@ namespace Driver
         }
 
         /// <summary>
-        /// [Deprecated] Deletes program from manipulator memory
+        /// Sends program to manipulator
+        /// </summary>
+        /// <param name="program"></param>
+        public async void UploadProgram()
+        {
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "txt files (.txt)|*.txt"
+            };
+            // Default file name
+            // Default file extension
+            // Filter files by extension
+
+            if (dialog.ShowDialog() == false)
+            {
+                return;
+            }
+
+            var path = dialog.FileName;
+            var name = Path.GetFileNameWithoutExtension(path);
+            var lines = File.ReadAllLines($"{dialog.FileName}");
+
+            if (!manipulator.Connected) return;
+            try
+            {
+                manipulator.Number(name);
+                await Task.Delay(1000);
+                manipulator.New();
+                await Task.Delay(1000);
+                
+                for (var i = 0; i < lines.Length; i++)
+                {
+                    await Task.Delay(500);
+                    //var prefix = $"{Convert.ToString(i + 1)} ";
+                    manipulator.SendCustom(lines[i]);
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i+1, lines.Length, EventType.LINE_UPLOADED));
+                    Debug.WriteLine($"{i + 1}/{lines.Length}, {lines[i]}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Deletes program from manipulator memory
         /// </summary>
         /// <param name="programName">Deleted program name</param>
         public void DeleteProgram(string programName)
@@ -156,9 +214,12 @@ namespace Driver
             var remoteProgramList = new List<RemoteProgram>();
 
             // Decode data
-            for (var i = 1; ; i++)
+            for (int i = 1; ; i++)
             {
-                manipulator.SendCustom(i == 1 ? "EXE0, \"Fd<*\"" : $"EXE0, \"Fd{i}\"");
+                if (i == 1)
+                    manipulator.SendCustom("EXE0, \"Fd<*\"");
+                else
+                    manipulator.SendCustom($"EXE0, \"Fd{i}\"");
 
                 await manipulator.Port.WaitForMessageAsync();
                 var QoK = manipulator.Port.Read();

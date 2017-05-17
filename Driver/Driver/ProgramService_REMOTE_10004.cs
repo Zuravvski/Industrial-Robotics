@@ -86,7 +86,7 @@ namespace Driver
             }
 
             var content = string.Empty;
-            for (uint i = 1; ; i++)
+            for (uint i = 1;; i++)
             {
                 var line = await manipulator.StepRead(i);
                 if (line.Equals("\r"))
@@ -103,10 +103,10 @@ namespace Driver
         public async Task<List<Program>> DownloadPrograms(List<RemoteProgram> remotePrograms)
         {
             var programs = new List<Program>();
-            for (var i = 0; i < remotePrograms.Count; i++)
+            for(var i = 0; i < remotePrograms.Count; i++)
             {
                 programs.Add(await DownloadProgram(remotePrograms[i]));
-                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i + 1,
+                StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i+1, 
                     remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
             }
             return programs;
@@ -132,7 +132,7 @@ namespace Driver
                 {
                     await Task.Delay(500);
                     manipulator.SendCustom(lines[i]);
-                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i + 1,
+                    StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i+1, 
                         lines.Count, EventType.LINE_UPLOADED));
                 }
             }

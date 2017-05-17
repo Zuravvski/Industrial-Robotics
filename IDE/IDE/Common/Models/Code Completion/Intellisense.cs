@@ -67,9 +67,13 @@ namespace IDE.Common.Models.Code_Completion
 
         public void Show()
         {
-            if (completionWindow?.CompletionList.ListBox.Items.Count >= 1 && !((CompletionData)completionWindow.CompletionList.ListBox.Items[0]).Text.Equals(string.Empty))
+            var caretPosition = textArea.Caret.Line;
+            var caretLine = textArea.Document.GetLineByNumber(caretPosition);
+            var careLineText = textArea.Document.GetText(caretLine);
+
+            if (!caretLine.IsDeleted && !careLineText.Contains(" "))
             {
-                completionWindow.Show();
+                completionWindow?.Show();
             }
             else
             {

@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using IDE.Common.Utilities;
 using System.Threading;
 using System.Threading.Tasks;
+using IDE.Common.Kinect;
 
 namespace IDE.Common.ViewModels
 {
@@ -40,6 +41,7 @@ namespace IDE.Common.ViewModels
         private DialogHost dialogHost;
         private bool dialogHostIsOpen;
         private bool connectionToggleIsChecked;
+        private KinectHandler kinectHandler;
 
         #endregion
 
@@ -61,6 +63,7 @@ namespace IDE.Common.ViewModels
 
             MessageList = new MessageList();
             Settings = DriverSettings.CreateDefaultSettings();
+            KinectHandler = new KinectHandler();
             
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
@@ -69,6 +72,16 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public KinectHandler KinectHandler
+        {
+            get { return kinectHandler; }
+            set
+            {
+                kinectHandler = value;
+                NotifyPropertyChanged("KinectHandler");
+            }
+        }
 
         public bool ConnectionToggleIsChecked
         {

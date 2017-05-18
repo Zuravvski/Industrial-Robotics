@@ -113,7 +113,7 @@ namespace IDE.Common.ViewModels
                 dialogHostIsOpen = value;
                 if (!DialogHostIsOpen)
                 {
-                    DialogHost.Cancel();
+                    DialogHost?.Cancel();
                 }
                 NotifyPropertyChanged("DialogHostIsOpen");
             }

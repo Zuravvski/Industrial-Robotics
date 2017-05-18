@@ -212,7 +212,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Common\Views\Transitions\Transition1Beginning.xaml">
+    <Page Include="Common\Views\Transitions\Slide_7.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\Transitions\Slide_8.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\Views\Transitions\TransitionManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -242,8 +250,14 @@
     <Compile Include="Common\Views\Transitions\Slide_6.xaml.cs">
       <DependentUpon>Slide_6.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\Views\Transitions\Transition1Beginning.xaml.cs">
-      <DependentUpon>Transition1Beginning.xaml</DependentUpon>
+    <Compile Include="Common\Views\Transitions\Slide_7.xaml.cs">
+      <DependentUpon>Slide_7.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\Slide_8.xaml.cs">
+      <DependentUpon>Slide_8.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Views\Transitions\TransitionManager.xaml.cs">
+      <DependentUpon>TransitionManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Others\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -436,7 +450,25 @@
     <Resource Include="Icons\FlisZdj.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Common\Views\Transitions\Images\slide_2.png" />
+    <Resource Include="Common\Views\Transitions\Images\2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Common\Views\Transitions\Images\4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Common\Views\Transitions\Images\3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Common\Views\Transitions\Images\5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Common\Views\Transitions\Images\6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Common\Views\Transitions\Images\7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Common\Views\Transitions\Images\1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

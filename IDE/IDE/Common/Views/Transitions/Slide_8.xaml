@@ -1,10 +1,11 @@
-﻿<UserControl x:Class="IDE.Common.Views.Transitions.Slide_2"
+﻿<UserControl x:Class="IDE.Common.Views.Transitions.Slide_8"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
+             
              d:DesignHeight="1080" d:DesignWidth="1920" Background="{DynamicResource WindowBackground}">
 
     <UserControl.Resources>
@@ -18,7 +19,7 @@
 
     <DockPanel>
         <DockPanel.Background>
-            <ImageBrush ImageSource="/Common/Views/Transitions/Images/1.png"/>
+            <ImageBrush ImageSource="/Common/Views/Transitions/Images/7.png"/>
         </DockPanel.Background>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
@@ -29,10 +30,6 @@
 
             <Button Style="{DynamicResource MaterialDesignFloatingActionMiniButton}" Command="{x:Static materialDesign:Transitioner.MovePreviousCommand}" VerticalAlignment="Center" Margin="0,0,20,0">
                 <materialDesign:PackIcon Kind="StepBackward"/>
-            </Button>
-
-            <Button Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" VerticalAlignment="Center" Margin="0,0,20,0">
-                <materialDesign:PackIcon Kind="StepForward"/>
             </Button>
 
         </StackPanel>

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="1080" d:DesignWidth="1920" Background="{DynamicResource WindowBackground}">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,18 +16,27 @@
     </UserControl.Resources>
 
 
-    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="600">
-        <StackPanel>
-            <TextBlock Text="Sample TEXT" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="32" Style="{StaticResource Heading2}" TextWrapping="Wrap"/>
-            <DockPanel>
-                <Button Style="{DynamicResource MaterialDesignFloatingActionMiniButton}" Command="{x:Static materialDesign:Transitioner.MovePreviousCommand}" HorizontalAlignment="Left">
-                    <materialDesign:PackIcon Kind="StepBackward" />
-                </Button>
-                <Button Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" HorizontalAlignment="Right">
-                    <materialDesign:PackIcon Kind="StepForward" IsEnabled="False"/>
-                </Button>
-            </DockPanel>
+    <DockPanel>
+        <DockPanel.Background>
+            <ImageBrush ImageSource="/Common/Views/Transitions/Images/4.png"/>
+        </DockPanel.Background>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20">
+
+            <Button Style="{DynamicResource MaterialDesignFloatingActionMiniButton}" Command="{x:Static materialDesign:Transitioner.MoveFirstCommand}" VerticalAlignment="Center" Margin="0,0,20,0">
+                <materialDesign:PackIcon Kind="Stop"/>
+            </Button>
+
+            <Button Style="{DynamicResource MaterialDesignFloatingActionMiniButton}" Command="{x:Static materialDesign:Transitioner.MovePreviousCommand}" VerticalAlignment="Center" Margin="0,0,20,0">
+                <materialDesign:PackIcon Kind="StepBackward"/>
+            </Button>
+
+            <Button Style="{DynamicResource MaterialDesignFloatingActionAccentButton}" Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" VerticalAlignment="Center" Margin="0,0,20,0">
+                <materialDesign:PackIcon Kind="StepForward"/>
+            </Button>
+
         </StackPanel>
-    </Grid>
+    </DockPanel>
+
 </UserControl>
 

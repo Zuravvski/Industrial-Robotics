@@ -16,11 +16,9 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
-        <StackPanel VerticalAlignment="Center">
-            <Button Style="{DynamicResource MaterialDesignFloatingActionButton}" Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" Margin="64">
-                <materialDesign:PackIcon Kind="Pill" Height="20" Width="20"/>
-            </Button>
-        </StackPanel>
+    <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+        <Button Style="{DynamicResource MaterialDesignFloatingActionButton}" Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" ToolTip="Quick tutorial on usage of software">
+            <materialDesign:PackIcon Kind="Pill" Height="20" Width="20"/>
+        </Button>
     </Grid>
 </UserControl>

@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:IDE.Common.Views.Transitions"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    
     <Grid Style="{StaticResource ContentRoot}">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -19,7 +20,7 @@
         
         <!--#region TRANSITIONS-->
 
-        <local:Transition1Beginning Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+        <local:TransitionManager Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="99"/>
 
         <!--#endregion-->
         

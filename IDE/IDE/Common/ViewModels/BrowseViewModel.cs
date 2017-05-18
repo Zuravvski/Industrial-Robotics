@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using IDE.Common.Utilities;
 using System.Threading;
 using System.Threading.Tasks;
+using IDE.Common.Kinect;
 
 namespace IDE.Common.ViewModels
 {
@@ -40,6 +41,7 @@ namespace IDE.Common.ViewModels
         private DialogHost dialogHost;
         private bool dialogHostIsOpen;
         private bool connectionToggleIsChecked;
+        private KinectHandler kinectHandler;
 
         #endregion
 
@@ -61,6 +63,7 @@ namespace IDE.Common.ViewModels
 
             MessageList = new MessageList();
             Settings = DriverSettings.CreateDefaultSettings();
+            KinectHandler = new KinectHandler();
             
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
@@ -69,6 +72,16 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+
+        public KinectHandler KinectHandler
+        {
+            get { return kinectHandler; }
+            set
+            {
+                kinectHandler = value;
+                NotifyPropertyChanged("KinectHandler");
+            }
+        }
 
         public bool ConnectionToggleIsChecked
         {
@@ -100,7 +113,7 @@ namespace IDE.Common.ViewModels
                 dialogHostIsOpen = value;
                 if (!DialogHostIsOpen)
                 {
-                    DialogHost.CancellationTokenSource.Cancel();
+                    DialogHost?.Cancel();
                 }
                 NotifyPropertyChanged("DialogHostIsOpen");
             }
@@ -237,7 +250,7 @@ namespace IDE.Common.ViewModels
         private async void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
         {
             int progress = (int)(e.CurrentStep / (float)e.NumberOfSteps * 100);
-            CreateDialogHost(false, e.ActionName, new CancellationTokenSource(), progress);
+            CreateDialogHost(false, e.ActionName, progress);
 
             if (e.CurrentStep == e.NumberOfSteps)
             {
@@ -246,7 +259,7 @@ namespace IDE.Common.ViewModels
             }
         }
 
-        private void CreateDialogHost(bool isIndeterminate, string currentAction, CancellationTokenSource cancellationToken, int currentProgress = 0)
+        private DialogHost CreateDialogHost(bool isIndeterminate, string currentAction, int currentProgress = 0)
         {
             var message = "";
             var progress = "";
@@ -274,8 +287,8 @@ namespace IDE.Common.ViewModels
                 CurrentAction = currentAction,
                 CurrentProgress = progress,
                 Message = message,
-                CancellationTokenSource = cancellationToken
             };
+            return DialogHost;
         }
 
         /// <summary>
@@ -305,7 +318,7 @@ namespace IDE.Common.ViewModels
         private async void Refresh(object obj)
         {
             DialogHostIsOpen = true;
-            CreateDialogHost(true, "Refreshing program list", new CancellationTokenSource());
+            CreateDialogHost(true, "Refreshing program list");
             RemotePrograms = null;
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
             DialogHostIsOpen = false;
@@ -325,7 +338,7 @@ namespace IDE.Common.ViewModels
             if (dialog.ShowDialog().GetValueOrDefault(false))
             {
                 DialogHostIsOpen = true;
-                CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...", new CancellationTokenSource());
+                CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...");
                 var program = await programService.DownloadProgram(SelectedRemoteProgram);
                 var programWithoutLineNumbers = ProgramContentConverter.ToPC(program.Content);
                 program.Content = programWithoutLineNumbers;
@@ -342,7 +355,7 @@ namespace IDE.Common.ViewModels
         private async void Delete(object obj)
         {
             DialogHostIsOpen = true;
-            programService.DeleteProgram(SelectedRemoteProgram.Name);
+            programService.DeleteProgram(SelectedRemoteProgram.Name).RunSynchronously();
             await Task.Delay(2000);
             Refresh(null);
         }
@@ -371,12 +384,11 @@ namespace IDE.Common.ViewModels
                 var program = new Program(name) {Content = content};
 
                 DialogHostIsOpen = true;
-                CreateDialogHost(false, $"Uploading program", new CancellationTokenSource());
+                var dialogHost = CreateDialogHost(false, $"Uploading program");
                 var contentWithLineNumbers = ProgramContentConverter.ToManipulator(program.Content);
                 program.Content = contentWithLineNumbers;
-
-                var cancellationToken = new CancellationTokenSource();
-                await programService.UploadProgram(program, cancellationToken.Token);
+                
+                await programService.UploadProgram(program, dialogHost.CancellationToken);
             }
         }
 
@@ -420,12 +432,12 @@ namespace IDE.Common.ViewModels
 
         private void Stop(object obj)
         {
-            programService.StopProgram();
+            programService.StopProgram().RunSynchronously();
         }
 
         private void Run(object obj)
         {
-            programService.RunProgram(SelectedRemoteProgram);
+            programService.RunProgram(SelectedRemoteProgram).RunSynchronously();
         }
 
         /// <summary>

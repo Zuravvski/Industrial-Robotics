@@ -43,12 +43,23 @@ namespace Driver
 
         public async Task StopProgram()
         {
+            await StopProgram(default(CancellationToken));
+        }
+
+        public async Task StopProgram(CancellationToken cancellationToken)
+        {
             if (!manipulator.Connected) return;
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 manipulator.Halt();
-                await Task.Delay(200);
+                await Task.Delay(200, cancellationToken);
                 manipulator.Reset(0);
+            }
+            catch(OperationCanceledException)
+            {
+                // Cancellation does not require handling as method returns immediately after catch clause
             }
             catch (Exception ex)
             {
@@ -57,6 +68,11 @@ namespace Driver
         }
 
         public async Task RunProgram(RemoteProgram remoteProgram)
+        {
+            await RunProgram(remoteProgram, default(CancellationToken));
+        }
+
+        public async Task RunProgram(RemoteProgram remoteProgram, CancellationToken cancellationToken)
         {
             if (!manipulator.Connected) return;
             try
@@ -71,15 +87,20 @@ namespace Driver
             }
         }
 
+        public async Task<Program> DownloadProgram(RemoteProgram remoteProgram)
+        {
+            return await DownloadProgram(remoteProgram, default(CancellationToken));
+        }
+
         /// <summary>
         /// Uploads program from manipulator to PC memory
         /// </summary>
         /// <param name="remoteProgram">Program downloaded from manipulator</param>
         /// <returns>Requested program or null when program with given name does not exist</returns>
-        public async Task<Program> DownloadProgram(RemoteProgram remoteProgram)
+        public async Task<Program> DownloadProgram(RemoteProgram remoteProgram, CancellationToken cancellationToken)
         {
             manipulator.Number(remoteProgram.Name);
-            await Task.Delay(1000);
+            await Task.Delay(1000, cancellationToken);
             var errorCode = await manipulator.ErrorRead();
 
             if (errorCode != 0)
@@ -94,6 +115,16 @@ namespace Driver
                 if (line.Equals("\r"))
                     break;
                 content += line + "\n";
+
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                catch(OperationCanceledException)
+                {
+                    break;
+                }
+
             }
             return Program.CreateFromRemoteProgram(remoteProgram, content);
         }
@@ -104,9 +135,27 @@ namespace Driver
         /// <returns></returns>
         public async Task<List<Program>> DownloadPrograms(List<RemoteProgram> remotePrograms)
         {
+            return await DownloadPrograms(remotePrograms, default(CancellationToken));
+        }
+
+        /// <summary>
+        /// Receives all programs downloaded from manipulator
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Program>> DownloadPrograms(List<RemoteProgram> remotePrograms, CancellationToken cancellationToken)
+        {
             var programs = new List<Program>();
             for (var i = 0; i < remotePrograms.Count; i++)
             {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                catch(OperationCanceledException)
+                {
+                    break;
+                }
+
                 programs.Add(await DownloadProgram(remotePrograms[i]));
                 StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i + 1,
                     remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
@@ -117,30 +166,42 @@ namespace Driver
         /// <summary>
         /// Sends program to manipulator
         /// </summary>
-        /// <param name="program"></param>
+        /// <param name="program">Program to upload to manipulator</param>
+        public async Task UploadProgram(Program program)
+        {
+            await UploadProgram(program, default(CancellationToken));
+        }
+
+        /// <summary>
+        /// Sends program to manipulator
+        /// </summary>
+        /// <param name="program">Program to upload to manipulator</param>
+        /// <param name="cancellationToken">Defines task cancellation operation</param>
         public async Task UploadProgram(Program program, CancellationToken cancellationToken)
         {
             if (!manipulator.Connected) return;
             try
             {
                 manipulator.Number(program.Name);
-                await Task.Delay(1000);
+                await Task.Delay(1000, cancellationToken);
                 manipulator.New();
-                await Task.Delay(1000);
+                await Task.Delay(1000, cancellationToken);
 
                 var lines = program.GetLines();
 
                 for (var i = 0; i < lines.Count; i++)
                 {
-                    await Task.Delay(500);
-
-                    if (cancellationToken != null && cancellationToken.IsCancellationRequested)
-                        break;
+                    await Task.Delay(500, cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     manipulator.SendCustom(lines[i]);
                     StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i + 1,
                         lines.Count, EventType.LINE_UPLOADED));
                 }
+            }
+            catch(OperationCanceledException)
+            {
+                // Cancellation does not require handling as method returns immediately after catch clause
             }
             catch (Exception ex)
             {
@@ -148,19 +209,24 @@ namespace Driver
             }
         }
 
+        public async Task DeleteProgram(string programName)
+        {
+            await DeleteProgram(programName, default(CancellationToken));
+        }
+
         /// <summary>
         /// [Deprecated] Deletes program from manipulator memory
         /// </summary>
         /// <param name="programName">Deleted program name</param>
-        public async Task DeleteProgram(string programName)
+        public async Task DeleteProgram(string programName, CancellationToken cancellationToken)
         {
             if (!manipulator.Connected) return;
             try
             {
                 manipulator.Number(programName);
-                await Task.Delay(1000);
+                await Task.Delay(1000, cancellationToken);
                 manipulator.New();
-                await Task.Delay(1000);
+                await Task.Delay(1000, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -169,6 +235,11 @@ namespace Driver
         }
 
         public async Task<List<RemoteProgram>> ReadProgramInfo()
+        {
+            return await ReadProgramInfo(default(CancellationToken));
+        }
+
+        public async Task<List<RemoteProgram>> ReadProgramInfo(CancellationToken cancellationToken)
         {
             var remoteProgramList = new List<RemoteProgram>();
 
@@ -181,6 +252,15 @@ namespace Driver
                 var QoK = manipulator.Port.Read();
                 if (QoK.Equals("QoK\r") || Regex.IsMatch(QoK, @"^QoK\s*$"))
                     break;
+
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                catch(OperationCanceledException)
+                {
+                    break;
+                }
 
                 var remoteProgram = RemoteProgram.Create(QoK);
                 if (remoteProgram != null)

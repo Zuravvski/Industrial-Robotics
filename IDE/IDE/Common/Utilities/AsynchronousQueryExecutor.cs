@@ -4,8 +4,18 @@ using System.Runtime.Remoting.Messaging;
 
 namespace IDE.Common.Utilities
 {
+    /// <summary>
+    /// AsynchronousQueryExecutor class
+    /// </summary>
     public static class AsynchronousQueryExecutor
     {
+        /// <summary>
+        /// Calls the specified query.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query">The query.</param>
+        /// <param name="callback">The callback.</param>
+        /// <param name="errorCallback">The error callback.</param>
         public static void Call<T>(IEnumerable<T> query, Action<IEnumerable<T>> callback, Action<Exception> errorCallback)
         {
             Func<IEnumerable<T>, IEnumerable<T>> func = InnerEnumerate<T>;
@@ -29,6 +39,12 @@ namespace IDE.Common.Utilities
                                 },
                                 null);
         }
+        /// <summary>
+        /// Inners the enumerate.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query">The query.</param>
+        /// <returns></returns>
         private static IEnumerable<T> InnerEnumerate<T>(IEnumerable<T> query)
         {
             return query;

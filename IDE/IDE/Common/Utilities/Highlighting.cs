@@ -10,17 +10,41 @@ using IDE.Common.Utilities.Extensions;
 
 namespace IDE.Common.Utilities
 {
+    /// <summary>
+    /// Highlighting class
+    /// </summary>
     public class Highlighting
     {
+        /// <summary>
+        /// The file path
+        /// </summary>
         private string filePath;
 
+        /// <summary>
+        /// Gets the colors.
+        /// </summary>
+        /// <value>
+        /// The colors.
+        /// </value>
         public Dictionary<Command.TypeE, Color> Colors { get; private set; }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
         public delegate void HighlightingChangedDelegate();
+        /// <summary>
+        /// Occurs when [highlighting changed].
+        /// </summary>
         public event HighlightingChangedDelegate HighlightingChanged;
 
         #region Properties
 
+        /// <summary>
+        /// Gets the file path.
+        /// </summary>
+        /// <value>
+        /// The file path.
+        /// </value>
         public string FilePath
         {
             get { return filePath; }
@@ -33,6 +57,10 @@ namespace IDE.Common.Utilities
 
         #endregion
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Highlighting"/> class.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public Highlighting(string path = MissingFileManager.DEFAULT_HIGHLIGHTING_PATH)
         {
             FilePath = Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute) ? path : MissingFileManager.DEFAULT_HIGHLIGHTING_PATH;
@@ -42,6 +70,10 @@ namespace IDE.Common.Utilities
 
         #region Actions
 
+        /// <summary>
+        /// Applies the specified colors.
+        /// </summary>
+        /// <param name="colors">The colors.</param>
         public void Apply(Dictionary<Command.TypeE, Color> colors)
         {
             Colors = colors;
@@ -49,6 +81,10 @@ namespace IDE.Common.Utilities
             HighlightingChanged?.Invoke();
         }
 
+        /// <summary>
+        /// Imports the specified path.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public void Import(string path)
         {
             try
@@ -78,6 +114,10 @@ namespace IDE.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Exports the specified path.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public void Export(string path)
         {
             try

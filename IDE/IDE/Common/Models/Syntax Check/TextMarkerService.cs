@@ -28,24 +28,52 @@ using ICSharpCode.AvalonEdit.Rendering;
 
 namespace IDE.Common.Models.Syntax_Check
 {
-	/// <summary>
-	/// Handles the text markers for a code editor.
-	/// </summary>
-	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService, ITextViewConnect
+    /// <summary>
+    /// Handles the text markers for a code editor.
+    /// </summary>
+    /// <seealso cref="ICSharpCode.AvalonEdit.Rendering.DocumentColorizingTransformer" />
+    /// <seealso cref="ICSharpCode.AvalonEdit.Rendering.IBackgroundRenderer" />
+    /// <seealso cref="IDE.Common.Models.Syntax_Check.ITextMarkerService" />
+    /// <seealso cref="ICSharpCode.AvalonEdit.Rendering.ITextViewConnect" />
+    public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService, ITextViewConnect
 	{
-		TextSegmentCollection<TextMarker> markers;
-		TextDocument document;
-		
-		public TextMarkerService(TextDocument document)
+        /// <summary>
+        /// The markers
+        /// </summary>
+        TextSegmentCollection<TextMarker> markers;
+        /// <summary>
+        /// The document
+        /// </summary>
+        TextDocument document;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextMarkerService"/> class.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <exception cref="System.ArgumentNullException">document</exception>
+        public TextMarkerService(TextDocument document)
 		{
 			if (document == null)
 				throw new ArgumentNullException("document");
 			this.document = document;
 			this.markers = new TextSegmentCollection<TextMarker>(document);
 		}
-		
-		#region ITextMarkerService
-		public ITextMarker Create(int startOffset, int length)
+
+        #region ITextMarkerService
+        /// <summary>
+        /// Creates a new text marker. The text marker will be invisible at first,
+        /// you need to set one of the Color properties to make it visible.
+        /// </summary>
+        /// <param name="startOffset">The start offset.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException">Cannot create a marker when not attached to a document</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// startOffset - Value must be between 0 and " + textLength
+        /// or
+        /// length - length must not be negative and startOffset+length must not be after the end of the document
+        /// </exception>
+        public ITextMarker Create(int startOffset, int length)
 		{
 			if (markers == null)
 				throw new InvalidOperationException("Cannot create a marker when not attached to a document");
@@ -61,20 +89,36 @@ namespace IDE.Common.Models.Syntax_Check
 			// no need to mark segment for redraw: the text marker is invisible until a property is set
 			return m;
 		}
-		
-		public IEnumerable<ITextMarker> GetMarkersAtOffset(int offset)
+
+        /// <summary>
+        /// Finds all text markers at the specified offset.
+        /// </summary>
+        /// <param name="offset">The offset.</param>
+        /// <returns></returns>
+        public IEnumerable<ITextMarker> GetMarkersAtOffset(int offset)
 		{
 			if (markers == null)
 				return Enumerable.Empty<ITextMarker>();
 			else
 				return markers.FindSegmentsContaining(offset);
 		}
-		
-		public IEnumerable<ITextMarker> TextMarkers {
+
+        /// <summary>
+        /// Gets the list of text markers.
+        /// </summary>
+        /// <value>
+        /// The text markers.
+        /// </value>
+        public IEnumerable<ITextMarker> TextMarkers {
 			get { return markers ?? Enumerable.Empty<ITextMarker>(); }
 		}
-		
-		public void RemoveAll(Predicate<ITextMarker> predicate)
+
+        /// <summary>
+        /// Removes all text markers that match the condition.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <exception cref="System.ArgumentNullException">predicate</exception>
+        public void RemoveAll(Predicate<ITextMarker> predicate)
 		{
 			if (predicate == null)
 				throw new ArgumentNullException("predicate");
@@ -85,8 +129,13 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		public void Remove(ITextMarker marker)
+
+        /// <summary>
+        /// Removes the specified text marker.
+        /// </summary>
+        /// <param name="marker">The marker.</param>
+        /// <exception cref="System.ArgumentNullException">marker</exception>
+        public void Remove(ITextMarker marker)
 		{
 			if (marker == null)
 				throw new ArgumentNullException("marker");
@@ -96,11 +145,12 @@ namespace IDE.Common.Models.Syntax_Check
 				m.OnDeleted();
 			}
 		}
-		
-		/// <summary>
-		/// Redraws the specified text segment.
-		/// </summary>
-		internal void Redraw(ISegment segment)
+
+        /// <summary>
+        /// Redraws the specified text segment.
+        /// </summary>
+        /// <param name="segment">The segment.</param>
+        internal void Redraw(ISegment segment)
 		{
 			foreach (var view in textViews) {
 				view.Redraw(segment, DispatcherPriority.Normal);
@@ -108,12 +158,19 @@ namespace IDE.Common.Models.Syntax_Check
 			if (RedrawRequested != null)
 				RedrawRequested(this, EventArgs.Empty);
 		}
-		
-		public event EventHandler RedrawRequested;
-		#endregion
-		
-		#region DocumentColorizingTransformer
-		protected override void ColorizeLine(DocumentLine line)
+
+        /// <summary>
+        /// Occurs when [redraw requested].
+        /// </summary>
+        public event EventHandler RedrawRequested;
+        #endregion
+
+        #region DocumentColorizingTransformer
+        /// <summary>
+        /// Override this method to colorize an individual document line.
+        /// </summary>
+        /// <param name="line"></param>
+        protected override void ColorizeLine(DocumentLine line)
 		{
 			if (markers == null)
 				return;
@@ -143,17 +200,30 @@ namespace IDE.Common.Models.Syntax_Check
 				);
 			}
 		}
-		#endregion
-		
-		#region IBackgroundRenderer
-		public KnownLayer Layer {
+        #endregion
+
+        #region IBackgroundRenderer
+        /// <summary>
+        /// Gets the layer on which this background renderer should draw.
+        /// </summary>
+        public KnownLayer Layer {
 			get {
 				// draw behind selection
 				return KnownLayer.Selection;
 			}
 		}
-		
-		public void Draw(TextView textView, DrawingContext drawingContext)
+
+        /// <summary>
+        /// Causes the background renderer to draw.
+        /// </summary>
+        /// <param name="textView"></param>
+        /// <param name="drawingContext"></param>
+        /// <exception cref="System.ArgumentNullException">
+        /// textView
+        /// or
+        /// drawingContext
+        /// </exception>
+        public void Draw(TextView textView, DrawingContext drawingContext)
 		{
 			if (textView == null)
 				throw new ArgumentNullException("textView");
@@ -221,26 +291,45 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
+
+        /// <summary>
+        /// Creates the points.
+        /// </summary>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
+        IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
 		{
 			for (int i = 0; i < count; i++)
 				yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
 		}
-		#endregion
-		
-		#region ITextViewConnect
-		readonly List<TextView> textViews = new List<TextView>();
-		
-		void ITextViewConnect.AddToTextView(TextView textView)
+        #endregion
+
+        #region ITextViewConnect
+        /// <summary>
+        /// The text views
+        /// </summary>
+        readonly List<TextView> textViews = new List<TextView>();
+
+        /// <summary>
+        /// Called when added to a text view.
+        /// </summary>
+        /// <param name="textView"></param>
+        void ITextViewConnect.AddToTextView(TextView textView)
 		{
 			if (textView != null && !textViews.Contains(textView)) {
 				Debug.Assert(textView.Document == document);
 				textViews.Add(textView);
 			}
 		}
-		
-		void ITextViewConnect.RemoveFromTextView(TextView textView)
+
+        /// <summary>
+        /// Called when removed from a text view.
+        /// </summary>
+        /// <param name="textView"></param>
+        void ITextViewConnect.RemoveFromTextView(TextView textView)
 		{
 			if (textView != null) {
 				Debug.Assert(textView.Document == document);
@@ -249,12 +338,27 @@ namespace IDE.Common.Models.Syntax_Check
 		}
 		#endregion
 	}
-	
-	public sealed class TextMarker : TextSegment, ITextMarker
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="ICSharpCode.AvalonEdit.Document.TextSegment" />
+    /// <seealso cref="IDE.Common.Models.Syntax_Check.ITextMarker" />
+    public sealed class TextMarker : TextSegment, ITextMarker
 	{
-		readonly TextMarkerService service;
-		
-		public TextMarker(TextMarkerService service, int startOffset, int length)
+        /// <summary>
+        /// The service
+        /// </summary>
+        readonly TextMarkerService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextMarker"/> class.
+        /// </summary>
+        /// <param name="service">The service.</param>
+        /// <param name="startOffset">The start offset.</param>
+        /// <param name="length">The length.</param>
+        /// <exception cref="System.ArgumentNullException">service</exception>
+        public TextMarker(TextMarkerService service, int startOffset, int length)
 		{
 			if (service == null)
 				throw new ArgumentNullException("service");
@@ -263,32 +367,59 @@ namespace IDE.Common.Models.Syntax_Check
 			this.Length = length;
 			this.markerTypes = TextMarkerTypes.None;
 		}
-		
-		public event EventHandler Deleted;
-		
-		public bool IsDeleted {
+
+        /// <summary>
+        /// Event that occurs when the text marker is deleted.
+        /// </summary>
+        public event EventHandler Deleted;
+
+        /// <summary>
+        /// Gets whether the text marker was deleted.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is deleted; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsDeleted {
 			get { return !this.IsConnectedToCollection; }
 		}
-		
-		public void Delete()
+
+        /// <summary>
+        /// Deletes the text marker.
+        /// </summary>
+        public void Delete()
 		{
 			service.Remove(this);
 		}
-		
-		internal void OnDeleted()
+
+        /// <summary>
+        /// Called when [deleted].
+        /// </summary>
+        internal void OnDeleted()
 		{
 			if (Deleted != null)
 				Deleted(this, EventArgs.Empty);
 		}
-		
-		void Redraw()
+
+        /// <summary>
+        /// Redraws this instance.
+        /// </summary>
+        void Redraw()
 		{
 			service.Redraw(this);
 		}
-		
-		Color? backgroundColor;
-		
-		public Color? BackgroundColor {
+
+        /// <summary>
+        /// The background color
+        /// </summary>
+        Color? backgroundColor;
+
+        /// <summary>
+        /// Gets/Sets the background color.
+        /// </summary>
+        /// <value>
+        /// The color of the background.
+        /// </value>
+        public Color? BackgroundColor {
 			get { return backgroundColor; }
 			set {
 				if (backgroundColor != value) {
@@ -297,10 +428,19 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		Color? foregroundColor;
-		
-		public Color? ForegroundColor {
+
+        /// <summary>
+        /// The foreground color
+        /// </summary>
+        Color? foregroundColor;
+
+        /// <summary>
+        /// Gets/Sets the foreground color.
+        /// </summary>
+        /// <value>
+        /// The color of the foreground.
+        /// </value>
+        public Color? ForegroundColor {
 			get { return foregroundColor; }
 			set {
 				if (foregroundColor != value) {
@@ -309,10 +449,19 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		FontWeight? fontWeight;
-		
-		public FontWeight? FontWeight {
+
+        /// <summary>
+        /// The font weight
+        /// </summary>
+        FontWeight? fontWeight;
+
+        /// <summary>
+        /// Gets/Sets the font weight.
+        /// </summary>
+        /// <value>
+        /// The font weight.
+        /// </value>
+        public FontWeight? FontWeight {
 			get { return fontWeight; }
 			set {
 				if (fontWeight != value) {
@@ -321,10 +470,19 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		FontStyle? fontStyle;
-		
-		public FontStyle? FontStyle {
+
+        /// <summary>
+        /// The font style
+        /// </summary>
+        FontStyle? fontStyle;
+
+        /// <summary>
+        /// Gets/Sets the font style.
+        /// </summary>
+        /// <value>
+        /// The font style.
+        /// </value>
+        public FontStyle? FontStyle {
 			get { return fontStyle; }
 			set {
 				if (fontStyle != value) {
@@ -333,12 +491,27 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		public object Tag { get; set; }
-		
-		TextMarkerTypes markerTypes;
-		
-		public TextMarkerTypes MarkerTypes {
+
+        /// <summary>
+        /// Gets/Sets an object with additional data for this text marker.
+        /// </summary>
+        /// <value>
+        /// The tag.
+        /// </value>
+        public object Tag { get; set; }
+
+        /// <summary>
+        /// The marker types
+        /// </summary>
+        TextMarkerTypes markerTypes;
+
+        /// <summary>
+        /// Gets/Sets the type of the marker. Use TextMarkerType.None for normal markers.
+        /// </summary>
+        /// <value>
+        /// The marker types.
+        /// </value>
+        public TextMarkerTypes MarkerTypes {
 			get { return markerTypes; }
 			set {
 				if (markerTypes != value) {
@@ -347,10 +520,19 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		Color markerColor;
-		
-		public Color MarkerColor {
+
+        /// <summary>
+        /// The marker color
+        /// </summary>
+        Color markerColor;
+
+        /// <summary>
+        /// Gets/Sets the color of the marker.
+        /// </summary>
+        /// <value>
+        /// The color of the marker.
+        /// </value>
+        public Color MarkerColor {
 			get { return markerColor; }
 			set {
 				if (markerColor != value) {
@@ -359,7 +541,16 @@ namespace IDE.Common.Models.Syntax_Check
 				}
 			}
 		}
-		
-		public object ToolTip { get; set; }
+
+        /// <summary>
+        /// Gets/Sets an object that will be displayed as tooltip in the text editor.
+        /// </summary>
+        /// <value>
+        /// The tool tip.
+        /// </value>
+        /// <remarks>
+        /// Not supported in this sample!
+        /// </remarks>
+        public object ToolTip { get; set; }
 	}
 }

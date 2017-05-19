@@ -7,11 +7,29 @@ using IDE.Common.Utilities.Extensions;
 
 namespace IDE.Common.Utilities
 {
+    /// <summary>
+    /// Commands class
+    /// </summary>
     public class Commands
     {
+        /// <summary>
+        /// The file path
+        /// </summary>
         private string filePath;
+        /// <summary>
+        /// Gets the commands map.
+        /// </summary>
+        /// <value>
+        /// The commands map.
+        /// </value>
         public ISet<Command> CommandsMap { get; }
 
+        /// <summary>
+        /// Gets the file path.
+        /// </summary>
+        /// <value>
+        /// The file path.
+        /// </value>
         public string FilePath
         {
             get { return filePath; }
@@ -23,8 +41,15 @@ namespace IDE.Common.Utilities
         }
 
         // Utils
+        /// <summary>
+        /// The document
+        /// </summary>
         private readonly XmlDocument document;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Commands"/> class.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public Commands(string path = MissingFileManager.DEFAULT_COMMANDS_PATH)
         {
             document = new XmlDocument();
@@ -33,6 +58,10 @@ namespace IDE.Common.Utilities
             Load(FilePath);
         }
 
+        /// <summary>
+        /// Loads the specified path.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public void Load(string path)
         {
             try
@@ -65,6 +94,11 @@ namespace IDE.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Saves the specified path.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <exception cref="System.InvalidOperationException">Commands were never loaded to memory.</exception>
         public void Save(string path)
         {
             if (null == CommandsMap)
@@ -87,11 +121,19 @@ namespace IDE.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Adds the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public void AddCommand(Command command)
         {
             CommandsMap.Add(command);
         }
 
+        /// <summary>
+        /// Removes the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public void RemoveCommand(Command command)
         {
             CommandsMap.Remove(command);

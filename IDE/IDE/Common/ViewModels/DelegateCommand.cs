@@ -5,23 +5,40 @@ using System.Windows.Input;
 namespace IDE.Common.ViewModels
 {
     /// <summary>
-    ///     This class allows delegating the commanding logic to methods passed as parameters,
-    ///     and enables a View to bind commands to objects that are not part of the element tree.
+    /// This class allows delegating the commanding logic to methods passed as parameters,
+    /// and enables a View to bind commands to objects that are not part of the element tree.
     /// </summary>
+    /// <seealso cref="System.Windows.Input.ICommand" />
     public class DelegateCommand : ICommand
     {
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
+        /// </summary>
+        /// <param name="executeMethod">The execute method.</param>
         public DelegateCommand(Action executeMethod)
             : this(executeMethod, null, false)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
+        /// </summary>
+        /// <param name="executeMethod">The execute method.</param>
+        /// <param name="canExecuteMethod">The can execute method.</param>
         public DelegateCommand(Action executeMethod, Func<bool> canExecuteMethod)
             : this(executeMethod, canExecuteMethod, false)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
+        /// </summary>
+        /// <param name="executeMethod">The execute method.</param>
+        /// <param name="canExecuteMethod">The can execute method.</param>
+        /// <param name="isAutomaticRequeryDisabled">if set to <c>true</c> [is automatic requery disabled].</param>
+        /// <exception cref="System.ArgumentNullException">executeMethod</exception>
         public DelegateCommand(Action executeMethod, Func<bool> canExecuteMethod, bool isAutomaticRequeryDisabled)
         {
             if (executeMethod == null)
@@ -38,16 +55,31 @@ namespace IDE.Common.ViewModels
 
         #region Public Methods
 
+        /// <summary>
+        /// Determines whether this instance can execute.
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if this instance can execute; otherwise, <c>false</c>.
+        /// </returns>
         public bool CanExecute()
         {
             return _canExecuteMethod == null || _canExecuteMethod();
         }
 
+        /// <summary>
+        /// Executes this instance.
+        /// </summary>
         public void Execute()
         {
             _executeMethod?.Invoke();
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is automatic requery disabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is automatic requery disabled; otherwise, <c>false</c>.
+        /// </value>
         public bool IsAutomaticRequeryDisabled
         {
             get
@@ -71,11 +103,17 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Raises the can execute changed.
+        /// </summary>
         public void RaiseCanExecuteChanged()
         {
             OnCanExecuteChanged();
         }
 
+        /// <summary>
+        /// Called when [can execute changed].
+        /// </summary>
         protected virtual void OnCanExecuteChanged()
         {
             CommandManagerHelper.CallWeakReferenceHandlers(_canExecuteChangedHandlers);
@@ -85,6 +123,9 @@ namespace IDE.Common.ViewModels
 
         #region ICommand Members
 
+        /// <summary>
+        /// Occurs when changes occur that affect whether or not the command should execute.
+        /// </summary>
         public event EventHandler CanExecuteChanged
         {
             add
@@ -105,11 +146,22 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Defines the method that determines whether the command can execute in its current state.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+        /// <returns>
+        /// true if this command can be executed; otherwise, false.
+        /// </returns>
         bool ICommand.CanExecute(object parameter)
         {
             return CanExecute();
         }
 
+        /// <summary>
+        /// Defines the method to be called when the command is invoked.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
         void ICommand.Execute(object parameter)
         {
             Execute();
@@ -119,42 +171,62 @@ namespace IDE.Common.ViewModels
 
         #region Data
 
+        /// <summary>
+        /// The execute method
+        /// </summary>
         private readonly Action _executeMethod = null;
+        /// <summary>
+        /// The can execute method
+        /// </summary>
         private readonly Func<bool> _canExecuteMethod = null;
+        /// <summary>
+        /// The is automatic requery disabled
+        /// </summary>
         private bool _isAutomaticRequeryDisabled = false;
+        /// <summary>
+        /// The can execute changed handlers
+        /// </summary>
         private List<WeakReference> _canExecuteChangedHandlers;
 
         #endregion
     }
 
     /// <summary>
-    ///     This class allows delegating the commanding logic to methods passed as parameters,
-    ///     and enables a View to bind commands to objects that are not part of the element tree.
+    /// This class allows delegating the commanding logic to methods passed as parameters,
+    /// and enables a View to bind commands to objects that are not part of the element tree.
     /// </summary>
     /// <typeparam name="T">Type of the parameter passed to the delegates</typeparam>
+    /// <seealso cref="System.Windows.Input.ICommand" />
     public class DelegateCommand<T> : ICommand
     {
         #region Constructors
 
         /// <summary>
-        ///     Constructor
+        /// Constructor
         /// </summary>
+        /// <param name="executeMethod">The execute method.</param>
         public DelegateCommand(Action<T> executeMethod)
             : this(executeMethod, null, false)
         {
         }
 
         /// <summary>
-        ///     Constructor
+        /// Constructor
         /// </summary>
+        /// <param name="executeMethod">The execute method.</param>
+        /// <param name="canExecuteMethod">The can execute method.</param>
         public DelegateCommand(Action<T> executeMethod, Func<T, bool> canExecuteMethod)
             : this(executeMethod, canExecuteMethod, false)
         {
         }
 
         /// <summary>
-        ///     Constructor
+        /// Constructor
         /// </summary>
+        /// <param name="executeMethod">The execute method.</param>
+        /// <param name="canExecuteMethod">The can execute method.</param>
+        /// <param name="isAutomaticRequeryDisabled">if set to <c>true</c> [is automatic requery disabled].</param>
+        /// <exception cref="System.ArgumentNullException">executeMethod</exception>
         public DelegateCommand(Action<T> executeMethod, Func<T, bool> canExecuteMethod, bool isAutomaticRequeryDisabled)
         {
             if (executeMethod == null)
@@ -172,8 +244,12 @@ namespace IDE.Common.ViewModels
         #region Public Methods
 
         /// <summary>
-        ///     Method to determine if the command can be executed
+        /// Method to determine if the command can be executed
         /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance can execute the specified parameter; otherwise, <c>false</c>.
+        /// </returns>
         public bool CanExecute(T parameter)
         {
             if (_canExecuteMethod != null)
@@ -184,8 +260,9 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        ///     Execution of the command
+        /// Execution of the command
         /// </summary>
+        /// <param name="parameter">The parameter.</param>
         public void Execute(T parameter)
         {
             if (_executeMethod != null)
@@ -195,7 +272,7 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        ///     Raises the CanExecuteChaged event
+        /// Raises the CanExecuteChaged event
         /// </summary>
         public void RaiseCanExecuteChanged()
         {
@@ -203,7 +280,7 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        ///     Protected virtual method to raise CanExecuteChanged event
+        /// Protected virtual method to raise CanExecuteChanged event
         /// </summary>
         protected virtual void OnCanExecuteChanged()
         {
@@ -211,8 +288,11 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        ///     Property to enable or disable CommandManager's automatic requery on this command
+        /// Property to enable or disable CommandManager's automatic requery on this command
         /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is automatic requery disabled; otherwise, <c>false</c>.
+        /// </value>
         public bool IsAutomaticRequeryDisabled
         {
             get
@@ -241,7 +321,7 @@ namespace IDE.Common.ViewModels
         #region ICommand Members
 
         /// <summary>
-        ///     ICommand.CanExecuteChanged implementation
+        /// ICommand.CanExecuteChanged implementation
         /// </summary>
         public event EventHandler CanExecuteChanged
         {
@@ -263,6 +343,13 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Defines the method that determines whether the command can execute in its current state.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+        /// <returns>
+        /// true if this command can be executed; otherwise, false.
+        /// </returns>
         bool ICommand.CanExecute(object parameter)
         {
             // if T is of value type and the parameter is not
@@ -276,6 +363,10 @@ namespace IDE.Common.ViewModels
             return CanExecute((T)parameter);
         }
 
+        /// <summary>
+        /// Defines the method to be called when the command is invoked.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
         void ICommand.Execute(object parameter)
         {
             Execute((T)parameter);
@@ -285,20 +376,36 @@ namespace IDE.Common.ViewModels
 
         #region Data
 
+        /// <summary>
+        /// The execute method
+        /// </summary>
         private readonly Action<T> _executeMethod = null;
+        /// <summary>
+        /// The can execute method
+        /// </summary>
         private readonly Func<T, bool> _canExecuteMethod = null;
+        /// <summary>
+        /// The is automatic requery disabled
+        /// </summary>
         private bool _isAutomaticRequeryDisabled = false;
+        /// <summary>
+        /// The can execute changed handlers
+        /// </summary>
         private List<WeakReference> _canExecuteChangedHandlers;
 
         #endregion
     }
 
     /// <summary>
-    ///     This class contains methods for the CommandManager that help avoid memory leaks by
-    ///     using weak references.
+    /// This class contains methods for the CommandManager that help avoid memory leaks by
+    /// using weak references.
     /// </summary>
     internal class CommandManagerHelper
     {
+        /// <summary>
+        /// Calls the weak reference handlers.
+        /// </summary>
+        /// <param name="handlers">The handlers.</param>
         internal static void CallWeakReferenceHandlers(List<WeakReference> handlers)
         {
             if (handlers != null)
@@ -334,6 +441,10 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Adds the handlers to requery suggested.
+        /// </summary>
+        /// <param name="handlers">The handlers.</param>
         internal static void AddHandlersToRequerySuggested(List<WeakReference> handlers)
         {
             if (handlers != null)
@@ -349,6 +460,10 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Removes the handlers from requery suggested.
+        /// </summary>
+        /// <param name="handlers">The handlers.</param>
         internal static void RemoveHandlersFromRequerySuggested(List<WeakReference> handlers)
         {
             if (handlers != null)
@@ -364,11 +479,22 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Adds the weak reference handler.
+        /// </summary>
+        /// <param name="handlers">The handlers.</param>
+        /// <param name="handler">The handler.</param>
         internal static void AddWeakReferenceHandler(ref List<WeakReference> handlers, EventHandler handler)
         {
             AddWeakReferenceHandler(ref handlers, handler, -1);
         }
 
+        /// <summary>
+        /// Adds the weak reference handler.
+        /// </summary>
+        /// <param name="handlers">The handlers.</param>
+        /// <param name="handler">The handler.</param>
+        /// <param name="defaultListSize">Default size of the list.</param>
         internal static void AddWeakReferenceHandler(ref List<WeakReference> handlers, EventHandler handler, int defaultListSize)
         {
             if (handlers == null)
@@ -379,6 +505,11 @@ namespace IDE.Common.ViewModels
             handlers.Add(new WeakReference(handler));
         }
 
+        /// <summary>
+        /// Removes the weak reference handler.
+        /// </summary>
+        /// <param name="handlers">The handlers.</param>
+        /// <param name="handler">The handler.</param>
         internal static void RemoveWeakReferenceHandler(List<WeakReference> handlers, EventHandler handler)
         {
             if (handlers != null)

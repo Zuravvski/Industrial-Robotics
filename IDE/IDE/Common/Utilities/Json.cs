@@ -14,6 +14,7 @@ namespace IDE.Common.Utilities
         /// <param name="obj">Object to serialize.</param>
         /// <param name="fileName">File name to save object as.</param>
         /// <param name="fileExtension">File extension to save object with.</param>
+        /// <param name="formatingStyle">The formating style.</param>
         public static void SerializeObject(object obj, string fileName, string fileExtension = "txt", Formatting formatingStyle = Formatting.None)
         {
             File.WriteAllText($@"{fileName}.{fileExtension}", "aaaa");    //to clear desired file before writing
@@ -31,8 +32,10 @@ namespace IDE.Common.Utilities
         /// <summary>
         /// Object deserializer.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="fileName">Name of a file containing json.</param>
         /// <param name="fileExtension">Extension of a file containing json.</param>
+        /// <returns></returns>
         public static T DeserializeObject<T>(string fileName, string fileExtension = "FLAJS")
         {
             var fs = File.Open($@"{fileName}.{fileExtension}", FileMode.Open);

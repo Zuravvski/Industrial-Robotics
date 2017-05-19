@@ -8,25 +8,54 @@ using IDE.Common.Utilities.Extensions;
 namespace IDE.Common.Utilities
 {
     // TODO: Useless class - dispose
+    /// <summary>
+    /// ConfigurationService class
+    /// </summary>
     public class ConfigurationService
     {
+        /// <summary>
+        /// The default commands path
+        /// </summary>
         private const string DEFAULT_COMMANDS_PATH = "Commands.xml";
 
+        /// <summary>
+        /// The instance
+        /// </summary>
         private static readonly Lazy<ConfigurationService> instance = new Lazy<ConfigurationService>(() => new ConfigurationService());
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
         public static ConfigurationService Instance => instance.Value;
 
         // Configuration related objects
+        /// <summary>
+        /// The commands
+        /// </summary>
         private ISet<Command> commands;
 
         // Utils
+        /// <summary>
+        /// The document
+        /// </summary>
         private readonly XmlDocument document;
 
+        /// <summary>
+        /// Prevents a default instance of the <see cref="ConfigurationService"/> class from being created.
+        /// </summary>
         private ConfigurationService()
         {
             document = new XmlDocument();
         }
 
         // TODO: Move to session
+        /// <summary>
+        /// Loads the commands.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <returns></returns>
         public ISet<Command> LoadCommands(string path = DEFAULT_COMMANDS_PATH)
         {
             if (null == commands)
@@ -62,6 +91,11 @@ namespace IDE.Common.Utilities
         }
 
         // TODO: Move to command manager
+        /// <summary>
+        /// Saves the commands.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <exception cref="System.InvalidOperationException">Commands were never loaded to memory.</exception>
         public void SaveCommands(string path = DEFAULT_COMMANDS_PATH)
         {
             if (null == commands)

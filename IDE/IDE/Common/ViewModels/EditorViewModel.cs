@@ -12,20 +12,39 @@ using IDE.Common.Utilities;
 
 namespace IDE.Common.ViewModels
 {
+    /// <summary>
+    /// EditorViewModel class
+    /// </summary>
+    /// <seealso cref="IDE.Common.ViewModels.Commands.ObservableObject" />
     public class EditorViewModel : ObservableObject
     {
 
         #region Fields
+        /// <summary>
+        /// The program list
+        /// </summary>
         private ObservableCollection<Program> programList;
 
+        /// <summary>
+        /// The selected tab item
+        /// </summary>
         private TabItem selectedTabItem;
+        /// <summary>
+        /// The tab items
+        /// </summary>
         private ObservableCollection<TabItem> tabItems;
+        /// <summary>
+        /// The intellisense is checked
+        /// </summary>
         private bool intellisenseIsChecked, syntaxIsChecked;
 
         #endregion
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorViewModel"/> class.
+        /// </summary>
         public EditorViewModel()
         {
             TabItems = new ObservableCollection<TabItem>();
@@ -41,6 +60,12 @@ namespace IDE.Common.ViewModels
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [intellisense is checked].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [intellisense is checked]; otherwise, <c>false</c>.
+        /// </value>
         public bool IntellisenseIsChecked
         {
             get
@@ -58,6 +83,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [syntax is checked].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [syntax is checked]; otherwise, <c>false</c>.
+        /// </value>
         public bool SyntaxIsChecked
         {
             get
@@ -75,6 +106,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the program list.
+        /// </summary>
+        /// <value>
+        /// The program list.
+        /// </value>
         public ObservableCollection<Program> ProgramList
         {
             get
@@ -88,8 +125,20 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the appearance.
+        /// </summary>
+        /// <value>
+        /// The appearance.
+        /// </value>
         public AppearanceViewModel Appearance => AppearanceViewModel.Instance;
 
+        /// <summary>
+        /// Gets or sets the tab items.
+        /// </summary>
+        /// <value>
+        /// The tab items.
+        /// </value>
         public ObservableCollection<TabItem> TabItems
         {
             get
@@ -103,6 +152,12 @@ namespace IDE.Common.ViewModels
 
             }
         }
+        /// <summary>
+        /// Gets or sets the selected tab item.
+        /// </summary>
+        /// <value>
+        /// The selected tab item.
+        /// </value>
         public TabItem SelectedTabItem
         {
             get
@@ -168,7 +223,7 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        /// Performs saving all tabs. If it is new program Save as will be called, 
+        /// Performs saving all tabs. If it is new program Save as will be called,
         /// else program will be saved in path declared in ~Program.path~.
         /// </summary>
         private void SaveAllTabs()
@@ -180,13 +235,15 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        /// Performs save as operation on a new file. 
+        /// Performs save as operation on a new file.
         /// It's basically the same as ~SaveTab~ operation, except for the fact
         /// that ~tabItem.Program~ might not be null, but we still want to create
         /// new instance of ~Program~ for this ~tabItem.content~.
         /// </summary>
         /// <param name="tabItem">Tab item which content will be saved.</param>
-        /// <returns>True if saving was succesfull, false if not.</returns>
+        /// <returns>
+        /// True if saving was succesfull, false if not.
+        /// </returns>
         private bool SaveAsTab(TabItem tabItem)
         {
             var dialog = new SaveFileDialog
@@ -216,11 +273,13 @@ namespace IDE.Common.ViewModels
         }
 
         /// <summary>
-        /// Performs "regular" save operation on existing or new file. 
+        /// Performs "regular" save operation on existing or new file.
         /// In case of new file you will have to declare file name and location first.
         /// </summary>
         /// <param name="tabItem">Tab item which content will be saved.</param>
-        /// <returns>True if saving was succesfull, false if not.</returns>
+        /// <returns>
+        /// True if saving was succesfull, false if not.
+        /// </returns>
         private bool SaveTab(TabItem tabItem)
         {
             if (tabItem.Program == null)
@@ -312,18 +371,81 @@ namespace IDE.Common.ViewModels
 
         #region Commands
 
+        /// <summary>
+        /// Gets the add tab command.
+        /// </summary>
+        /// <value>
+        /// The add tab command.
+        /// </value>
         public ICommand AddTabCommand { get; private set; }
+        /// <summary>
+        /// Gets the close tab command.
+        /// </summary>
+        /// <value>
+        /// The close tab command.
+        /// </value>
         public ICommand CloseTabCommand { get; private set; }
+        /// <summary>
+        /// Gets the change font command.
+        /// </summary>
+        /// <value>
+        /// The change font command.
+        /// </value>
         public ICommand ChangeFontCommand { get; private set; }
+        /// <summary>
+        /// Gets the control s key.
+        /// </summary>
+        /// <value>
+        /// The control s key.
+        /// </value>
         public ICommand CtrlSKey { get; private set; }
+        /// <summary>
+        /// Gets the control n key.
+        /// </summary>
+        /// <value>
+        /// The control n key.
+        /// </value>
         public ICommand CtrlNKey { get; private set; }
-        
+
+        /// <summary>
+        /// Gets the menu create command.
+        /// </summary>
+        /// <value>
+        /// The menu create command.
+        /// </value>
         public ICommand MenuCreateCommand { get; private set; }
+        /// <summary>
+        /// Gets the menu open command.
+        /// </summary>
+        /// <value>
+        /// The menu open command.
+        /// </value>
         public ICommand MenuOpenCommand { get; private set; }
+        /// <summary>
+        /// Gets the menu save command.
+        /// </summary>
+        /// <value>
+        /// The menu save command.
+        /// </value>
         public ICommand MenuSaveCommand { get; private set; }
+        /// <summary>
+        /// Gets the menu save as command.
+        /// </summary>
+        /// <value>
+        /// The menu save as command.
+        /// </value>
         public ICommand MenuSaveAsCommand { get; private set; }
+        /// <summary>
+        /// Gets the menu save all command.
+        /// </summary>
+        /// <value>
+        /// The menu save all command.
+        /// </value>
         public ICommand MenuSaveAllCommand { get; private set; }
 
+        /// <summary>
+        /// Declares the commands.
+        /// </summary>
         private void DeclareCommands()
         {
             AddTabCommand = new RelayCommand(AddTab);
@@ -341,41 +463,80 @@ namespace IDE.Common.ViewModels
             CtrlNKey = new RelayCommand(AddTab);
         }
 
+        /// <summary>
+        /// Determines whether [is tab count below maximum] [the specified object].
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if [is tab count below maximum] [the specified object]; otherwise, <c>false</c>.
+        /// </returns>
         private bool IsTabCountBelowMax(object obj)
         {
             return TabItems.Count < 15;
         }
 
+        /// <summary>
+        /// Doeses the selected tab exist.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns></returns>
         private bool DoesSelectedTabExist(object obj)
         {
             return SelectedTabItem != null;
         }
 
+        /// <summary>
+        /// Menus the create.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void MenuCreate(object obj)
         {
             OpenTab(null);
         }
 
+        /// <summary>
+        /// Menus the open.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void MenuOpen(object obj)
         {
             OpenFileTab();
         }
 
+        /// <summary>
+        /// Menus the save.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void MenuSave(object obj)
         {
             SaveTab(SelectedTabItem);
         }
 
+        /// <summary>
+        /// Menus the save as.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void MenuSaveAs(object obj)
         {
             SaveAsTab(SelectedTabItem);
         }
 
+        /// <summary>
+        /// Menus the save all.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void MenuSaveAll(object obj)
         {
             SaveAllTabs();
         }
 
+        /// <summary>
+        /// Determines whether this instance [can change font] the specified object.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance [can change font] the specified object; otherwise, <c>false</c>.
+        /// </returns>
         private bool CanChangeFont(object obj)
         {
             if (TabItems.Count == 0)
@@ -385,6 +546,10 @@ namespace IDE.Common.ViewModels
             return !text.Equals(obj as string);
         }
 
+        /// <summary>
+        /// Changes the font.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void ChangeFont(object obj)
         {
             var fontName = obj as string;
@@ -408,6 +573,10 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Controls the s.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void CtrlS(object obj)
         {
             //if tab exist, save it

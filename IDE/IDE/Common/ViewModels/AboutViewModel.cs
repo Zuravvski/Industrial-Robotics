@@ -3,17 +3,27 @@ using IDE.Common.Models;
 
 namespace IDE.Common.ViewModels
 {
+    /// <summary>
+    /// AboutViewModel class
+    /// </summary>
+    /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     class AboutViewModel : INotifyPropertyChanged
     {
 
         #region Fields
 
+        /// <summary>
+        /// The about model
+        /// </summary>
         AboutModel aboutModel;
 
         #endregion
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AboutViewModel"/> class.
+        /// </summary>
         public AboutViewModel()
         {
             aboutModel = new AboutModel
@@ -32,6 +42,12 @@ namespace IDE.Common.ViewModels
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets or sets the about model.
+        /// </summary>
+        /// <value>
+        /// The about model.
+        /// </value>
         public AboutModel AboutModel
         {
             get
@@ -44,6 +60,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the general information.
+        /// </summary>
+        /// <value>
+        /// The general information.
+        /// </value>
         public string GeneralInfo
         {
             get
@@ -57,6 +79,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the about creators.
+        /// </summary>
+        /// <value>
+        /// The about creators.
+        /// </value>
         public string AboutCreators
         {
             get
@@ -73,8 +101,15 @@ namespace IDE.Common.ViewModels
 
         #region PropertyChangedEvents
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Called when [property changed].
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

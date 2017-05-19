@@ -15,13 +15,26 @@ using System.Windows.Media.Imaging;
 
 namespace IDE.Common.Models
 {
+    /// <summary>
+    /// TabItem class
+    /// </summary>
+    /// <seealso cref="IDE.Common.ViewModels.Commands.ObservableObject" />
     public class TabItem : ObservableObject
     {
 
         #region Fields
 
+        /// <summary>
+        /// The image
+        /// </summary>
         private BitmapImage image;
+        /// <summary>
+        /// The unsaved changes
+        /// </summary>
         private bool unsavedChanges = true;
+        /// <summary>
+        /// The header
+        /// </summary>
         private string header;
 
         #endregion
@@ -76,14 +89,44 @@ namespace IDE.Common.Models
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the content of the tab.
+        /// </summary>
+        /// <value>
+        /// The content of the tab.
+        /// </value>
         public Border TabContent { get; set; }
 
+        /// <summary>
+        /// Gets or sets the tab grid.
+        /// </summary>
+        /// <value>
+        /// The tab grid.
+        /// </value>
         public Grid TabGrid { get; set; }
 
+        /// <summary>
+        /// Gets or sets the program editor.
+        /// </summary>
+        /// <value>
+        /// The program editor.
+        /// </value>
         public ProgramEditor ProgramEditor { get; set; }
 
+        /// <summary>
+        /// Gets or sets the data grid.
+        /// </summary>
+        /// <value>
+        /// The data grid.
+        /// </value>
         public DataGrid DataGrid { get; set; }
 
+        /// <summary>
+        /// Gets or sets the header.
+        /// </summary>
+        /// <value>
+        /// The header.
+        /// </value>
         public string Header
         {
             get
@@ -97,6 +140,12 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Gets the image.
+        /// </summary>
+        /// <value>
+        /// The image.
+        /// </value>
         public BitmapImage Image
         {
             get
@@ -110,8 +159,20 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Gets or sets the program.
+        /// </summary>
+        /// <value>
+        /// The program.
+        /// </value>
         public Program Program { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [unsaved changed].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [unsaved changed]; otherwise, <c>false</c>.
+        /// </value>
         public bool UnsavedChanged
         {
             get
@@ -137,12 +198,21 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Gets or sets the position item source.
+        /// </summary>
+        /// <value>
+        /// The position item source.
+        /// </value>
         public List<Positions> PositionItemSource { get; set; }
 
         #endregion
 
         #region Actions
 
+        /// <summary>
+        /// Organizes the content of the tab.
+        /// </summary>
         private void OrganizeTabContent()
         {
             PositionItemSource = new List<Positions>();
@@ -189,6 +259,10 @@ namespace IDE.Common.Models
             };
         }
 
+        /// <summary>
+        /// Generates the dump positions.
+        /// </summary>
+        /// <param name="rand">The rand.</param>
         private void GenerateDumpPositions(Random rand)
         {
             var OC = rand.Next(1, 3) % 2 == 0 ? "O" : "C";
@@ -206,6 +280,11 @@ namespace IDE.Common.Models
             });
         }
 
+        /// <summary>
+        /// Handles the TextChanged event of the ProgramEditor control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ProgramEditor_TextChanged(object sender, EventArgs e)
         {
             if (Program != null)
@@ -215,6 +294,11 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Bitmap2s the bitmap image.
+        /// </summary>
+        /// <param name="bitmap">The bitmap.</param>
+        /// <returns></returns>
         private BitmapImage Bitmap2BitmapImage(Bitmap bitmap)
         {
             var bitmapImage = new BitmapImage();

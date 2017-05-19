@@ -8,13 +8,26 @@ using Microsoft.Win32;
 
 namespace IDE.Common.ViewModels
 {
+    /// <summary>
+    /// HighlightingViewModel class
+    /// </summary>
+    /// <seealso cref="IDE.Common.ViewModels.Commands.ObservableObject" />
     public class HighlightingViewModel : ObservableObject
     {
+        /// <summary>
+        /// The highlighting
+        /// </summary>
         private readonly Highlighting highlighting;
+        /// <summary>
+        /// The color map
+        /// </summary>
         private Dictionary<Command.TypeE, Color> colorMap;
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HighlightingViewModel"/> class.
+        /// </summary>
         public HighlightingViewModel()
         {
             highlighting = Session.Instance.Highlighting;
@@ -29,6 +42,12 @@ namespace IDE.Common.ViewModels
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the colors.
+        /// </summary>
+        /// <value>
+        /// The colors.
+        /// </value>
         public Dictionary<Command.TypeE, Color> Colors
         {
             private set
@@ -46,11 +65,33 @@ namespace IDE.Common.ViewModels
 
         #region Actions
 
+        /// <summary>
+        /// Gets the export click command.
+        /// </summary>
+        /// <value>
+        /// The export click command.
+        /// </value>
         public ICommand ExportClickCommand { get; private set; }
+        /// <summary>
+        /// Gets the import click command.
+        /// </summary>
+        /// <value>
+        /// The import click command.
+        /// </value>
         public ICommand ImportClickCommand { get; private set; }
+        /// <summary>
+        /// Gets the apply click command.
+        /// </summary>
+        /// <value>
+        /// The apply click command.
+        /// </value>
         public ICommand ApplyClickCommand { get; private set; }
 
 
+        /// <summary>
+        /// Imports the specified object.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void Import(object obj)
         {
             //read highlight definition and write it into "main" HighlightingDefinition file
@@ -69,6 +110,10 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Exports the specified object.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void Export(object obj)
         {
             var dialog = new SaveFileDialog
@@ -85,11 +130,18 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Applies the specified object.
+        /// </summary>
+        /// <param name="obj">The object.</param>
         private void Apply(object obj)
         {
             highlighting.Apply(Colors);
         }
 
+        /// <summary>
+        /// Refreshes the colors.
+        /// </summary>
         private void RefreshColors()
         {
             Colors = highlighting.Colors;

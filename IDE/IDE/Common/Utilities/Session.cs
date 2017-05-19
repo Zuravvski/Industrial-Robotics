@@ -10,24 +10,63 @@ using IDE.Common.Models;
 
 namespace IDE.Common.Utilities
 {
+    /// <summary>
+    /// Session class
+    /// </summary>
     public class Session
     {
         #region Constants
+        /// <summary>
+        /// The session node
+        /// </summary>
         private const string SESSION_NODE = "/Session";
+        /// <summary>
+        /// The commands parameter
+        /// </summary>
         private const string COMMANDS_PARAM = "CommandsMap";
+        /// <summary>
+        /// The highlighting parameter
+        /// </summary>
         private const string HIGHLIGHTING_PARAM = "HighlightingMap";
         #endregion
 
         #region Settings
+        /// <summary>
+        /// Gets the commands.
+        /// </summary>
+        /// <value>
+        /// The commands.
+        /// </value>
         public Commands Commands { get; private set; }
+        /// <summary>
+        /// Gets the highlighting.
+        /// </summary>
+        /// <value>
+        /// The highlighting.
+        /// </value>
         public Highlighting Highlighting { get; private set; }
         #endregion
 
+        /// <summary>
+        /// The instance
+        /// </summary>
         private static readonly Lazy<Session> instance = new Lazy<Session>(() => new Session());
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
         public static Session Instance => instance.Value;
-        
+
+        /// <summary>
+        /// The document
+        /// </summary>
         private readonly XmlDocument document = new XmlDocument();
 
+        /// <summary>
+        /// Prevents a default instance of the <see cref="Session"/> class from being created.
+        /// </summary>
         private Session()
         {
             document.Load(MissingFileManager.SESSION_PATH);
@@ -37,6 +76,9 @@ namespace IDE.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
         public void Initialize()
         {
             document.Load(MissingFileManager.SESSION_PATH);
@@ -51,6 +93,10 @@ namespace IDE.Common.Utilities
             Highlighting = highlightingMapParam != null ? new Highlighting(highlightingMapParam.Value) : new Highlighting();
         }
 
+        /// <summary>
+        /// Loads the programs.
+        /// </summary>
+        /// <returns></returns>
         public ObservableCollection<Program> LoadPrograms()
         {
             var list = new ObservableCollection<Program>();
@@ -94,6 +140,10 @@ namespace IDE.Common.Utilities
             }
         }
 
+        /// <summary>
+        /// Saves the programs.
+        /// </summary>
+        /// <param name="tabItems">The tab items.</param>
         public void SavePrograms(IEnumerable<TabItem> tabItems)
         {
             // Remove program nodes to override them
@@ -122,6 +172,10 @@ namespace IDE.Common.Utilities
             document.Save(MissingFileManager.SESSION_PATH);
         }
 
+        /// <summary>
+        /// Submits the highlighting.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public void SubmitHighlighting(string path)
         {
             var root = document.SelectSingleNode("Session");
@@ -136,6 +190,10 @@ namespace IDE.Common.Utilities
             document.Save(MissingFileManager.SESSION_PATH);
         }
 
+        /// <summary>
+        /// Submits the commands.
+        /// </summary>
+        /// <param name="path">The path.</param>
         public void SubmitCommands(string path)
         {
             var root = document.SelectSingleNode("Session");

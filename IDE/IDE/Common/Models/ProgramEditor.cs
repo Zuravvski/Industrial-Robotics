@@ -19,28 +19,56 @@ using Microsoft.Win32;
 
 namespace IDE.Common.Models
 {
+    /// <summary>
+    /// ProgramEditor class
+    /// </summary>
+    /// <seealso cref="ICSharpCode.AvalonEdit.TextEditor" />
     public class ProgramEditor : TextEditor
     {
 
         #region Fields
 
+        /// <summary>
+        /// The syntax checker mode
+        /// </summary>
         private SyntaxCheckerModeE syntaxCheckerMode;
+        /// <summary>
+        /// The syntax checker
+        /// </summary>
         private readonly SyntaxChecker syntaxChecker;
+        /// <summary>
+        /// The intellisense
+        /// </summary>
         private readonly Intellisense intellisense;
+        /// <summary>
+        /// The syntax check visualizer
+        /// </summary>
         private readonly SyntaxCheckVisualizer syntaxCheckVisualizer;
+        /// <summary>
+        /// The is highlighting enabled
+        /// </summary>
         private bool isHighlightingEnabled;
+        /// <summary>
+        /// The is intellisense enabled
+        /// </summary>
         private bool isIntellisenseEnabled;
 
         #endregion
 
         #region Enums
-        
+
         /// <summary>
         /// Describes wheter syntax check will occcur on the real time or on demand.
         /// </summary>
         public enum SyntaxCheckerModeE
         {
+            /// <summary>
+            /// The real time
+            /// </summary>
             RealTime,
+            /// <summary>
+            /// The on demand
+            /// </summary>
             OnDemand
         }
 
@@ -48,6 +76,9 @@ namespace IDE.Common.Models
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProgramEditor"/> class.
+        /// </summary>
         public ProgramEditor()
         {
             syntaxChecker = new SyntaxChecker();
@@ -59,11 +90,17 @@ namespace IDE.Common.Models
             Session.Instance.Highlighting.HighlightingChanged += LoadHighligtingDefinition;
             DataObject.AddPastingHandler(this, OnPaste);
         }
-        
+
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is highlighting enabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is highlighting enabled; otherwise, <c>false</c>.
+        /// </value>
         public bool IsHighlightingEnabled
         {
             get { return isHighlightingEnabled; }
@@ -74,6 +111,12 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is intellisense enabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is intellisense enabled; otherwise, <c>false</c>.
+        /// </value>
         public bool IsIntellisenseEnabled
         {
             get { return isIntellisenseEnabled; }
@@ -97,12 +140,27 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is intellisense showing.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is intellisense showing; otherwise, <c>false</c>.
+        /// </value>
         public bool IsIntellisenseShowing => intellisense.IsShowing;
 
+        /// <summary>
+        /// The do syntax check property
+        /// </summary>
         public static readonly DependencyProperty DoSyntaxCheckProperty =
              DependencyProperty.Register("DoSyntaxCheck", typeof(bool),
              typeof(ProgramEditor), new FrameworkPropertyMetadata(true));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [do syntax check].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [do syntax check]; otherwise, <c>false</c>.
+        /// </value>
         public bool DoSyntaxCheck
         {
             get { return (bool)GetValue(DoSyntaxCheckProperty); }
@@ -123,8 +181,20 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is one line.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is one line; otherwise, <c>false</c>.
+        /// </value>
         public bool IsOneLine { get; set; }
 
+        /// <summary>
+        /// Gets or sets the syntax checker mode.
+        /// </summary>
+        /// <value>
+        /// The syntax checker mode.
+        /// </value>
         public SyntaxCheckerModeE SyntaxCheckerMode
         {
             get { return syntaxCheckerMode; }
@@ -146,11 +216,17 @@ namespace IDE.Common.Models
 
         #region Actions
 
+        /// <summary>
+        /// Fonts the enlarge.
+        /// </summary>
         public void FontEnlarge()
         {
             FontSize++;
         }
 
+        /// <summary>
+        /// Fonts the reduce.
+        /// </summary>
         public void FontReduce()
         {
             FontSize--;
@@ -159,6 +235,7 @@ namespace IDE.Common.Models
         /// <summary>
         /// Sets current font.
         /// </summary>
+        /// <param name="fontName">Name of the font.</param>
         public void ChangeFont(string fontName)
         {
             var fontFamily = FontFamily;
@@ -173,6 +250,9 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Loads the highligting definition.
+        /// </summary>
         private void LoadHighligtingDefinition()
         {
             if (IsHighlightingEnabled)
@@ -195,16 +275,31 @@ namespace IDE.Common.Models
 
         #region Event Handlers
 
+        /// <summary>
+        /// Called when [intellisense submition].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
         private void OnIntellisenseSubmition(object sender, KeyEventArgs e)
         {
             intellisense.Submit(e, IsOneLine);
         }
 
+        /// <summary>
+        /// Called when [intellisense preparation].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="TextCompositionEventArgs"/> instance containing the event data.</param>
         private void OnIntellisensePreparation(object sender, TextCompositionEventArgs e)
         {
              intellisense.Prepare(e);
         }
 
+        /// <summary>
+        /// Called when [intellisense show].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="TextCompositionEventArgs"/> instance containing the event data.</param>
         private void OnIntellisenseShow(object sender, TextCompositionEventArgs e)
         {
             var line = Document.GetLineByNumber(TextArea.Caret.Line);
@@ -219,6 +314,11 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Called when [syntax check].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void OnSyntaxCheck(object sender, EventArgs e)
         {
             if (DoSyntaxCheck)
@@ -227,6 +327,11 @@ namespace IDE.Common.Models
             }    
         }
 
+        /// <summary>
+        /// Called when [paste].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DataObjectPastingEventArgs"/> instance containing the event data.</param>
         private void OnPaste(object sender, DataObjectPastingEventArgs e)
         {
             var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
@@ -241,6 +346,9 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Validates all lines.
+        /// </summary>
         public async void ValidateAllLines()
         {
             if (DoSyntaxCheck)
@@ -254,6 +362,11 @@ namespace IDE.Common.Models
             }
         }
 
+        /// <summary>
+        /// Validates the line.
+        /// </summary>
+        /// <param name="lineNum">The line number.</param>
+        /// <returns></returns>
         public async Task<bool> ValidateLine(int lineNum)
         {
             var line = TextArea.Document.GetLineByNumber(lineNum);
@@ -262,7 +375,12 @@ namespace IDE.Common.Models
             syntaxCheckVisualizer.Visualize(!DoSyntaxCheck || isValid, line);
             return isValid;
         }
-        
+
+        /// <summary>
+        /// Exports the content.
+        /// </summary>
+        /// <param name="defaultFileName">Default name of the file.</param>
+        /// <param name="extension">The extension.</param>
         public void ExportContent(string defaultFileName, string extension)
         {
             try

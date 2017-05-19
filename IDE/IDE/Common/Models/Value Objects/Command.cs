@@ -7,11 +7,18 @@ using IDE.Common.Utilities.Extensions;
 
 namespace IDE.Common.Models.Value_Objects
 {
+    /// <summary>
+    /// Command class
+    /// </summary>
+    /// <seealso cref="IDE.Common.Utilities.IXMLObject" />
     public class Command : IXMLObject
     {
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Command"/> class.
+        /// </summary>
         protected Command()
         {
 
@@ -21,22 +28,49 @@ namespace IDE.Common.Models.Value_Objects
 
         #region enums
 
+        /// <summary>
+        /// 
+        /// </summary>
         public enum TypeE
         {
+            /// <summary>
+            /// The other
+            /// </summary>
             [Description("Other")]
             Other,
+            /// <summary>
+            /// The comment
+            /// </summary>
             [Description("Comment")]
             Comment,
+            /// <summary>
+            /// The movement
+            /// </summary>
             [Description("Movement")]
             Movement,
+            /// <summary>
+            /// The grip
+            /// </summary>
             [Description("Grip")]
             Grip,
+            /// <summary>
+            /// The timers counters
+            /// </summary>
             [Description("TimersCounters")]
             TimersCounters,
+            /// <summary>
+            /// The programming
+            /// </summary>
             [Description("Programming")]
             Programming,
+            /// <summary>
+            /// The information
+            /// </summary>
             [Description("Information")]
             Information,
+            /// <summary>
+            /// The macro
+            /// </summary>
             [Description("Macro")]
             Macro
         };
@@ -45,10 +79,40 @@ namespace IDE.Common.Models.Value_Objects
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
         public string Name { get; private set; }
+        /// <summary>
+        /// Gets the content.
+        /// </summary>
+        /// <value>
+        /// The content.
+        /// </value>
         public string Content { get; private set; }
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
         public string Description { get; private set; }
+        /// <summary>
+        /// Gets the regex.
+        /// </summary>
+        /// <value>
+        /// The regex.
+        /// </value>
         public Regex Regex { get; private set; }
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>
+        /// The type.
+        /// </value>
         public TypeE Type { get; private set; }
 
         #endregion
@@ -62,7 +126,9 @@ namespace IDE.Common.Models.Value_Objects
         /// <param name="content">Defines command keyword in movemaster language</param>
         /// <param name="description">Describes command [not mandatory]</param>
         /// <param name="regex">Defines valid syntax of command [not mandatory]</param>
+        /// <param name="type">The type.</param>
         /// <returns></returns>
+        /// <exception cref="System.ArgumentException">Invalid arguments were passed</exception>
         public static Command CreateCommand(string name, string content, string description, Regex regex, TypeE type)
         {
             if(ValidateData(name, content, description, regex))
@@ -80,12 +146,24 @@ namespace IDE.Common.Models.Value_Objects
             throw new ArgumentException("Invalid arguments were passed");
         }
 
+        /// <summary>
+        /// Validates the data.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="content">The content.</param>
+        /// <param name="description">The description.</param>
+        /// <param name="regex">The regex.</param>
+        /// <returns></returns>
         private static bool ValidateData(string name, string content, string description, Regex regex)
         {
             return !string.IsNullOrWhiteSpace(name) && !string.IsNullOrEmpty(content) &&
                    null != description && null != regex;
         }
 
+        /// <summary>
+        /// To the XML.
+        /// </summary>
+        /// <returns></returns>
         public XmlElement ToXML()
         {
             var document = new XmlDocument();

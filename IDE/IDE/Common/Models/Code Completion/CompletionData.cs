@@ -9,10 +9,23 @@ using System.Windows.Media.Imaging;
 
 namespace IDE.Common.Models.Code_Completion
 {
+    /// <summary>
+    /// CompletionData class
+    /// </summary>
+    /// <seealso cref="ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData" />
     public class CompletionData : ICompletionData
     {
+        /// <summary>
+        /// The type
+        /// </summary>
         private readonly string type;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompletionData"/> class.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="description">The description.</param>
+        /// <param name="type">The type.</param>
         public CompletionData(string text, string description, string type)
         {
             Text = text;
@@ -20,6 +33,9 @@ namespace IDE.Common.Models.Code_Completion
             this.type = type;
         }
 
+        /// <summary>
+        /// Gets the image.
+        /// </summary>
         public System.Windows.Media.ImageSource Image
         {
             get
@@ -63,21 +79,49 @@ namespace IDE.Common.Models.Code_Completion
             }
         }
 
+        /// <summary>
+        /// Gets the text. This property is used to filter the list of visible elements.
+        /// </summary>
         public string Text { get; private set; }
 
         // Use this property if you want to show a fancy UIElement in the list.
+        /// <summary>
+        /// The displayed content. This can be the same as 'Text', or a WPF UIElement if
+        /// you want to display rich content.
+        /// </summary>
         public object Content => this.Text;
 
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
         public object Description { private set; get; }
 
+        /// <summary>
+        /// Gets the priority. This property is used in the selection logic. You can use it to prefer selecting those items
+        /// which the user is accessing most frequently.
+        /// </summary>
         public double Priority => 0;
 
+        /// <summary>
+        /// Perform the completion.
+        /// </summary>
+        /// <param name="textArea">The text area on which completion is performed.</param>
+        /// <param name="completionSegment">The text segment that was used by the completion window if
+        /// the user types (segment between CompletionWindow.StartOffset and CompletionWindow.EndOffset).</param>
+        /// <param name="insertionRequestEventArgs">The EventArgs used for the insertion request.
+        /// These can be TextCompositionEventArgs, KeyEventArgs, MouseEventArgs, depending on how
+        /// the insertion was triggered.</param>
         public void Complete(TextArea textArea, ISegment completionSegment,
             EventArgs insertionRequestEventArgs)
         {
             textArea.Document.Replace(completionSegment, this.Text);
         }
 
+        /// <summary>
+        /// Bitmap2s the bitmap image.
+        /// </summary>
+        /// <param name="bitmap">The bitmap.</param>
+        /// <returns></returns>
         public BitmapImage Bitmap2BitmapImage(Bitmap bitmap)
         {
             var bitmapImage = new BitmapImage();

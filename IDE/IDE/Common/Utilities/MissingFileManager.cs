@@ -5,12 +5,24 @@ using System.Xml;
 
 namespace IDE.Common.Utilities
 {
+    /// <summary>
+    /// MissingFileManager class
+    /// </summary>
     public static class MissingFileManager
     {
         #region Constants
 
+        /// <summary>
+        /// The default highlighting path
+        /// </summary>
         public const string DEFAULT_HIGHLIGHTING_PATH = "HighlightingDefinition.xshd";
+        /// <summary>
+        /// The default commands path
+        /// </summary>
         public const string DEFAULT_COMMANDS_PATH = "CommandsDefinition.xml";
+        /// <summary>
+        /// The session path
+        /// </summary>
         public const string SESSION_PATH = "Session.xml";
 
         #endregion
@@ -43,7 +55,10 @@ namespace IDE.Common.Utilities
             CreateCommandsFile();
             CreateHighlightingDefinitionFile();
         }
-        
+
+        /// <summary>
+        /// Creates the session file.
+        /// </summary>
         public static void CreateSessionFile()
         {
             var document = new XmlDocument();

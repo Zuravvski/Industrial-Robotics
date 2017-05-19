@@ -9,20 +9,46 @@ using IDE.Common.Utilities.Extensions;
 
 namespace IDE.Common.Models.Code_Completion
 {
+    /// <summary>
+    /// Intellisense class
+    /// </summary>
     public class Intellisense
     {
+        /// <summary>
+        /// The commands
+        /// </summary>
         private readonly ISet<Command> commands;
+        /// <summary>
+        /// The text area
+        /// </summary>
         private readonly TextArea textArea;
+        /// <summary>
+        /// The completion window
+        /// </summary>
         private CompletionWindow completionWindow;
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is showing.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is showing; otherwise, <c>false</c>.
+        /// </value>
         public bool IsShowing => completionWindow != null && completionWindow.IsVisible;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Intellisense"/> class.
+        /// </summary>
+        /// <param name="textArea">The text area.</param>
         public Intellisense(TextArea textArea)
         {
             commands = Session.Instance.Commands.CommandsMap;
             this.textArea = textArea;
         }
 
+        /// <summary>
+        /// Prepares the specified e.
+        /// </summary>
+        /// <param name="e">The <see cref="TextCompositionEventArgs"/> instance containing the event data.</param>
         public void Prepare(TextCompositionEventArgs e)
         {
             if (completionWindow == null)
@@ -52,6 +78,11 @@ namespace IDE.Common.Models.Code_Completion
             }
         }
 
+        /// <summary>
+        /// Submits the specified e.
+        /// </summary>
+        /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
+        /// <param name="isOneLine">if set to <c>true</c> [is one line].</param>
         public void Submit(KeyEventArgs e, bool isOneLine)
         {
             if (e.Key == Key.Enter)
@@ -69,6 +100,9 @@ namespace IDE.Common.Models.Code_Completion
             }
         }
 
+        /// <summary>
+        /// Shows this instance.
+        /// </summary>
         public void Show()
         {
             var caretPosition = textArea.Caret.Line;
@@ -89,6 +123,9 @@ namespace IDE.Common.Models.Code_Completion
             }
         }
 
+        /// <summary>
+        /// Closes this instance.
+        /// </summary>
         public void Close()
         {
             completionWindow?.Close();

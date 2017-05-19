@@ -7,12 +7,18 @@ using System.Threading.Tasks;
 
 namespace IDE.Common.Utilities
 {
+    /// <summary>
+    /// ProgramContentConverter class
+    /// </summary>
     public static class ProgramContentConverter
     {
 
         #region Fields
 
         //difference between lines, e.g. 5 GC; 10 GO; 15 WH
+        /// <summary>
+        /// The line number addition
+        /// </summary>
         private static int lineNumberAddition = 5;
 
         #endregion
@@ -23,7 +29,9 @@ namespace IDE.Common.Utilities
         /// Removes numbers at begging of line and converts command parameters.
         /// </summary>
         /// <param name="content">Program from manipulator.</param>
-        /// <returns>Program to be displayed to user.</returns>
+        /// <returns>
+        /// Program to be displayed to user.
+        /// </returns>
         public static string ToPC(string content)
         {
             var lines = content.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
@@ -51,7 +59,9 @@ namespace IDE.Common.Utilities
         /// Removes numbers at begging of line and converts command parameters.
         /// </summary>
         /// <param name="content">Program from manipulator.</param>
-        /// <returns>Program to be displayed to user.</returns>
+        /// <returns>
+        /// Program to be displayed to user.
+        /// </returns>
         public static string[] ToPC(string[] content)
         {
             /* What we want to do here is:
@@ -82,7 +92,9 @@ namespace IDE.Common.Utilities
         /// Adds numbers at begging of line and converts command parameters.
         /// </summary>
         /// <param name="content">Program from user.</param>
-        /// <returns>Program to be send to manipulator.</returns>
+        /// <returns>
+        /// Program to be send to manipulator.
+        /// </returns>
         public static string ToManipulator(string content)
         {
             var lines = content.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
@@ -110,7 +122,9 @@ namespace IDE.Common.Utilities
         /// Adds numbers at begging of line and converts command parameters.
         /// </summary>
         /// <param name="content">Program from user.</param>
-        /// <returns>Program to be send to manipulator.</returns>
+        /// <returns>
+        /// Program to be send to manipulator.
+        /// </returns>
         public static string[] ToManipulator(string[] content)
         {
             /* What we want to do here is:

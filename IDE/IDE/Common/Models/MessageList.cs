@@ -3,11 +3,17 @@ using IDE.Common.Models.Value_Objects;
 
 namespace IDE.Common.Models
 {
+    /// <summary>
+    /// MessageList class
+    /// </summary>
     public class MessageList
     {
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageList"/> class.
+        /// </summary>
         public MessageList()
         {
             Messages = new ObservableCollection<Message>();
@@ -20,6 +26,9 @@ namespace IDE.Common.Models
         /// <summary>
         /// Message list.
         /// </summary>
+        /// <value>
+        /// The messages.
+        /// </value>
         public ObservableCollection<Message> Messages { get; }
 
         #endregion

@@ -8,16 +8,32 @@ using IDE.Common.ViewModels.Commands;
 namespace IDE.Common.ViewModels
 {
     /// <summary>
-    ///     A simple view model for configuring theme, font and accent colors.
+    /// A simple view model for configuring theme, font and accent colors.
     /// </summary>
+    /// <seealso cref="IDE.Common.ViewModels.Commands.ObservableObject" />
     public class AppearanceViewModel : ObservableObject
     {
+        /// <summary>
+        /// The font small
+        /// </summary>
         private const string FontSmall = "small";
+        /// <summary>
+        /// The font large
+        /// </summary>
         private const string FontLarge = "large";
 
+        /// <summary>
+        /// The palette metro
+        /// </summary>
         private const string PaletteMetro = "metro";
+        /// <summary>
+        /// The palette wp
+        /// </summary>
         private const string PaletteWP = "windows phone";
 
+        /// <summary>
+        /// The metro accent colors
+        /// </summary>
         private Color[] metroAccentColors = {
             Color.FromRgb(0x33, 0x99, 0xff),   // blue
             Color.FromRgb(0x00, 0xab, 0xa9),   // teal
@@ -31,6 +47,9 @@ namespace IDE.Common.ViewModels
         };
 
         // 20 accent colors from Windows Phone 8
+        /// <summary>
+        /// The wp accent colors
+        /// </summary>
         private readonly Color[] wpAccentColors =
         {
             Color.FromRgb(0xa4, 0xc4, 0x00), // lime
@@ -55,19 +74,46 @@ namespace IDE.Common.ViewModels
             Color.FromRgb(0x87, 0x79, 0x4e) // taupe
         };
 
+        /// <summary>
+        /// The selected palette
+        /// </summary>
         private string selectedPalette = PaletteWP;
 
+        /// <summary>
+        /// The selected accent color
+        /// </summary>
         private Color selectedAccentColor;
+        /// <summary>
+        /// The selected theme
+        /// </summary>
         private Link selectedTheme;
+        /// <summary>
+        /// The selected font size
+        /// </summary>
         private string selectedFontSize;
+        /// <summary>
+        /// The theme color
+        /// </summary>
         private Brush themeColor;
 
         // Sigleton
+        /// <summary>
+        /// The instance
+        /// </summary>
         private static readonly Lazy<AppearanceViewModel> instance =
             new Lazy<AppearanceViewModel>(() => new AppearanceViewModel());
 
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
         public static AppearanceViewModel Instance => instance.Value;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AppearanceViewModel"/> class.
+        /// </summary>
         protected AppearanceViewModel()
         {
             // add the default themes
@@ -102,6 +148,9 @@ namespace IDE.Common.ViewModels
         }
 
 
+        /// <summary>
+        /// Synchronizes the color of the theme and.
+        /// </summary>
         private void SyncThemeAndColor()
         {
             // synchronizes the selected viewmodel theme with the actual theme used by the appearance manager.
@@ -111,29 +160,64 @@ namespace IDE.Common.ViewModels
             SelectedAccentColor = AppearanceManager.Current.AccentColor;
         }
 
+        /// <summary>
+        /// Called when [appearance manager property changed].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
         private void OnAppearanceManagerPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "ThemeSource" || e.PropertyName == "AccentColor")
                 SyncThemeAndColor();
         }
 
+        /// <summary>
+        /// Gets the themes.
+        /// </summary>
+        /// <value>
+        /// The themes.
+        /// </value>
         public LinkCollection Themes { get; } = new LinkCollection();
 
+        /// <summary>
+        /// Gets the font sizes.
+        /// </summary>
+        /// <value>
+        /// The font sizes.
+        /// </value>
         public string[] FontSizes
         {
             get { return new[] {FontSmall, FontLarge}; }
         }
 
+        /// <summary>
+        /// Gets the palettes.
+        /// </summary>
+        /// <value>
+        /// The palettes.
+        /// </value>
         public string[] Palettes
         {
             get { return new string[] {PaletteMetro, PaletteWP}; }
         }
 
+        /// <summary>
+        /// Gets the accent colors.
+        /// </summary>
+        /// <value>
+        /// The accent colors.
+        /// </value>
         public Color[] AccentColors
         {
             get { return selectedPalette == PaletteMetro ? metroAccentColors : wpAccentColors; }
         }
 
+        /// <summary>
+        /// Gets or sets the selected palette.
+        /// </summary>
+        /// <value>
+        /// The selected palette.
+        /// </value>
         public string SelectedPalette
         {
             get { return selectedPalette; }
@@ -149,6 +233,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the selected theme.
+        /// </summary>
+        /// <value>
+        /// The selected theme.
+        /// </value>
         public Link SelectedTheme
         {
             get { return selectedTheme; }
@@ -165,6 +255,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the size of the selected font.
+        /// </summary>
+        /// <value>
+        /// The size of the selected font.
+        /// </value>
         public string SelectedFontSize
         {
             get { return selectedFontSize; }
@@ -180,6 +276,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the color of the selected accent.
+        /// </summary>
+        /// <value>
+        /// The color of the selected accent.
+        /// </value>
         public Color SelectedAccentColor
         {
             get { return selectedAccentColor; }
@@ -195,6 +297,12 @@ namespace IDE.Common.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the color of the theme.
+        /// </summary>
+        /// <value>
+        /// The color of the theme.
+        /// </value>
         public Brush ThemeColor
         {
             get { return themeColor; }

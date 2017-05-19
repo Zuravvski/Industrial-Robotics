@@ -12,8 +12,16 @@ using System.Windows.Media.Imaging;
 
 namespace IDE.Common.ViewModels.Converters
 {
+    /// <summary>
+    /// BitmapToBitmapImage class
+    /// </summary>
     public class BitmapToBitmapImage
     {
+        /// <summary>
+        /// Converts the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static BitmapImage Convert(Bitmap value)
         {
             Bitmap bitmap = value as Bitmap;

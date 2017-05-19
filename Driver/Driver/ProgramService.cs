@@ -77,9 +77,14 @@ namespace Driver
             if (!manipulator.Connected) return;
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 manipulator.Number(remoteProgram.Name);
-                await Task.Delay(1000);
+                await Task.Delay(1000, cancellationToken);
                 manipulator.Run();
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancellation does not require handling as method returns immediately after catch clause 
             }
             catch (Exception ex)
             {
@@ -156,7 +161,7 @@ namespace Driver
                     break;
                 }
 
-                programs.Add(await DownloadProgram(remotePrograms[i]));
+                programs.Add(await DownloadProgram(remotePrograms[i], cancellationToken));
                 StepUpdate?.Invoke(this, new NotificationEventArgs("Downloading programs", i + 1,
                     remotePrograms.Count, EventType.PROGRAM_DOWNLOADED));
             }

@@ -97,6 +97,7 @@ namespace IDE.Common.ViewModels
         /// The kinect handler
         /// </summary>
         private KinectHandler kinectHandler;
+        private DialogHost uploadDialog;
 
         #endregion
 
@@ -404,12 +405,12 @@ namespace IDE.Common.ViewModels
         private async void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
         {
             int progress = (int)(e.CurrentStep / (float)e.NumberOfSteps * 100);
-            var dialog = CreateDialogHost(false, e.ActionName, progress);
+            CreateDialogHost(false, e.ActionName, progress);
 
             if (e.CurrentStep == e.NumberOfSteps)
             {
-                await Task.Delay(2000, dialog.CancellationToken);
-                Refresh(dialog);
+                await Task.Delay(2000, uploadDialog.CancellationToken);
+                Refresh(null);
             }
         }
 
@@ -428,6 +429,13 @@ namespace IDE.Common.ViewModels
             if (isIndeterminate)
             {
                 message = "Just a moment...";   //default indeterminate dialog 
+
+                DialogHost = new DialogHost()
+                {
+                    CurrentAction = currentAction,
+                    CurrentProgress = progress,
+                    Message = message,
+                };
             }
             else
             {
@@ -441,14 +449,13 @@ namespace IDE.Common.ViewModels
                     message = "Get ready. We are almost done.";
 
                 progress = currentProgress.ToString() + "%";
+
+                uploadDialog.CurrentAction = currentAction;
+                uploadDialog.CurrentProgress = progress;
+                uploadDialog.Message = message;
+                DialogHost = uploadDialog;
             }
 
-            DialogHost = new DialogHost()
-            {
-                CurrentAction = currentAction,
-                CurrentProgress = progress,
-                Message = message,
-            };
             return DialogHost;
         }
 
@@ -475,7 +482,7 @@ namespace IDE.Common.ViewModels
 
 
         /// <summary>
-        /// Occurs after user triggers upload event.
+        /// Occurs after user triggers refresh event.
         /// </summary>
         /// <param name="obj">The object.</param>
         private async void Refresh(object obj)
@@ -490,13 +497,13 @@ namespace IDE.Common.ViewModels
             {
                 host = CreateDialogHost(true, "Refreshing program list");
             }
-            RemotePrograms.Clear();
+            RemotePrograms?.Clear();
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo(host.CancellationToken)));
             DialogHostIsOpen = false;
         }
 
         /// <summary>
-        /// Occurs after user triggers upload event.
+        /// Occurs after user triggers download event.
         /// </summary>
         /// <param name="obj">The object.</param>
         private async void Download(object obj)
@@ -558,11 +565,16 @@ namespace IDE.Common.ViewModels
                 var program = new Program(name) {Content = content};
 
                 DialogHostIsOpen = true;
-                var host = CreateDialogHost(false, $"Uploading program");
+                uploadDialog = new DialogHost();
+                uploadDialog.CurrentAction = "Preparing upload";
+                uploadDialog.Message = "Please wait...";
+                uploadDialog.CurrentProgress = "0%";
+                DialogHost = uploadDialog;  //only temporary
+
                 var contentWithLineNumbers = ProgramContentConverter.ToManipulator(program.Content);
                 program.Content = contentWithLineNumbers;
                 
-                await programService.UploadProgram(program, host.CancellationToken);
+                await programService.UploadProgram(program, uploadDialog.CancellationToken);
             }
         }
 

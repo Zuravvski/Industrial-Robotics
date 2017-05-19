@@ -197,15 +197,7 @@ namespace Driver
                 for (var i = 0; i < lines.Count; i++)
                 {
                     await Task.Delay(500, cancellationToken);
-
-                    try
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        break;
-                    }
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     manipulator.SendCustom(lines[i]);
                     StepUpdate?.Invoke(this, new NotificationEventArgs("Uploading program", i + 1,

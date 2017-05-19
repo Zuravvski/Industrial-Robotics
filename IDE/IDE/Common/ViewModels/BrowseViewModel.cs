@@ -404,12 +404,12 @@ namespace IDE.Common.ViewModels
         private async void ProgramService_StepUpdate(object sender, NotificationEventArgs e)
         {
             int progress = (int)(e.CurrentStep / (float)e.NumberOfSteps * 100);
-            CreateDialogHost(false, e.ActionName, progress);
+            var dialog = CreateDialogHost(false, e.ActionName, progress);
 
             if (e.CurrentStep == e.NumberOfSteps)
             {
-                await Task.Delay(2000);
-                Refresh(null);
+                await Task.Delay(2000, dialog.CancellationToken);
+                Refresh(dialog);
             }
         }
 
@@ -481,8 +481,16 @@ namespace IDE.Common.ViewModels
         private async void Refresh(object obj)
         {
             DialogHostIsOpen = true;
-            var host = CreateDialogHost(true, "Refreshing program list");
-            RemotePrograms = null;
+            DialogHost host;
+            if(obj != null && obj is DialogHost)
+            {
+                host = obj as DialogHost;
+            }
+            else
+            {
+                host = CreateDialogHost(true, "Refreshing program list");
+            }
+            RemotePrograms.Clear();
             RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo(host.CancellationToken)));
             DialogHostIsOpen = false;
         }

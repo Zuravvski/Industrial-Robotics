@@ -48,7 +48,7 @@
     <Description>Reads the values of the internal register, hand check state, and general output state.</Description>
   </Command>
 
-  <Command name="Draw straight" content="DS" regex="^\s*DS\s+(\-?\s*\d+\s*,\s*){2}\-?\s*\d+\s*$" type="Movement">
+  <Command name="Draw straight" content="DS" regex="^\s*DS\s+(\-?\s*\d+\s*(\.\s*\d{1,2}\s*)?,\s*){2}\-?\s*\d+\s*(\.\s*\d{1,2}\s*)?$" type="Movement">
     <Description>Moves the end of the hand to a position away from the current position by the distance specified in X, Y, and Z directions. (Linear interpolation)</Description>
   </Command>
 
@@ -180,7 +180,7 @@
     <Description>Specify program override.</Description>
   </Command>
 
-  <Command name="Position define" content="PD" regex="^\s*PD\s+([0-9]|[1-9][0-9]|[1-9][0-9]{2})((\s*(,\s*\-?\s*\d{1,4})?(\.\d{1,2})?\s*)|\s*,\s*){3}((,\s*\-?|s*\d+\s*|\s*,\s*){2})?(,\s*(R|L)\s*|\s*,\s*)?(,\s*(A|B)\s*|\s*,\s*)?(,\s*(O|C)\s*|\s*,\s*)?$" type="Programming">
+  <Command name="Position define" content="PD" regex="^\s*PD\s+([0-9]|[1-9][0-9]|[1-9][0-9]{2})((\s*(,\s*\-?\s*\d{1,4})?(\.\d{1,2})?\s*)|\s*,\s*){3}((,\s*\-?\s*\d+\s*(\.\s*\d{1,2})?\s*|\s*,\s*){3})?(,\s*(R|L)\s*|\s*,\s*)?(,\s*(A|B)\s*|\s*,\s*)?(,\s*(O|C)\s*|\s*,\s*)?$" type="Programming">
     <Description>Defines the coordinates (location and angle) of the specified position.</Description>
   </Command>
 
@@ -208,6 +208,10 @@
     <Description>Adds each coordinate value of position (b) to each coordinate value of position (a) and defines it again as a new position.</Description>
   </Command>
 
+  <Command name="Step read" content="STR" regex="^\s*STR\s+([1-9]|[1-9][0-9]|[1-9][0-9]{2})\s*)$" type="Programming">
+    <Description>Reads the content of the specified step number, or the stopping step number. (using RS232-C)</Description>
+  </Command>
+
   <Command name="Speed" content="SP" regex="^\s*SP\s+([1-9]|[1-2][0-9]|30)\s*$" type="Programming">
     <Description>Sets the operating speed, acceleration or deceleration time and the continuous path setting.</Description>
   </Command>
@@ -220,7 +224,7 @@
     <Description>Reads the software version of the system ROM.</Description>
   </Command>
 
-  <Command name="Where" content="WH" regex="^\s*WH\s*$" type="Information">
+  <Command name="Where" content="WH" regex=" ^\s*WH\s*$" type="Information">
     <Description>Reads the coordinates of the current position and the open or close state of the hand. (Using RS-232C)</Description>
   </Command>
 

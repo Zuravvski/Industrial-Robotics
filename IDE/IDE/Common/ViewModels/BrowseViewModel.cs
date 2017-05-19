@@ -63,7 +63,7 @@ namespace IDE.Common.ViewModels
 
             MessageList = new MessageList();
             Settings = DriverSettings.CreateDefaultSettings();
-            KinectHandler = new KinectHandler();
+            //KinectHandler = new KinectHandler();
             
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
@@ -318,9 +318,9 @@ namespace IDE.Common.ViewModels
         private async void Refresh(object obj)
         {
             DialogHostIsOpen = true;
-            CreateDialogHost(true, "Refreshing program list");
+            var host = CreateDialogHost(true, "Refreshing program list");
             RemotePrograms = null;
-            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo()));
+            RemotePrograms = new ObservableCollection<RemoteProgram>(new List<RemoteProgram>(await programService.ReadProgramInfo(host.CancellationToken)));
             DialogHostIsOpen = false;
         }
 
@@ -338,8 +338,8 @@ namespace IDE.Common.ViewModels
             if (dialog.ShowDialog().GetValueOrDefault(false))
             {
                 DialogHostIsOpen = true;
-                CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}...");
-                var program = await programService.DownloadProgram(SelectedRemoteProgram);
+                var host = CreateDialogHost(true, $"Downloading {SelectedRemoteProgram.Name}");
+                var program = await programService.DownloadProgram(SelectedRemoteProgram, host.CancellationToken);
                 var programWithoutLineNumbers = ProgramContentConverter.ToPC(program.Content);
                 program.Content = programWithoutLineNumbers;
                 File.WriteAllText(dialog.FileName, program.Content);
@@ -355,7 +355,8 @@ namespace IDE.Common.ViewModels
         private async void Delete(object obj)
         {
             DialogHostIsOpen = true;
-            programService.DeleteProgram(SelectedRemoteProgram.Name).RunSynchronously();
+            var host = CreateDialogHost(true, $"Deleting {SelectedRemoteProgram.Name}");
+            programService.DeleteProgram(SelectedRemoteProgram.Name, host.CancellationToken).RunSynchronously();
             await Task.Delay(2000);
             Refresh(null);
         }
@@ -384,11 +385,11 @@ namespace IDE.Common.ViewModels
                 var program = new Program(name) {Content = content};
 
                 DialogHostIsOpen = true;
-                var dialogHost = CreateDialogHost(false, $"Uploading program");
+                var host = CreateDialogHost(false, $"Uploading program");
                 var contentWithLineNumbers = ProgramContentConverter.ToManipulator(program.Content);
                 program.Content = contentWithLineNumbers;
                 
-                await programService.UploadProgram(program, dialogHost.CancellationToken);
+                await programService.UploadProgram(program, host.CancellationToken);
             }
         }
 

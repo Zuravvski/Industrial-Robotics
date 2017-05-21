@@ -180,7 +180,7 @@ namespace Driver
         /// <summary>
         /// Sends program to manipulator
         /// </summary>
-        /// <param name="program">Program to upload to manipulator</param>
+        /// <param name="program">Program to be uploaded to manipulator</param>
         /// <param name="cancellationToken">Defines task cancellation operation</param>
         public async Task UploadProgram(Program program, CancellationToken cancellationToken)
         {

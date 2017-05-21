@@ -55,7 +55,7 @@ namespace IDE.Common.Kinect
                 MessageBox.Show("No kinect detected!");
                 return;
             }
-
+            
             kinectSensor = KinectSensor.KinectSensors[0];
             KinectSensor.KinectSensors.StatusChanged += KinectSensors_StatusChanged;
             skeletons = new Skeleton[kinectSensor.SkeletonStream.FrameSkeletonArrayLength];

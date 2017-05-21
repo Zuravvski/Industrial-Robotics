@@ -279,7 +279,7 @@
         <!--#region KINECT STUFF-->
 
             <Border Grid.Column="1" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1" Grid.ColumnSpan="2" Grid.RowSpan="1">
-                <Grid Visibility="Collapsed">
+                <Grid>
                     <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Center" KinectSensorChooser="{Binding KinectHandler.KinectSensorChooserUI}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                         <Image Source="{Binding KinectHandler.ImageSource}"/>

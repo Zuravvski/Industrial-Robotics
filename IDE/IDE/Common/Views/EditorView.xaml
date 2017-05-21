@@ -101,7 +101,7 @@
 
         <StackPanel Orientation="Horizontal">
 
-            <materialDesign:PopupBox Background="{DynamicResource ButtonBorder}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="File" BorderBrush="#DDDDDD" Margin="30,0,0,0">
+            <materialDesign:PopupBox PopupMode="MouseOver" Background="{DynamicResource ButtonBorder}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="File" BorderBrush="#DDDDDD" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
                     <materialDesign:PackIcon Kind="File" Width="24" Height="24" Foreground="{DynamicResource WindowText}"/>
                 </materialDesign:PopupBox.ToggleContent>
@@ -115,7 +115,7 @@
                 </StackPanel>
             </materialDesign:PopupBox>
 
-            <materialDesign:PopupBox Background="{DynamicResource ButtonBorder}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="Save" BorderBrush="#DDDDDD" Margin="30,0,0,0">
+            <materialDesign:PopupBox PopupMode="MouseOver" Background="{DynamicResource ButtonBorder}" PlacementMode="BottomAndAlignCentres" Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" BorderThickness="2" ToolTip="Save" BorderBrush="#DDDDDD" Margin="30,0,0,0">
                 <materialDesign:PopupBox.ToggleContent>
                     <materialDesign:PackIcon Kind="Floppy" Width="24" Height="24" Foreground="{DynamicResource WindowText}"/>
                 </materialDesign:PopupBox.ToggleContent>

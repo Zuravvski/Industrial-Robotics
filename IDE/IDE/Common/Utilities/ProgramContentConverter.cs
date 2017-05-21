@@ -78,7 +78,8 @@ namespace IDE.Common.Utilities
                 if (Regex.IsMatch(content[i], @"^\s*GS\s+([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9])\s*$"))
                 {
                     //GS command found so replace it with corresponding number || newNumber = (oldNumber + difference - 1)/difference
-                    var commandParameterToReplace = ((Convert.ToInt32(new string(content[i].Where(char.IsDigit).ToArray())) + lineNumberAddition - 1)/lineNumberAddition).ToString();
+                    var commandParameterToReplace = ((Convert.ToInt32(new string(content[i].Where(char.IsDigit).ToArray())) +
+                        lineNumberAddition - 1)/lineNumberAddition).ToString();
                     content[i] = Regex.Replace(content[i], @"([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9])\s*$", commandParameterToReplace);
                 }
             }
@@ -141,7 +142,8 @@ namespace IDE.Common.Utilities
                 if (Regex.IsMatch(content[i], @"^\s*GS\s+([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9])\s*$"))
                 {
                     //GS command found so replace it with corresponding number || newNumber = oldNumber * difference - difference + 1
-                    var commandParameterToReplace = (Convert.ToInt32(new string(content[i].Where(char.IsDigit).ToArray())) * lineNumberAddition - lineNumberAddition + 1).ToString();
+                    var commandParameterToReplace = (Convert.ToInt32(new string(content[i].Where(char.IsDigit).ToArray())) *
+                        lineNumberAddition - lineNumberAddition + 1).ToString();
                     content[i] = Regex.Replace(content[i], @"([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9])\s*$", commandParameterToReplace);
                 }
                 content[i] = lineNumber.ToString() + " " + content[i];

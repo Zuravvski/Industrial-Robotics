@@ -24,7 +24,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\IDE.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -111,6 +112,7 @@
     </ApplicationDefinition>
     <Compile Include="Common\Kinect\InteractionClient.cs" />
     <Compile Include="Common\Kinect\KinectHandler.cs" />
+    <Compile Include="Common\Kinect\Marker.cs" />
     <Compile Include="Common\Models\AboutModel.cs" />
     <Compile Include="Common\Models\AvalonEditBehavior.cs" />
     <Compile Include="Common\Models\Code Completion\CompletionData.cs" />

@@ -282,11 +282,11 @@
 
                     <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Center" KinectSensorChooser="{Binding KinectHandler.KinectSensorChooserUI}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Grid>
+                        <Canvas Width="640" Height="480">
                             <Image Source="{Binding KinectHandler.ImageSource}" Width="640" Height="480"/>
-                            <Ellipse Name="EllipseLeft" Stroke="Red" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Margin="{Binding KinectHandler.LeftHandMarker.Margin}" Visibility="Hidden"/>
-                            <Ellipse Name="EllipseRight" Stroke="Red" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Margin="{Binding KinectHandler.RightHandMarker.Margin}"/>
-                        </Grid>
+                            <Ellipse Stroke="{Binding KinectHandler.LeftHandMarker.Color}" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Canvas.Left="{Binding KinectHandler.LeftHandMarker.CanvasLeft}" Canvas.Top="{Binding KinectHandler.LeftHandMarker.CanvasTop}" Visibility="{Binding KinectHandler.LeftHandMarker.Visibility}"/>
+                            <Ellipse Stroke="{Binding KinectHandler.RightHandMarker.Color}" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Canvas.Left="{Binding KinectHandler.RightHandMarker.CanvasLeft}" Canvas.Top="{Binding KinectHandler.RightHandMarker.CanvasTop}" Visibility="{Binding KinectHandler.RightHandMarker.Visibility}"/>
+                        </Canvas>
                         <StackPanel>
                             <CheckBox Content="Seated mode?" IsChecked="{Binding KinectHandler.SeatedModeIsChecked}"/>
                             <StackPanel Orientation="Horizontal">

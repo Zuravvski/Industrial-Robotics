@@ -122,7 +122,6 @@ namespace IDE.Common.ViewModels
             MessageList = new MessageList();
             Settings = DriverSettings.CreateDefaultSettings();
             KinectHandler = new KinectHandler();
-            
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
         }

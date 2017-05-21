@@ -277,12 +277,16 @@
         <!--#endregion-->
 
         <!--#region KINECT STUFF-->
-
             <Border Grid.Column="1" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1" Grid.ColumnSpan="2" Grid.RowSpan="1">
                 <Grid>
+
                     <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Center" KinectSensorChooser="{Binding KinectHandler.KinectSensorChooserUI}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Image Source="{Binding KinectHandler.ImageSource}"/>
+                        <Grid>
+                            <Image Source="{Binding KinectHandler.ImageSource}" Width="640" Height="480"/>
+                            <Ellipse Name="EllipseLeft" Stroke="Red" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Margin="{Binding KinectHandler.LeftHandMarker.Margin}" Visibility="Hidden"/>
+                            <Ellipse Name="EllipseRight" Stroke="Red" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Margin="{Binding KinectHandler.RightHandMarker.Margin}"/>
+                        </Grid>
                         <StackPanel>
                             <CheckBox Content="Seated mode?" IsChecked="{Binding KinectHandler.SeatedModeIsChecked}"/>
                             <StackPanel Orientation="Horizontal">

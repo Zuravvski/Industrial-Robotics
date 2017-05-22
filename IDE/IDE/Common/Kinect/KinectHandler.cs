@@ -46,6 +46,9 @@ namespace IDE.Common.Kinect
         private ConcurrentQueue<string> bufferedCommands;
         private float sumX, sumY, sumZ;
 
+        private bool sample;
+        private const int sampleTime = 400;
+
         #endregion
 
         #region Constructor
@@ -53,8 +56,11 @@ namespace IDE.Common.Kinect
         public KinectHandler()
         {
             lastPosition = new SkeletonPoint() { X = 0, Y = 0, Z = 0 };
+            LeftHandMarker = new Marker();
+            RightHandMarker = new Marker();
             InitializeKinect();
             ResetSums();
+            StartKinect(null);
         }
 
         #endregion
@@ -230,7 +236,7 @@ namespace IDE.Common.Kinect
 
         public void StartKinect(E3JManipulator manipulator)
         {
-            Manipulator = manipulator;
+            //Manipulator = manipulator;
             bufferedCommands = new ConcurrentQueue<string>();
             consumerThread = new Thread(MessageConsumer) { IsBackground = true };
             consumerThread.Start();
@@ -240,9 +246,10 @@ namespace IDE.Common.Kinect
         {
             var lastGripCommand = string.Empty;
             var lastMoveCommand = string.Empty;
-            while (Manipulator.Connected)
+            while (true)
             {
-                Thread.Sleep(250);
+                Thread.Sleep(sampleTime);
+                sample = true;
                 string command;
                 if (bufferedCommands.TryDequeue(out command))
                 {
@@ -250,7 +257,7 @@ namespace IDE.Common.Kinect
                     {
                         if (!lastMoveCommand.Equals(command))
                         {
-                            Manipulator.SendCustom(command);
+                            //Manipulator.SendCustom(command);
                             Debug.WriteLine(command);
                         }
                         lastMoveCommand = command;
@@ -259,8 +266,7 @@ namespace IDE.Common.Kinect
                     {
                         if (!lastGripCommand.Equals(command))
                         {
-                            Manipulator.SendCustom(command);
-                            Thread.Sleep(100);
+                            //Manipulator.SendCustom(command);
                             Debug.WriteLine(command);
                         }
                         lastGripCommand = command;
@@ -286,6 +292,10 @@ namespace IDE.Common.Kinect
 
             //select our user and get his data
             var userInfo = userInfos.FirstOrDefault(uInfo => uInfo.SkeletonTrackingId != 0);
+
+            if (userInfo == null)
+                return;
+
             var userID = userInfo.SkeletonTrackingId;
             hands = userInfo.HandPointers;
 
@@ -313,6 +323,8 @@ namespace IDE.Common.Kinect
                 NotifyPropertyChanged("LeftHandMarker");
                 RightHandMarker.UpdateUI(kinectSensor, rightHandJoint, leftHandEvent, rightHandEvent);
                 NotifyPropertyChanged("RightHandMarker");
+
+                
                 
                 const int multiplication = 100; //tbd
 
@@ -332,11 +344,37 @@ namespace IDE.Common.Kinect
                         if (!bufferedCommands.Contains("GO"))
                             bufferedCommands.Enqueue("GO");
                     }
-                    sumX += deltaX;
-                    sumY += deltaY;
-                    sumZ += deltaZ;
 
-                    lastPosition = rightHandJoint.Position;
+                    //summing
+                    //sumX += deltaX;
+                    //sumY += deltaY;
+                    //sumZ += deltaZ;
+
+                    //if (sample)
+                    //{
+                    //    var moveCommand = $"DS {(int)sumZ}, {(int)sumX}, {(int)sumY}";
+                    //    if (!bufferedCommands.Contains(moveCommand))
+                    //        bufferedCommands.Enqueue(moveCommand);
+
+                    //    sample = false;
+                    //}
+
+                    if (sample)
+                    {
+                        deltaX = (rightHandJoint.Position.X - lastPosition.X) * multiplication;
+                        deltaY = (rightHandJoint.Position.Y - lastPosition.Y) * multiplication;
+                        deltaZ = (rightHandJoint.Position.Z - lastPosition.Z) * multiplication;
+
+                        var moveCommand = $"DS {(int)(deltaZ)}, {(int)(deltaX)}, {(int)(deltaY)}";
+                        if (!bufferedCommands.Contains(moveCommand))
+                            bufferedCommands.Enqueue(moveCommand);
+
+                        lastPosition = rightHandJoint.Position;
+                        sample = false;
+                    }
+
+
+                    //lastPosition = rightHandJoint.Position;
                 }
             }
         }

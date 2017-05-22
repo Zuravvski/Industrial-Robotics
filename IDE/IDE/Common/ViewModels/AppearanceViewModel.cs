@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
 using FirstFloor.ModernUI.Presentation;
+using IDE.Common.Utilities;
 using IDE.Common.ViewModels.Commands;
 
 namespace IDE.Common.ViewModels
@@ -155,9 +156,6 @@ namespace IDE.Common.ViewModels
         {
             // synchronizes the selected viewmodel theme with the actual theme used by the appearance manager.
             SelectedTheme = Themes.FirstOrDefault(l => l.Source.Equals(AppearanceManager.Current.ThemeSource));
-
-            // and make sure accent color is up-to-date
-            SelectedAccentColor = AppearanceManager.Current.AccentColor;
         }
 
         /// <summary>
@@ -198,7 +196,7 @@ namespace IDE.Common.ViewModels
         /// </value>
         public string[] Palettes
         {
-            get { return new string[] {PaletteMetro, PaletteWP}; }
+            get { return new[] {PaletteMetro, PaletteWP}; }
         }
 
         /// <summary>
@@ -227,8 +225,7 @@ namespace IDE.Common.ViewModels
                 {
                     selectedPalette = value;
                     NotifyPropertyChanged("AccentColors");
-
-                    SelectedAccentColor = AccentColors.FirstOrDefault();
+                    //SelectedAccentColor = AccentColors.FirstOrDefault();
                 }
             }
         }
@@ -252,6 +249,7 @@ namespace IDE.Common.ViewModels
                     // and update the actual theme
                     AppearanceManager.Current.ThemeSource = value.Source;
                 }
+                Session.Instance.SubmitTheme(selectedTheme);
             }
         }
 
@@ -293,6 +291,7 @@ namespace IDE.Common.ViewModels
                     NotifyPropertyChanged("SelectedAccentColor");
                     AppearanceManager.Current.AccentColor = value;
                     ThemeColor = new SolidColorBrush(value);
+                    Session.Instance.SubmitAccentColor(selectedAccentColor);
                 }
             }
         }

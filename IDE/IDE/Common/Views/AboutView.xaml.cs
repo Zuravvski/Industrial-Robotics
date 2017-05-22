@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using IDE.Common.Utilities;
 using IDE.Common.ViewModels;
 
 namespace IDE.Common.Views
@@ -11,7 +12,8 @@ namespace IDE.Common.Views
         public About()
         {
             InitializeComponent();
-            this.DataContext = new AboutViewModel();
+            DataContext = new AboutViewModel();
+            Session.Instance.InitializeColors();
         }
     }
 }

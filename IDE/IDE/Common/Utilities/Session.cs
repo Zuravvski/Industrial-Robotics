@@ -4,9 +4,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 using System.Xml;
 using Driver;
+using FirstFloor.ModernUI.Presentation;
 using IDE.Common.Models;
+using IDE.Common.ViewModels;
 
 namespace IDE.Common.Utilities
 {
@@ -28,6 +31,9 @@ namespace IDE.Common.Utilities
         /// The highlighting parameter
         /// </summary>
         private const string HIGHLIGHTING_PARAM = "HighlightingMap";
+
+        private const string THEME_PARAM = "Theme";
+        private const string ACCENT_COLOR_PARAM = "AccentColor";
         #endregion
 
         #region Settings
@@ -91,6 +97,48 @@ namespace IDE.Common.Utilities
             // Loading highlighting
             var highlightingMapParam = root.Attributes["HighlightingMap"];
             Highlighting = highlightingMapParam != null ? new Highlighting(highlightingMapParam.Value) : new Highlighting();
+        }
+
+        public void InitializeColors()
+        {
+            document.Load(MissingFileManager.SESSION_PATH);
+            var root = document.SelectSingleNode("/Session");
+
+            // Loading last theme
+            var themeParam = root.Attributes["Theme"];
+            if (!string.IsNullOrWhiteSpace(themeParam?.Value))
+            {
+                var theme = AppearanceViewModel.Instance.Themes.FirstOrDefault(t => t.DisplayName.Equals(themeParam.Value));
+                if (theme != null)
+                {
+                    AppearanceViewModel.Instance.SelectedTheme = theme;
+                }
+            }
+
+
+            // Loading last accent color
+            var accentColorParam = root.Attributes["AccentColor"];
+            if (!string.IsNullOrWhiteSpace(accentColorParam?.Value))
+            {
+                try
+                {
+                    var accentColor = (Color)ColorConverter.ConvertFromString(accentColorParam.Value);
+                    if (new List<Color>(AppearanceViewModel.Instance.AccentColors).Contains(accentColor))
+                    {
+                        AppearanceViewModel.Instance.SelectedAccentColor = accentColor;
+                    }
+                    else
+                    {
+                        AppearanceViewModel.Instance.SelectedAccentColor = (Color)ColorConverter.ConvertFromString("#FF825A2C");
+                        SubmitAccentColor(AppearanceViewModel.Instance.SelectedAccentColor);
+                    }   
+                }
+                catch
+                {
+                    AppearanceViewModel.Instance.SelectedAccentColor = (Color)ColorConverter.ConvertFromString("#FF825A2C");
+                    SubmitAccentColor(AppearanceViewModel.Instance.SelectedAccentColor);
+                }
+            }
         }
 
         /// <summary>
@@ -205,6 +253,35 @@ namespace IDE.Common.Utilities
             commandsMapParam = document.CreateAttribute(COMMANDS_PARAM);
             commandsMapParam.Value = path;
             root.Attributes.Append(commandsMapParam);
+            document.Save(MissingFileManager.SESSION_PATH);
+        }
+
+        public void SubmitAccentColor(Color accentColor)
+        {
+            var root = document.SelectSingleNode("Session");
+            var themeParam = root.Attributes[ACCENT_COLOR_PARAM];
+            if (themeParam != null)
+            {
+                root.Attributes.Remove(themeParam);
+            }
+            themeParam = document.CreateAttribute(ACCENT_COLOR_PARAM);
+            themeParam.Value = accentColor.ToString();
+            root.Attributes.Append(themeParam);
+            document.Save(MissingFileManager.SESSION_PATH);
+        }
+
+        public void SubmitTheme(Link theme)
+        {
+            var root = document.SelectSingleNode("Session");
+            var themeParam = root.Attributes[THEME_PARAM];
+            if (themeParam != null)
+            {
+                root.Attributes.Remove(themeParam);
+            }
+            
+            themeParam = document.CreateAttribute(THEME_PARAM);
+            themeParam.Value = theme.DisplayName;
+            root.Attributes.Append(themeParam);
             document.Save(MissingFileManager.SESSION_PATH);
         }
     }

@@ -1,9 +1,7 @@
 ﻿using IDE.Common.ViewModels.Commands;
 using System.Windows.Input;
-using System;
 using System.Diagnostics;
 using IDE.Common.Utilities;
-using System.IO;
 
 namespace IDE.Common.ViewModels
 {
@@ -28,6 +26,7 @@ namespace IDE.Common.ViewModels
         public HomeViewModel()
         {
             DeclareCommands();
+            Session.Instance.InitializeColors();
         }
 
         #endregion

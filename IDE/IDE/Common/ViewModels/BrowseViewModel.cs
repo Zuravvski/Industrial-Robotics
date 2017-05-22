@@ -13,7 +13,6 @@ using System.IO;
 using System.IO.Ports;
 using Microsoft.Win32;
 using IDE.Common.Utilities;
-using System.Threading;
 using System.Threading.Tasks;
 using IDE.Common.Kinect;
 
@@ -859,7 +858,7 @@ namespace IDE.Common.ViewModels
         /// Connections the specified object.
         /// </summary>
         /// <param name="obj">The object.</param>
-        private async void Connection(object obj)
+        private void Connection(object obj)
         {
             if (null != obj)
             {
@@ -882,6 +881,7 @@ namespace IDE.Common.ViewModels
                     Manipulator.Port.ConnectionStatusChanged += Port_ConnectionStatusChanged;
                     Manipulator.Connect(SelectedCOMPort);
                     Manipulator.Port.DataReceived += Port_DataReceived;
+                    kinectHandler.StartKinect(Manipulator);
                 }
             }
         }

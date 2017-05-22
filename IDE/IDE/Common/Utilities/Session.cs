@@ -123,19 +123,19 @@ namespace IDE.Common.Utilities
                 try
                 {
                     var accentColor = (Color)ColorConverter.ConvertFromString(accentColorParam.Value);
-                    if (new List<Color>(AppearanceViewModel.Instance.AccentColors).Contains(accentColor))
+                    if (AppearanceViewModel.Instance.AccentColors.Contains(accentColor))
                     {
                         AppearanceViewModel.Instance.SelectedAccentColor = accentColor;
                     }
                     else
                     {
-                        AppearanceViewModel.Instance.SelectedAccentColor = (Color)ColorConverter.ConvertFromString("#FF825A2C");
+                        AppearanceViewModel.Instance.SelectedAccentColor = (Color)ColorConverter.ConvertFromString("#FF6A00FF");
                         SubmitAccentColor(AppearanceViewModel.Instance.SelectedAccentColor);
                     }   
                 }
                 catch
                 {
-                    AppearanceViewModel.Instance.SelectedAccentColor = (Color)ColorConverter.ConvertFromString("#FF825A2C");
+                    AppearanceViewModel.Instance.SelectedAccentColor = (Color)ColorConverter.ConvertFromString("#FF6A00FF");
                     SubmitAccentColor(AppearanceViewModel.Instance.SelectedAccentColor);
                 }
             }

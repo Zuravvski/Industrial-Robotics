@@ -7,8 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <local:Console></local:Console>
-        </ScrollViewer>
+        <Label Content="{Binding SumX}" HorizontalAlignment="Left" Margin="116,41,0,0" VerticalAlignment="Top" FontSize="24"/>
+        <Label Content="{Binding SumY}" HorizontalAlignment="Left" Margin="230,104,0,0" VerticalAlignment="Top" FontSize="24"/>
+        <Label Content="{Binding SumZ}" HorizontalAlignment="Left" Margin="374,114,0,0" VerticalAlignment="Top" FontSize="24"/>
+        <Button Content="Start" HorizontalAlignment="Left" Margin="415,28,0,0" VerticalAlignment="Top" Width="75" Command="{Binding Start}"/>
     </Grid>
 </Window>

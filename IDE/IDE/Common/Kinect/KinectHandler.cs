@@ -3,16 +3,16 @@ using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit;
 using Microsoft.Kinect.Toolkit.Interaction;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Point = System.Drawing.Point;
+using Driver;
 
 namespace IDE.Common.Kinect
 {
@@ -28,8 +28,8 @@ namespace IDE.Common.Kinect
         private UserInfo[] userInfos; //the information about the interactive users
         private IReadOnlyCollection<InteractionHandPointer> hands;
 
-        private Dictionary<int, InteractionHandEventType> _lastLeftHandEvents = new Dictionary<int, InteractionHandEventType>();
-        private Dictionary<int, InteractionHandEventType> _lastRightHandEvents = new Dictionary<int, InteractionHandEventType>();
+        private readonly Dictionary<int, InteractionHandEventType> _lastLeftHandEvents = new Dictionary<int, InteractionHandEventType>();
+        private readonly Dictionary<int, InteractionHandEventType> _lastRightHandEvents = new Dictionary<int, InteractionHandEventType>();
         private ImageSource imageSource;
 
         private Marker leftHandMarker, rightHandMarker;
@@ -41,6 +41,11 @@ namespace IDE.Common.Kinect
         private string lHandText;
         private string rHandText;
 
+        // Manipulator stuff
+        private Thread consumerThread;
+        private ConcurrentQueue<string> bufferedCommands;
+        private float sumX, sumY, sumZ;
+
         #endregion
 
         #region Constructor
@@ -49,6 +54,7 @@ namespace IDE.Common.Kinect
         {
             lastPosition = new SkeletonPoint() { X = 0, Y = 0, Z = 0 };
             InitializeKinect();
+            ResetSums();
         }
 
         #endregion
@@ -56,6 +62,8 @@ namespace IDE.Common.Kinect
         #region Properties
 
         public KinectSensorChooserUI KinectSensorChooserUI { get; set; }
+
+        public E3JManipulator Manipulator { get; set; }
 
         public Marker LeftHandMarker
         {
@@ -184,10 +192,6 @@ namespace IDE.Common.Kinect
             var smoothingParam = new TransformSmoothParameters();
             {
                 smoothingParam.Smoothing = 0.3f;
-                //smoothingParam.Correction = 0.3f;
-                //smoothingParam.Prediction = 1f;
-                //smoothingParam.JitterRadius = 1.0f;
-                //smoothingParam.MaxDeviationRadius = 1.0f;
             };
             kinectSensor.SkeletonStream.Enable(smoothingParam);
             kinectSensor.DepthStream.Enable();
@@ -215,6 +219,55 @@ namespace IDE.Common.Kinect
                                     : InteractionHandEventType.None;
 
             return lastHandEvent;
+        }
+
+        private void ResetSums()
+        {
+            sumX = 0;
+            sumY = 0;
+            sumZ = 0;
+        }
+
+        public void StartKinect(E3JManipulator manipulator)
+        {
+            Manipulator = manipulator;
+            bufferedCommands = new ConcurrentQueue<string>();
+            consumerThread = new Thread(MessageConsumer) { IsBackground = true };
+            consumerThread.Start();
+        }
+
+        private void MessageConsumer()
+        {
+            var lastGripCommand = string.Empty;
+            var lastMoveCommand = string.Empty;
+            while (Manipulator.Connected)
+            {
+                Thread.Sleep(250);
+                string command;
+                if (bufferedCommands.TryDequeue(out command))
+                {
+                    if (command.Contains("DS"))
+                    {
+                        if (!lastMoveCommand.Equals(command))
+                        {
+                            Manipulator.SendCustom(command);
+                            Debug.WriteLine(command);
+                        }
+                        lastMoveCommand = command;
+                    }
+                    if (command.Contains("G"))
+                    {
+                        if (!lastGripCommand.Equals(command))
+                        {
+                            Manipulator.SendCustom(command);
+                            Thread.Sleep(100);
+                            Debug.WriteLine(command);
+                        }
+                        lastGripCommand = command;
+                    }
+                }
+                ResetSums();
+            }
         }
 
         #endregion
@@ -256,71 +309,35 @@ namespace IDE.Common.Kinect
                 LHandText = $"Tracking status: {leftHand.IsTracked}\nX: {Math.Round(leftHand.RawX, 1)} Y: {Math.Round(leftHand.RawY, 1)} Z: {Math.Round(leftHand.RawZ, 1)}\nState: {leftHandEvent}";
                 RHandText = $"Tracking status: {rightHand.IsTracked}\nX: {Math.Round(rightHand.RawX, 1)} Y: {Math.Round(rightHand.RawY, 1)} Z: {Math.Round(rightHand.RawZ, 1)}\nState: {rightHandEvent}";
 
-                LeftHandMarker.UpdateUI(kinectSensor, leftHandJoint, leftHandEvent);
-                RightHandMarker.UpdateUI(kinectSensor, rightHandJoint, leftHandEvent);
+                LeftHandMarker.UpdateUI(kinectSensor, leftHandJoint, leftHandEvent, leftHandEvent);
+                NotifyPropertyChanged("LeftHandMarker");
+                RightHandMarker.UpdateUI(kinectSensor, rightHandJoint, leftHandEvent, rightHandEvent);
+                NotifyPropertyChanged("RightHandMarker");
+                
+                const int multiplication = 100; //tbd
 
-                //var leftImagePoint = kinectSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(leftHandJoint.Position,
-                //    DepthImageFormat.Resolution640x480Fps30);
-
-                //LeftHandMarker = new Marker()
-                //{
-                //    CanvasLeft = leftImagePoint.X,
-                //    CanvasTop = leftImagePoint.Y,
-                //    Visibility = TrackingToVisibility(leftHandJoint, leftHandEvent),
-                //    Color = StateToColor(leftHandEvent)
-                //};
-
-                //var rightImagePoint = kinectSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(rightHandJoint.Position,
-                //    DepthImageFormat.Resolution640x480Fps30);
-
-                //RightHandMarker = new Marker()
-                //{
-                //    CanvasLeft = rightImagePoint.X,
-                //    CanvasTop = rightImagePoint.Y,
-                //    Visibility = TrackingToVisibility(rightHandJoint, leftHandEvent),
-                //    Color = StateToColor(rightHandEvent)
-                //};
-
-
-                int xAddition = 0, yAddition = 0, zAddition = 0;
-                var multiplication = 100;    //tbd
-
-                var deltaX = rightHandJoint.Position.X - lastPosition.X;
-                var deltaY = rightHandJoint.Position.Y - lastPosition.Y;
-                var deltaZ = rightHandJoint.Position.Z - lastPosition.Z;
-
-                if (Math.Abs(deltaX) > 0.1)
-                {
-                    xAddition = (int)deltaX * multiplication;
-                }
-                if (Math.Abs(deltaY) > 0.1)
-                {
-                    yAddition = (int)deltaY * multiplication;
-                }
-                if (Math.Abs(deltaZ) > 0.1)
-                {
-                    zAddition = (int)deltaY * multiplication;
-                }
+                var deltaX = (rightHandJoint.Position.X - lastPosition.X) * multiplication;
+                var deltaY = (rightHandJoint.Position.Y - lastPosition.Y) * multiplication;
+                var deltaZ = (rightHandJoint.Position.Z - lastPosition.Z) * multiplication;
 
                 if (leftHandEvent == InteractionHandEventType.Grip)
                 {
                     if (rightHandEvent == InteractionHandEventType.Grip)
                     {
-                        Debug.WriteLine("GC");
+                        if (!bufferedCommands.Contains("GC"))
+                            bufferedCommands.Enqueue("GC");
                     }
                     else if (rightHandEvent == InteractionHandEventType.GripRelease)
                     {
-                        Debug.WriteLine("GO");
+                        if (!bufferedCommands.Contains("GO"))
+                            bufferedCommands.Enqueue("GO");
                     }
-                    await Task.Delay(250);
-                    Debug.WriteLine($"DS {zAddition}, {xAddition}, {yAddition}");
-                }
-                else
-                {
-                    lastPosition = new SkeletonPoint() { X = 0, Y = 0, Z = 0 };
-                }
+                    sumX += deltaX;
+                    sumY += deltaY;
+                    sumZ += deltaZ;
 
-                lastPosition = rightHandJoint.Position;
+                    lastPosition = rightHandJoint.Position;
+                }
             }
         }
 

@@ -881,6 +881,7 @@ namespace IDE.Common.ViewModels
                     Manipulator = new E3JManipulator(Settings);
                     Manipulator.Port.ConnectionStatusChanged += Port_ConnectionStatusChanged;
                     Manipulator.Connect(SelectedCOMPort);
+                    KinectHandler.Manipulator = Manipulator;
                     Manipulator.Port.DataReceived += Port_DataReceived;
                 }
             }

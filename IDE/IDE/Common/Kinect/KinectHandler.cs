@@ -1,18 +1,18 @@
-﻿using IDE.Common.ViewModels.Commands;
+﻿using Driver;
+using IDE.Common.ViewModels.Commands;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit;
 using Microsoft.Kinect.Toolkit.Interaction;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Point = System.Drawing.Point;
 
 namespace IDE.Common.Kinect
 {
@@ -20,6 +20,9 @@ namespace IDE.Common.Kinect
     {
 
         #region Fields
+
+        private Thread consumerThread;
+        private ConcurrentQueue<string> bufferedCommands;
         
         private KinectSensor kinectSensor;
         private InteractionStream interactionStream;
@@ -35,11 +38,15 @@ namespace IDE.Common.Kinect
         private Marker leftHandMarker, rightHandMarker;
         private SkeletonPoint lastPosition;
 
+        System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
+
         private bool seatedModeIsChecked;
         private string connectionStatusText;
         private string trackingStatusText;
         private string lHandText;
         private string rHandText;
+
+        private volatile float sumX, sumY, sumZ;
 
         #endregion
 
@@ -48,12 +55,32 @@ namespace IDE.Common.Kinect
         public KinectHandler()
         {
             lastPosition = new SkeletonPoint() { X = 0, Y = 0, Z = 0 };
+            LeftHandMarker = new Marker();
+            RightHandMarker = new Marker();
+            bufferedCommands = new ConcurrentQueue<string>();
+            consumerThread = new Thread(CommandConsumer) { IsBackground = true } ;
             InitializeKinect();
+
+            sumX = 0;
+            sumY = 0;
+            sumZ = 0;
+
+            t.Interval = 200; // specify interval time as you want
+            t.Tick += new EventHandler(timer_Tick);
+            t.Start();
+            //consumerThread.Start();
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            canSend = !canSend;
         }
 
         #endregion
 
         #region Properties
+
+        public E3JManipulator Manipulator { get; set; }
 
         public KinectSensorChooserUI KinectSensorChooserUI { get; set; }
 
@@ -201,6 +228,56 @@ namespace IDE.Common.Kinect
             kinectSensor.Start();
         }
 
+        volatile bool canSend;
+        private void CommandConsumer()
+        {
+            var lastGripCommand = string.Empty;
+            var lastMoveCommand = string.Empty;
+            while (true)
+            {
+                //string command;
+                //if (bufferedCommands.TryDequeue(out command))
+                //{
+                //    if (command.Contains("DS"))
+                //    {
+                //        Manipulator?.SendCustom(command);
+                //        Debug.WriteLine(command);
+                //        sumX = 0;
+                //        sumY = 0;
+                //        sumZ = 0;
+                //    }
+                //    //if (command.Contains("G"))
+                //    //{
+                //    //    if (!lastGripCommand.Equals(command))
+                //    //    {
+                //    //        Manipulator?.SendCustom(command);
+                //    //        Thread.Sleep(100);
+                //    //        Debug.WriteLine(command);
+                //    //    }
+                //    //    lastGripCommand = command;
+
+                //    //}
+                //}
+                //Manipulator?.SendCustom($"DS {sumZ}, {sumX}, {sumY}");
+                //Debug.WriteLine($"DS {sumZ}, {sumX}, {sumY}");
+                //Thread.Sleep(1000);
+                //sumX = 0;
+                //sumY = 0;
+                //sumZ = 0;
+                
+            }
+        }
+
+        private async void HandleSomething()
+        {
+            Manipulator?.SendCustom($"DS {sumZ}, {sumX}, {sumY}");
+            Debug.WriteLine($"DS {sumZ}, {sumX}, {sumY}");
+            await Task.Delay(250);
+            sumX = 0;
+            sumY = 0;
+            sumZ = 0;
+        }
+
         private InteractionHandEventType DetermineLastHandEvent(InteractionHandPointer hand, int userID)
         {
             var lastHandEvents = hand.HandType == InteractionHandType.Left
@@ -233,6 +310,9 @@ namespace IDE.Common.Kinect
 
             //select our user and get his data
             var userInfo = userInfos.FirstOrDefault(uInfo => uInfo.SkeletonTrackingId != 0);
+            if (userInfo == null)
+                return;
+
             var userID = userInfo.SkeletonTrackingId;
             hands = userInfo.HandPointers;
 
@@ -256,71 +336,71 @@ namespace IDE.Common.Kinect
                 LHandText = $"Tracking status: {leftHand.IsTracked}\nX: {Math.Round(leftHand.RawX, 1)} Y: {Math.Round(leftHand.RawY, 1)} Z: {Math.Round(leftHand.RawZ, 1)}\nState: {leftHandEvent}";
                 RHandText = $"Tracking status: {rightHand.IsTracked}\nX: {Math.Round(rightHand.RawX, 1)} Y: {Math.Round(rightHand.RawY, 1)} Z: {Math.Round(rightHand.RawZ, 1)}\nState: {rightHandEvent}";
 
-                LeftHandMarker.UpdateUI(kinectSensor, leftHandJoint, leftHandEvent);
-                RightHandMarker.UpdateUI(kinectSensor, rightHandJoint, leftHandEvent);
-
-                //var leftImagePoint = kinectSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(leftHandJoint.Position,
-                //    DepthImageFormat.Resolution640x480Fps30);
-
-                //LeftHandMarker = new Marker()
-                //{
-                //    CanvasLeft = leftImagePoint.X,
-                //    CanvasTop = leftImagePoint.Y,
-                //    Visibility = TrackingToVisibility(leftHandJoint, leftHandEvent),
-                //    Color = StateToColor(leftHandEvent)
-                //};
-
-                //var rightImagePoint = kinectSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(rightHandJoint.Position,
-                //    DepthImageFormat.Resolution640x480Fps30);
-
-                //RightHandMarker = new Marker()
-                //{
-                //    CanvasLeft = rightImagePoint.X,
-                //    CanvasTop = rightImagePoint.Y,
-                //    Visibility = TrackingToVisibility(rightHandJoint, leftHandEvent),
-                //    Color = StateToColor(rightHandEvent)
-                //};
-
+                LeftHandMarker.UpdateUI(kinectSensor, leftHandJoint, leftHandEvent, leftHandEvent);
+                NotifyPropertyChanged("LeftHandMarker");
+                RightHandMarker.UpdateUI(kinectSensor, rightHandJoint, leftHandEvent, rightHandEvent);
+                NotifyPropertyChanged("RightHandMarker");
 
                 int xAddition = 0, yAddition = 0, zAddition = 0;
                 var multiplication = 100;    //tbd
 
-                var deltaX = rightHandJoint.Position.X - lastPosition.X;
-                var deltaY = rightHandJoint.Position.Y - lastPosition.Y;
-                var deltaZ = rightHandJoint.Position.Z - lastPosition.Z;
+                var deltaX = (rightHandJoint.Position.X - lastPosition.X) * multiplication;
+                var deltaY = (rightHandJoint.Position.Y - lastPosition.Y) * multiplication;
+                var deltaZ = (rightHandJoint.Position.Z - lastPosition.Z) * multiplication;
 
-                if (Math.Abs(deltaX) > 0.1)
-                {
-                    xAddition = (int)deltaX * multiplication;
-                }
-                if (Math.Abs(deltaY) > 0.1)
-                {
-                    yAddition = (int)deltaY * multiplication;
-                }
-                if (Math.Abs(deltaZ) > 0.1)
-                {
-                    zAddition = (int)deltaY * multiplication;
-                }
+
+
+                
+                
+                //var moveCommand = $"DS {sumZ}, {sumX}, {sumY}";
+                //if (!bufferedCommands.Contains(moveCommand))
+                //{
+                //    bufferedCommands.Enqueue(moveCommand);
+                //}
+
+
+                //if (Manipulator == null || !Manipulator.Connected)
+                //    return;
 
                 if (leftHandEvent == InteractionHandEventType.Grip)
                 {
                     if (rightHandEvent == InteractionHandEventType.Grip)
                     {
-                        Debug.WriteLine("GC");
+                        if(!bufferedCommands.Contains("GC"))
+                            bufferedCommands.Enqueue("GC");
                     }
                     else if (rightHandEvent == InteractionHandEventType.GripRelease)
                     {
-                        Debug.WriteLine("GO");
+                        if (!bufferedCommands.Contains("GO"))
+                            bufferedCommands.Enqueue("GO");
                     }
-                    await Task.Delay(250);
-                    Debug.WriteLine($"DS {zAddition}, {xAddition}, {yAddition}");
+                    sumX += deltaX;
+                    sumY += deltaY;
+                    sumZ += deltaZ;
+                    
+                    lastPosition = rightHandJoint.Position;
+
+                    if (canSend)
+                    {
+                        if (sumX < 20 && sumY < 20 && sumZ < 20)
+                        {
+                            Debug.WriteLine($"DS {(int)sumZ}, {(int)sumX}, {(int)sumY}");
+                            Manipulator?.SendCustom($"DS {(int)sumZ}, {(int)sumX}, {(int)sumY}");
+                        }
+
+                        sumX = 0;
+                        sumY = 0;
+                        sumZ = 0;
+                        canSend = !canSend;
+                    }
                 }
                 else
                 {
+                    //sumX = 0;
+                    //sumY = 0;
+                    //sumZ = 0;
                     lastPosition = new SkeletonPoint() { X = 0, Y = 0, Z = 0 };
                 }
-
-                lastPosition = rightHandJoint.Position;
             }
         }
 

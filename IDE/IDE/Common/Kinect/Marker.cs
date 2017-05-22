@@ -12,7 +12,7 @@ namespace IDE.Common.Kinect
         public SolidColorBrush Color { get; set; }
         public Visibility Visibility { get; set; }
 
-        public void UpdateUI(KinectSensor kinectSensor, Joint handJoint, InteractionHandEventType handEvent)
+        public void UpdateUI(KinectSensor kinectSensor, Joint handJoint, InteractionHandEventType handEvent, InteractionHandEventType handColor)
         {
             //calculate values
             var leftImagePoint = kinectSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(handJoint.Position,
@@ -22,7 +22,7 @@ namespace IDE.Common.Kinect
             CanvasLeft = leftImagePoint.X;
             CanvasTop = leftImagePoint.Y;
             Visibility = TrackingToVisibility(handJoint, handEvent);
-            Color = StateToColor(handEvent);
+            Color = StateToColor(handColor);
         }
 
         private Visibility TrackingToVisibility(Joint hand, InteractionHandEventType leftHandEvent)

@@ -227,14 +227,14 @@ namespace IDE.Common.Utilities
         public void SubmitHighlighting(string path)
         {
             var root = document.SelectSingleNode("Session");
-            var commandsMapParam = root.Attributes[HIGHLIGHTING_PARAM];
-            if (commandsMapParam != null)
+            var highligtingMapParam = root.Attributes[HIGHLIGHTING_PARAM];
+            if (highligtingMapParam != null)
             {
-                root.Attributes.Remove(commandsMapParam);
+                root.Attributes.Remove(highligtingMapParam);
             }
-            commandsMapParam = document.CreateAttribute(HIGHLIGHTING_PARAM);
-            commandsMapParam.Value = path;
-            root.Attributes.Append(commandsMapParam);
+            highligtingMapParam = document.CreateAttribute(HIGHLIGHTING_PARAM);
+            highligtingMapParam.Value = path;
+            root.Attributes.Append(highligtingMapParam);
             document.Save(MissingFileManager.SESSION_PATH);
         }
 

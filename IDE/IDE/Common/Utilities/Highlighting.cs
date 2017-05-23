@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
@@ -18,6 +19,8 @@ namespace IDE.Common.Utilities
         /// The file path
         /// </summary>
         private string filePath;
+
+        private FileSystemWatcher highlightingFileWatcher;
 
         /// <summary>
         /// Gets the colors.
@@ -47,7 +50,7 @@ namespace IDE.Common.Utilities
         public string FilePath
         {
             get { return filePath; }
-            set
+            private set
             {
                 filePath = value;
                 Session.Instance.SubmitHighlighting(filePath);
@@ -64,7 +67,7 @@ namespace IDE.Common.Utilities
         {
             FilePath = Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute) ? path : MissingFileManager.DEFAULT_HIGHLIGHTING_PATH;
             Colors = new Dictionary<Command.TypeE, Color>();
-            Import(path);
+            Import(FilePath);
         }
 
         #region Actions

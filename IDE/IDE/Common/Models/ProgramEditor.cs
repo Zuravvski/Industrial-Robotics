@@ -6,12 +6,8 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interactivity;
-using ICSharpCode.AvalonEdit.Document;
 using IDE.Common.Models.Code_Completion;
 using IDE.Common.Models.Syntax_Check;
 using IDE.Common.Utilities;
@@ -267,9 +263,10 @@ namespace IDE.Common.Models
                     }
                     catch(FileNotFoundException)
                     {
-                        Session.Instance.SubmitHighlighting(MissingFileManager.DEFAULT_HIGHLIGHTING_PATH);
                         MissingFileManager.CreateHighlightingDefinitionFile();
-                        LoadHighligtingDefinition();
+                        Session.Instance.SubmitHighlighting(MissingFileManager.DEFAULT_HIGHLIGHTING_PATH);
+                        Session.Instance.Highlighting.Import(MissingFileManager.DEFAULT_HIGHLIGHTING_PATH);
+                        Session.Instance.Highlighting.Apply(Session.Instance.Highlighting.Colors);
                     }
                 }
             }

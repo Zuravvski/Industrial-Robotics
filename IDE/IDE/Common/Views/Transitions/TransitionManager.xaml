@@ -19,7 +19,7 @@
 
     <Grid>
 
-        <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="False" >
+        <materialDesign:Transitioner SelectedIndex="0" AutoApplyTransitionOrigins="False">
             <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
                 <local:Slide_1/>
             </materialDesign:TransitioningContent>

@@ -148,6 +148,7 @@
     <Compile Include="Common\ViewModels\Converters\BitmapToBitmapImage.cs" />
     <Compile Include="Common\ViewModels\Converters\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\ColorToBrush.cs" />
+    <Compile Include="Common\ViewModels\Converters\SelectedIndexToZIndex.cs" />
     <Compile Include="Common\ViewModels\Converters\SolidColorToBrush.cs" />
     <Compile Include="Common\ViewModels\Converters\ConnectionToTextConverter.cs" />
     <Compile Include="Common\ViewModels\Converters\IntToString.cs" />

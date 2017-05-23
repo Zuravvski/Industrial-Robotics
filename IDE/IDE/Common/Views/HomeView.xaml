@@ -4,8 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:IDE.Common.Views.Transitions"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:IDE.Common.ViewModels.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <converters:SelectedIndexToZIndex x:Key="SelectedIndexToZIndex"/>
+    </UserControl.Resources>
     
     <Grid Style="{StaticResource ContentRoot}">
         <Grid.RowDefinitions>
@@ -20,7 +26,32 @@
         
         <!--#region TRANSITIONS-->
 
-        <local:TransitionManager x:Name="transitionManager" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="99"/>
+        <materialDesign:Transitioner x:Name="Transitioner" SelectedIndex="0" AutoApplyTransitionOrigins="False" Panel.ZIndex="{Binding ElementName=Transitioner, Path=SelectedIndex, Converter={StaticResource SelectedIndexToZIndex}}" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
+                <local:Slide_1/>
+            </materialDesign:TransitioningContent>
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect ExpandIn}">
+                <local:Slide_2/>
+            </materialDesign:TransitioningContent>
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
+                <local:Slide_3/>
+            </materialDesign:TransitioningContent>
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect SlideInFromLeft}">
+                <local:Slide_4/>
+            </materialDesign:TransitioningContent>
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect SlideInFromRight}">
+                <local:Slide_5/>
+            </materialDesign:TransitioningContent>
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect SlideInFromBottom}">
+                <local:Slide_6/>
+            </materialDesign:TransitioningContent>
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect ExpandIn}">
+                <local:Slide_7/>
+            </materialDesign:TransitioningContent>
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
+                <local:Slide_8/>
+            </materialDesign:TransitioningContent>
+        </materialDesign:Transitioner>
 
         <!--#endregion-->
         
@@ -38,7 +69,7 @@
             </StackPanel>
             
             <!--overview clip-->
-            <Button Command="{Binding OpenOverviewClipCommand}" Height="55" Width="300" HorizontalAlignment="Left"  Grid.Column="0" Grid.Row="1" Margin="0,100,0,0" Focusable="False">
+            <Button Command="{Binding OpenOverviewClipCommand}" Height="55" Width="300" HorizontalAlignment="Left"  Grid.Column="0" Grid.Row="1" Margin="0,100,0,0">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="5"/>

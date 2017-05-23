@@ -73,7 +73,7 @@ namespace IDE.Common.ViewModels
         /// <param name="obj">The object.</param>
         private void OpenOverviewClip(object obj)
         {
-            Process.Start("https://www.youtube.com/watch?v=7LKHpM1UeDA");
+            Process.Start("https://www.youtube.com/watch?v=vsLoWxozjYo");
         }
 
 

@@ -850,7 +850,7 @@ namespace IDE.Common.ViewModels
             EnableKinectCommand = new RelayCommand(EnableKinect);
         }
 
-        private async void EnableKinect(object obj)
+        private void EnableKinect(object obj)
         {
             DialogHostIsOpen = true;
             DialogHost = new DialogHost() { CurrentAction = "Initializing Kinect" };

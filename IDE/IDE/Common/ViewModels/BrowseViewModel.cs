@@ -15,6 +15,8 @@ using Microsoft.Win32;
 using IDE.Common.Utilities;
 using System.Threading.Tasks;
 using IDE.Common.Kinect;
+using System.Windows.Threading;
+using System.Windows;
 
 namespace IDE.Common.ViewModels
 {
@@ -120,7 +122,6 @@ namespace IDE.Common.ViewModels
 
             MessageList = new MessageList();
             Settings = DriverSettings.CreateDefaultSettings();
-            KinectHandler = new KinectHandler();
             //this should be removed later on
             manipulator = new E3JManipulator(DriverSettings.CreateDefaultSettings());
         }
@@ -129,18 +130,17 @@ namespace IDE.Common.ViewModels
 
         #region Properties
 
-        /// <summary>
-        /// Gets or sets the kinect handler.
-        /// </summary>
-        /// <value>
-        /// The kinect handler.
-        /// </value>
+
+        public static readonly DependencyProperty KinectHandlerProperty =
+             DependencyProperty.Register("KinectHandler", typeof(KinectHandler),
+             typeof(BrowseViewModel), new FrameworkPropertyMetadata(null));
+
         public KinectHandler KinectHandler
         {
-            get { return kinectHandler; }
+            get { return (KinectHandler)GetValue(KinectHandlerProperty); }
             set
             {
-                kinectHandler = value;
+                SetValue(KinectHandlerProperty, value);
                 NotifyPropertyChanged("KinectHandler");
             }
         }
@@ -533,7 +533,9 @@ namespace IDE.Common.ViewModels
         {
             DialogHostIsOpen = true;
             var host = CreateDialogHost(true, $"Deleting {SelectedRemoteProgram.Name}");
-            programService.DeleteProgram(SelectedRemoteProgram.Name, host.CancellationToken).RunSynchronously();
+            var result = await programService.DeleteProgram(SelectedRemoteProgram.Name, host.CancellationToken);
+            if (!result)
+                return;
             await Task.Delay(2000);
             Refresh(null);
         }
@@ -628,9 +630,9 @@ namespace IDE.Common.ViewModels
         /// Runs the specified object.
         /// </summary>
         /// <param name="obj">The object.</param>
-        private void Run(object obj)
+        private async void Run(object obj)
         {
-            programService.RunProgram(SelectedRemoteProgram).RunSynchronously();
+            await programService.RunProgram(SelectedRemoteProgram);
         }
 
         /// <summary>
@@ -827,6 +829,8 @@ namespace IDE.Common.ViewModels
         /// </value>
         public ICommand RefreshCOMPortsCommand { get; private set; }
 
+        public ICommand EnableKinectCommand { get; private set; }
+
         /// <summary>
         /// Declares the commands.
         /// </summary>
@@ -843,7 +847,17 @@ namespace IDE.Common.ViewModels
             ChangeFontCommand = new RelayCommand(ChangeFont, CanChangeFont);
             ConnectionCommand = new RelayCommand(Connection);
             RefreshCOMPortsCommand = new RelayCommand(RefreshCOMPorts);
+            EnableKinectCommand = new RelayCommand(EnableKinect);
         }
+
+        private async void EnableKinect(object obj)
+        {
+            DialogHostIsOpen = true;
+            DialogHost = new DialogHost() { CurrentAction = "Initializing Kinect" };
+            KinectHandler = new KinectHandler();
+            DialogHostIsOpen = false;
+        }
+        
 
         /// <summary>
         /// Refreshes the COM ports.
@@ -881,7 +895,7 @@ namespace IDE.Common.ViewModels
                     Manipulator.Port.ConnectionStatusChanged += Port_ConnectionStatusChanged;
                     Manipulator.Connect(SelectedCOMPort);
                     Manipulator.Port.DataReceived += Port_DataReceived;
-                    kinectHandler.StartKinect(Manipulator);
+                    KinectHandler?.StartKinect(Manipulator);
                 }
             }
         }

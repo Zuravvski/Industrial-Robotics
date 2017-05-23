@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace IDE.Common.ViewModels.Commands
 {
@@ -7,7 +8,7 @@ namespace IDE.Common.ViewModels.Commands
     /// ObservableObject class
     /// </summary>
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-    public class ObservableObject : INotifyPropertyChanged
+    public class ObservableObject : DependencyObject, INotifyPropertyChanged
     {
         /// <summary>
         /// Occurs when a property value changes.

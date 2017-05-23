@@ -33,7 +33,7 @@ namespace IDE.Common.Utilities
         public string FilePath
         {
             get { return filePath; }
-            private set
+            set
             {
                 filePath = value;
                 Session.Instance.SubmitCommands(filePath);

@@ -3,16 +3,14 @@ using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit;
 using Microsoft.Kinect.Toolkit.Interaction;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Driver;
+using System.Windows.Threading;
 
 namespace IDE.Common.Kinect
 {
@@ -42,12 +40,16 @@ namespace IDE.Common.Kinect
         private string rHandText;
 
         // Manipulator stuff
-        private Thread consumerThread;
-        private ConcurrentQueue<string> bufferedCommands;
         private float sumX, sumY, sumZ;
-
-        private bool sample;
+        private volatile bool sample;
         private const int sampleTime = 400;
+
+        //Grip
+        private const string GripOpen = "GO";
+        private const string GripClose = "GC";
+        private string lastGripCommand;
+        private DispatcherTimer timer;
+        private bool wasGripSent;
 
         #endregion
 
@@ -58,6 +60,7 @@ namespace IDE.Common.Kinect
             lastPosition = new SkeletonPoint() { X = 0, Y = 0, Z = 0 };
             LeftHandMarker = new Marker();
             RightHandMarker = new Marker();
+            lastGripCommand = GripOpen;
             InitializeKinect();
             ResetSums();
             StartKinect(null);
@@ -236,51 +239,23 @@ namespace IDE.Common.Kinect
 
         public void StartKinect(E3JManipulator manipulator)
         {
-            //Manipulator = manipulator;
-            bufferedCommands = new ConcurrentQueue<string>();
-            consumerThread = new Thread(MessageConsumer) { IsBackground = true };
-            consumerThread.Start();
+            Manipulator = manipulator;
+            timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 250) };
+            timer.Tick += OnResetSamplingTime;
+            timer.Start();
         }
 
-        private void MessageConsumer()
+        private void OnResetSamplingTime(object sender, EventArgs e)
         {
-            var lastGripCommand = string.Empty;
-            var lastMoveCommand = string.Empty;
-            while (true)
-            {
-                Thread.Sleep(sampleTime);
-                sample = true;
-                string command;
-                if (bufferedCommands.TryDequeue(out command))
-                {
-                    if (command.Contains("DS"))
-                    {
-                        if (!lastMoveCommand.Equals(command))
-                        {
-                            //Manipulator.SendCustom(command);
-                            Debug.WriteLine(command);
-                        }
-                        lastMoveCommand = command;
-                    }
-                    if (command.Contains("G"))
-                    {
-                        if (!lastGripCommand.Equals(command))
-                        {
-                            //Manipulator.SendCustom(command);
-                            Debug.WriteLine(command);
-                        }
-                        lastGripCommand = command;
-                    }
-                }
-                ResetSums();
-            }
+            sample = true;
+            timer.Stop();
         }
 
         #endregion
 
         #region Events
 
-        private async void InteractionStream_InteractionFrameReady(object sender, InteractionFrameReadyEventArgs e)
+        private void InteractionStream_InteractionFrameReady(object sender, InteractionFrameReadyEventArgs e)
         {
             using (InteractionFrame interactionFrame = e.OpenInteractionFrame()) //dispose as soon as possible
             {
@@ -324,57 +299,61 @@ namespace IDE.Common.Kinect
                 RightHandMarker.UpdateUI(kinectSensor, rightHandJoint, leftHandEvent, rightHandEvent);
                 NotifyPropertyChanged("RightHandMarker");
 
-                
-                
-                const int multiplication = 100; //tbd
-
-                var deltaX = (rightHandJoint.Position.X - lastPosition.X) * multiplication;
-                var deltaY = (rightHandJoint.Position.Y - lastPosition.Y) * multiplication;
-                var deltaZ = (rightHandJoint.Position.Z - lastPosition.Z) * multiplication;
+                if (Manipulator == null || !Manipulator.Connected)
+                    return;
 
                 if (leftHandEvent == InteractionHandEventType.Grip)
                 {
-                    if (rightHandEvent == InteractionHandEventType.Grip)
-                    {
-                        if (!bufferedCommands.Contains("GC"))
-                            bufferedCommands.Enqueue("GC");
-                    }
-                    else if (rightHandEvent == InteractionHandEventType.GripRelease)
-                    {
-                        if (!bufferedCommands.Contains("GO"))
-                            bufferedCommands.Enqueue("GO");
-                    }
-
-                    //summing
-                    //sumX += deltaX;
-                    //sumY += deltaY;
-                    //sumZ += deltaZ;
-
-                    //if (sample)
-                    //{
-                    //    var moveCommand = $"DS {(int)sumZ}, {(int)sumX}, {(int)sumY}";
-                    //    if (!bufferedCommands.Contains(moveCommand))
-                    //        bufferedCommands.Enqueue(moveCommand);
-
-                    //    sample = false;
-                    //}
+                    const int multiplication = 100; //tbd
 
                     if (sample)
                     {
-                        deltaX = (rightHandJoint.Position.X - lastPosition.X) * multiplication;
-                        deltaY = (rightHandJoint.Position.Y - lastPosition.Y) * multiplication;
-                        deltaZ = (rightHandJoint.Position.Z - lastPosition.Z) * multiplication;
+                        if (rightHandEvent == InteractionHandEventType.Grip && lastGripCommand.Equals(GripOpen))
+                        {
+                            Manipulator?.SendCustom(GripClose);
+                            lastGripCommand = GripClose;
+                            wasGripSent = true;
+                        }
+                        else if (rightHandEvent == InteractionHandEventType.GripRelease && lastGripCommand.Equals(GripClose))
+                        {
+                            Manipulator?.SendCustom(GripOpen);
+                            lastGripCommand = GripOpen;
+                            wasGripSent = true;
+                        }
 
-                        var moveCommand = $"DS {(int)(deltaZ)}, {(int)(deltaX)}, {(int)(deltaY)}";
-                        if (!bufferedCommands.Contains(moveCommand))
-                            bufferedCommands.Enqueue(moveCommand);
 
-                        lastPosition = rightHandJoint.Position;
+                        if(!wasGripSent)
+                        {
+                            var moveCommand = $"DS {(int)sumZ}, {(int)sumX}, {(int)sumY}";
+                            Manipulator?.SendCustom(moveCommand);
+                        }
+                        else
+                        {
+                            wasGripSent = false;
+                        }
+
+                        timer.Start();
+                        ResetSums();
                         sample = false;
+                        lastPosition = rightHandJoint.Position;
+
+                    }
+                    else
+                    {
+                        var deltaX = (rightHandJoint.Position.X - lastPosition.X) * multiplication;
+                        var deltaY = (rightHandJoint.Position.Y - lastPosition.Y) * multiplication;
+                        var deltaZ = (rightHandJoint.Position.Z - lastPosition.Z) * multiplication;
+
+                        sumX += deltaX;
+                        sumY += deltaY;
+                        sumZ += deltaZ;
                     }
 
-
                     //lastPosition = rightHandJoint.Position;
+                }
+                else
+                {
+                    lastPosition = rightHandJoint.Position;
                 }
             }
         }

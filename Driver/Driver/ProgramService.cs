@@ -223,9 +223,9 @@ namespace Driver
         /// [Deprecated] Deletes program from manipulator memory
         /// </summary>
         /// <param name="programName">Deleted program name</param>
-        public async Task DeleteProgram(string programName, CancellationToken cancellationToken)
+        public async Task<bool> DeleteProgram(string programName, CancellationToken cancellationToken)
         {
-            if (!manipulator.Connected) return;
+            if (!manipulator.Connected) return false;
             try
             {
                 manipulator.Number(programName);
@@ -233,10 +233,15 @@ namespace Driver
                 manipulator.New();
                 await Task.Delay(1000, cancellationToken);
             }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
             }
+            return true;
         }
 
         public async Task<List<RemoteProgram>> ReadProgramInfo()

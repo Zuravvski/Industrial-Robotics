@@ -260,8 +260,17 @@ namespace IDE.Common.Models
                 var filePath = Session.Instance.Highlighting.FilePath;
                 using (var reader = new XmlTextReader(filePath))
                 {
-                    var definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-                    SyntaxHighlighting = definition;
+                    try
+                    {
+                        var definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                        SyntaxHighlighting = definition;
+                    }
+                    catch(FileNotFoundException)
+                    {
+                        Session.Instance.SubmitHighlighting(MissingFileManager.DEFAULT_HIGHLIGHTING_PATH);
+                        MissingFileManager.CreateHighlightingDefinitionFile();
+                        LoadHighligtingDefinition();
+                    }
                 }
             }
             else

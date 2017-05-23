@@ -277,36 +277,14 @@
         <!--#endregion-->
 
         <!--#region KINECT STUFF-->
-            <Border Grid.Column="1" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1" Grid.ColumnSpan="2" Grid.RowSpan="1">
+            <Border Grid.Column="1" CornerRadius="10" BorderBrush="#DDDDDD" BorderThickness="1" Grid.ColumnSpan="2" ClipToBounds="True">
                 <Grid>
-
-                    <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Center" KinectSensorChooser="{Binding KinectHandler.KinectSensorChooserUI}"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Canvas Width="640" Height="480">
-                            <Image Source="{Binding KinectHandler.ImageSource}" Width="640" Height="480"/>
-                            <Ellipse Stroke="{Binding KinectHandler.LeftHandMarker.Color}" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Canvas.Left="{Binding KinectHandler.LeftHandMarker.CanvasLeft}" Canvas.Top="{Binding KinectHandler.LeftHandMarker.CanvasTop}" Visibility="{Binding KinectHandler.LeftHandMarker.Visibility}"/>
-                            <Ellipse Stroke="{Binding KinectHandler.RightHandMarker.Color}" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Canvas.Left="{Binding KinectHandler.RightHandMarker.CanvasLeft}" Canvas.Top="{Binding KinectHandler.RightHandMarker.CanvasTop}" Visibility="{Binding KinectHandler.RightHandMarker.Visibility}"/>
-                        </Canvas>
-                        <StackPanel>
-                            <CheckBox Content="Seated mode?" IsChecked="{Binding KinectHandler.SeatedModeIsChecked}"/>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Connection status: "/>
-                                <Label Content="{Binding KinectHandler.ConnectionStatusText}"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Tracking status: "/>
-                                <Label Content="{Binding KinectHandler.TrackingStatusText}"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="LHand: "/>
-                                <Label Content="{Binding KinectHandler.LHandText}"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="RHand: "/>
-                                <Label Content="{Binding KinectHandler.RHandText}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
+                <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Enable Kinect" Command="{Binding EnableKinectCommand}"/>
+                    <Canvas>
+                        <Image Source="{Binding KinectHandler.ImageSource}"/>
+                        <Ellipse Stroke="{Binding KinectHandler.LeftHandMarker.Color}" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Canvas.Left="{Binding KinectHandler.LeftHandMarker.CanvasLeft}" Canvas.Top="{Binding KinectHandler.LeftHandMarker.CanvasTop}" Visibility="{Binding KinectHandler.LeftHandMarker.Visibility}"/>
+                        <Ellipse Stroke="{Binding KinectHandler.RightHandMarker.Color}" StrokeThickness="3" Width="20" Height="20" Panel.ZIndex="99" Canvas.Left="{Binding KinectHandler.RightHandMarker.CanvasLeft}" Canvas.Top="{Binding KinectHandler.RightHandMarker.CanvasTop}" Visibility="{Binding KinectHandler.RightHandMarker.Visibility}"/>
+                    </Canvas>
                 </Grid>
             </Border>
 

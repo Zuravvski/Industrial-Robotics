@@ -20,7 +20,7 @@
         
         <!--#region TRANSITIONS-->
 
-        <local:TransitionManager Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="99"/>
+        <local:TransitionManager x:Name="transitionManager" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="99"/>
 
         <!--#endregion-->
         

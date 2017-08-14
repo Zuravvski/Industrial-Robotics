@@ -208,7 +208,7 @@
     <Description>Adds each coordinate value of position (b) to each coordinate value of position (a) and defines it again as a new position.</Description>
   </Command>
 
-  <Command name="Step read" content="STR" regex="^\s*STR\s+([1-9]|[1-9][0-9]|[1-9][0-9]{2})\s*)$" type="Programming">
+  <Command name="Step read" content="STR" regex="^\s*STR\s+([1-9]|[1-9][0-9]|[1-9][0-9]{2})\s*$" type="Programming">
     <Description>Reads the content of the specified step number, or the stopping step number. (using RS232-C)</Description>
   </Command>
 
